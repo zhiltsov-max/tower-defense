@@ -1,0 +1,64 @@
+project(GUI)
+
+set(gui_headers
+    abstractbutton.h 
+    abstracttextarea.h 
+    abstracttextbox.h 
+    abstractwindow.h 
+    customfont.h 
+    events.h 
+    gui_core.h 
+    gui_lua_binding.h 
+    gui_main.h 
+    imagebox.h 
+    menuobject.h 
+    messagebox.h 
+    movingtext.h 
+    okdialog.h 
+    pushbutton.h 
+    richtextarea.h 
+    richtextbox.h 
+    settings.h 
+    signal.h 
+    signal_defs.h 
+    simpletext.h 
+    simpletextbox.h 
+    slot.h 
+    textarea.h 
+    transparentwindow.h 
+    uiparent.h 
+    window.h 
+)
+
+set(gui_sources
+    abstractbutton.cpp 
+    abstracttextarea.cpp 
+    abstracttextbox.cpp 
+    abstractwindow.cpp 
+    customfont.cpp 
+    events.cpp 
+    gui_core.cpp 
+    gui_lua_binding.cpp 
+    imagebox.cpp 
+    menuobject.cpp 
+    messagebox.cpp 
+    movingtext.cpp 
+    okdialog.cpp 
+    pushbutton.cpp 
+    richtextarea.cpp 
+    richtextbox.cpp 
+    signal.cpp 
+    signal_defs.cpp 
+    simpletext.cpp 
+    simpletextbox.cpp 
+    slot.cpp 
+    transparentwindow.cpp 
+    uiparent.cpp 
+)
+
+add_library(td_gui_LIB STATIC
+    ${gui_headers} ${gui_sources})
+target_link_libraries(td_gui_LIB
+    td_core_LIB
+    td_application_core_LIB
+)

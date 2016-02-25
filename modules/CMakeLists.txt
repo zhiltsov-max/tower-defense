@@ -1,1 +1,232 @@
+project(TowerDefense)
 
+add_subdirectory(Core)
+add_subdirectory(Application)
+add_subdirectory(GUI)
+add_subdirectory(GameEngine)
+
+
+set(td_application_headers
+    Application/td_application.h 
+    Application/application_task.h 
+    Application/application_task_game.h 
+    Application/application_task_menu.h 
+    Game/UI/buttoncallbacks.h 
+    Game/UI/game_gui_lua_binding.h 
+    Game/UI/game_gui_main.h 
+    Game/UI/gameinfowindow.h 
+    Game/UI/messagebubble.h 
+    Game/UI/popupwindow.h 
+    Game/Preferences/keybindings.h 
+    Game/Preferences/preferences.h 
+    Game/States/game_state.h 
+    Game/States/game_state_playing.h 
+    Game/States/game_states.h 
+    Game/States/game_state_level_loading.h 
+    Game/States/game_state_initial.h 
+    Game/States/game_state_stage_loading.h 
+    Game/States/game_state_statistics.h 
+    Game/States/game_state_playing_end.h 
+    Game/Components/animation.h 
+    Game/Components/components_list.h 
+    Game/Components/game_objects_info.h 
+    Game/Level/level.h 
+    Game/Level/level_code.h 
+    Game/Level/level_lua_binding.h 
+    Game/Level/level_loader.h 
+    Game/Level/level_info_researches.h 
+    Game/Level/level_info_buildings.h 
+    Game/Level/level_info.h 
+    Game/Level/level_info_common.h 
+    Game/Level/level_info_game_objects.h 
+    Game/Level/level_info_loader.h 
+    Game/Level/level_info_raw.h 
+    Game/Level/level_info_scene.h 
+    Game/Level/level_info_stage.h 
+    Game/Level/level_info_stages.h 
+    Game/Level/level_clock.h 
+    Game/Level/level_scene.h 
+    Game/Level/level_data_common.h 
+    Game/Level/level_data_game_objects.h 
+    Game/Player/player.h 
+    Game/Player/player_progress.h 
+    Game/Player/player_progress_lua_binding.h 
+    Game/Player/player_statistics.h 
+    Game/Player/player_researches.h 
+    Game/Player/player_quests.h 
+    Game/Player/player_points.h 
+    Game/Player/player_credits.h 
+    Game/Researches/research.h 
+    Game/Researches/researches_controller.h 
+    Game/Researches/researches_info.h 
+    Game/Researches/researches_lua_binding.h 
+    Game/Researches/researches_tree.h 
+    Game/Researches/researches_tree_view.h 
+    Game/Researches/researches_tree_item_view.h
+    Game/Quests/controller.h 
+    Game/Quests/info.h 
+    Game/Quests/level_quests.h 
+    Game/Quests/quest.h 
+    Game/Quests/reward.h 
+    Game/Quests/rewardinfo.h 
+    Game/Quests/rewards.h 
+    Game/Quests/task.h 
+    Game/Quests/taskinfo.h 
+    Game/Quests/tasks.h 
+    Game/Quests/trigger.h 
+    Game/Quests/trigger_defs.h 
+    Game/Quests/triggerfactory.h 
+    Game/Quests/triggerinfo.h 
+    Game/Quests/triggers.h 
+    Game/Buildings/buildings_info.h 
+    Game/Buildings/buildings_controller.h 
+    Game/Buildings/buildings_list.h 
+    Game/Buildings/building.h 
+    Game/Buildings/building_animation.h 
+    Game/Buildings/building_selection.h 
+    Game/Buildings/tb_artillery.h 
+    Game/Buildings/tb_base.h 
+    Game/Buildings/tb_castle.h 
+    Game/Buildings/tb_rocket.h 
+    Game/Buildings/tb_watchpost.h 
+    Game/Buildings/turret.h 
+    Game/Buildings/turret_animation.h 
+    Game/Buildings/turret_bullet.h 
+    Game/Buildings/turret_selection.h 
+    Game/Map/map.h 
+    Game/Map/map_trigger.h 
+    Game/Map/nodemap.h 
+    Game/Map/passability.h 
+    Game/Map/passabilitymap.h 
+    Game/Map/pathnode.h 
+    Game/Map/tilemap.h 
+    Game/Map/tilemaplayer.h 
+    Game/Map/tileset.h 
+    Game/Mobs/mob.h 
+    Game/Mobs/mob_animation.h 
+    Game/Mobs/mob_controller.h 
+    Game/Mobs/mob_factory.h 
+    Game/Mobs/mob_flyer.h 
+    Game/Mobs/mob_healthbar.h 
+    Game/Mobs/mob_info.h 
+    Game/Mobs/mob_path.h 
+    Game/Mobs/mob_resources.h 
+    Game/Mobs/mob_walker.h 
+)
+
+set(td_application_sources 
+    Application/td_application.cpp 
+    Application/application_task.cpp 
+    Application/application_task_game.cpp 
+    Application/application_task_menu.cpp 
+    Game/UI/buttoncallbacks.cpp 
+    Game/UI/game_gui_lua_binding.cpp 
+    Game/UI/game_gui_main.cpp 
+    Game/UI/gameinfowindow.cpp 
+    Game/UI/messagebubble.cpp 
+    Game/UI/popupwindow.cpp 
+    Game/Preferences/keybindings.cpp 
+    Game/Preferences/preferences.cpp 
+    Game/States/game_state_playing.cpp 
+    Game/States/game_state_level_loading.cpp 
+    Game/States/game_state_initial.cpp 
+    Game/States/game_state.cpp 
+    Game/States/game_state_stage_loading.cpp 
+    Game/States/game_state_statistics.cpp 
+    Game/States/game_state_playing_end.cpp 
+    Game/Player/player.cpp 
+    Game/Player/player_progress.cpp 
+    Game/Player/player_statistics.cpp 
+    Game/Player/player_researches.cpp 
+    Game/Player/player_quests.cpp 
+    Game/Player/player_points.cpp 
+    Game/Player/player_credits.cpp 
+    Game/Components/animation.cpp 
+    Game/Researches/research.cpp 
+    Game/Researches/researches_controller.cpp 
+    Game/Researches/researches_info.cpp 
+    Game/Researches/researches_lua_binding.cpp 
+    Game/Researches/researches_tree.cpp 
+    Game/Researches/researches_tree_item.cpp 
+    Game/Researches/researches_tree_view.cpp 
+    Game/Level/level.cpp 
+    Game/Level/level_lua_binding.cpp 
+    Game/Level/level_loader.cpp 
+    Game/Level/level_info.cpp 
+    Game/Level/level_info_common.cpp 
+    Game/Level/level_info_loader.cpp 
+    Game/Level/level_info_scene.cpp 
+    Game/Level/level_info_stage.cpp 
+    Game/Level/level_info_stages.cpp 
+    Game/Level/level_clock.cpp 
+    Game/Level/level_data_common.cpp 
+    Game/Level/level_data_game_objects.cpp 
+    Game/Level/level_info_researches.cpp 
+    Game/Level/level_info_buildings.cpp 
+    Game/Level/level_scene.cpp
+    Game/Quests/info.cpp 
+    Game/Quests/level_quests.cpp 
+    Game/Quests/quest.cpp 
+    Game/Quests/reward.cpp 
+    Game/Quests/rewardinfo.cpp 
+    Game/Quests/rewards.cpp 
+    Game/Quests/task.cpp 
+    Game/Quests/taskinfo.cpp 
+    Game/Quests/tasks.cpp 
+    Game/Quests/trigger_defs.cpp 
+    Game/Quests/triggerfactory.cpp 
+    Game/Quests/triggerinfo.cpp 
+    Game/Quests/triggers.cpp 
+    Game/Buildings/building.cpp 
+    Game/Buildings/building_animation.cpp 
+    Game/Buildings/building_selection.cpp 
+    Game/Buildings/tb_castle.cpp 
+    Game/Buildings/tb_watchpost.cpp 
+    Game/Buildings/turret.cpp 
+    Game/Buildings/turret_bullet.cpp 
+    Game/Buildings/turretselection.cpp 
+    Game/Buildings/buildings_controller.cpp 
+    Game/Buildings/buildings_info.cpp 
+    Game/Map/map.cpp 
+    Game/Map/map_trigger.cpp 
+    Game/Map/nodemap.cpp 
+    Game/Map/passabilitymap.cpp 
+    Game/Map/pathnode.cpp 
+    Game/Map/tilemap.cpp 
+    Game/Map/tilemaplayer.cpp 
+    Game/Map/tileset.cpp 
+    Game/Mobs/mob.cpp 
+    Game/Mobs/mob_animation.cpp 
+    Game/Mobs/mob_controller.cpp 
+    Game/Mobs/mob_factory.cpp 
+    Game/Mobs/mob_flyer.cpp 
+    Game/Mobs/mob_healthbar.cpp 
+    Game/Mobs/mob_info.cpp 
+    Game/Mobs/mob_path.cpp 
+    Game/Mobs/mob_resources.cpp 
+    Game/Mobs/mob_walker.cpp 
+)
+
+add_library(td_application_LIB STATIC
+    ${td_application_headers} ${td_application_sources})
+
+
+set(td_headers config.h)
+set(td_sources main.cpp)
+
+add_executable(TowerDefense ${td_headers} ${td_sources})
+target_link_libraries(TowerDefense
+    ${LIBRARY_PATH}
+    -lglew32
+    -lsfml-system
+    -lsfml-main
+    -lsfml-window
+    -lsfml-graphics
+    -llua52
+
+    td_application_LIB
+    td_application_core_LIB
+    td_core_LIB
+    td_gui_LIB
+    td_game_engine_LIB
+)
