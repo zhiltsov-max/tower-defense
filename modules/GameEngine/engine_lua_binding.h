@@ -1,0 +1,4 @@
+#ifndef ENGINE_LUA_BINDING_H
+#define ENGINE_LUA_BINDING_H
+
+#endif // ENGINE_LUA_BINDING_H
