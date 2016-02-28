@@ -2,21 +2,41 @@
 
 BEGIN_GUI
 
-SignalID DefaultSignalID::ObjectVisibilityChanged = "vc";
-SignalID DefaultSignalID::ObjectShown = "sh";
-SignalID DefaultSignalID::ObjectHidden = "hid";
+const SignalID DefaultSignalID::ObjectVisibilityChanged = "vc";
+const SignalID DefaultSignalID::ObjectShown = "sh";
+const SignalID DefaultSignalID::ObjectHidden = "hid";
 
-SignalID DefaultSignalID::ObjectTextChanged = "otc";
-SignalID DefaultSignalID::ObjectPositionChanged = "mov";
-SignalID DefaultSignalID::ObjectSizeChanged = "siz";
+const SignalID DefaultSignalID::ObjectTextChanged = "otc";
+const SignalID DefaultSignalID::ObjectPositionChanged = "mov";
+const SignalID DefaultSignalID::ObjectSizeChanged = "siz";
 
-SignalID DefaultSignalID::ObjectEnabled = "ena";
-SignalID DefaultSignalID::ObjectDisabled = "dis";
+const SignalID DefaultSignalID::ObjectEnabled = "ena";
+const SignalID DefaultSignalID::ObjectDisabled = "dis";
 
-SignalID DefaultSignalID::MouseEntered = "men";
-SignalID DefaultSignalID::MouseLeave = "mou";
-SignalID DefaultSignalID::MouseClick = "mcl";
-SignalID DefaultSignalID::MouseDown = "mdn";
-SignalID DefaultSignalID::MouseUp = "mup";
+const SignalID DefaultSignalID::MouseEntered = "men";
+const SignalID DefaultSignalID::MouseLeave = "mou";
+const SignalID DefaultSignalID::MouseClick = "mcl";
+const SignalID DefaultSignalID::MouseDown = "mdn";
+const SignalID DefaultSignalID::MouseUp = "mup";
+
+const std::vector<SignalID> DefaultSignalID::_enumeration = {
+   ObjectVisibilityChanged,
+   ObjectShown,
+   ObjectHidden,
+
+   /*ObjectTextChanged*/
+   ObjectPositionChanged,
+   ObjectSizeChanged,
+
+   MouseEntered,
+   MouseLeave,
+   MouseClick,
+   MouseDown,
+   MouseUp
+};
+
+const std::vector<SignalID>& DefaultSignalID::enumerate() {
+    return _enumeration;
+}
 
 END_GUI

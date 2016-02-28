@@ -1,6 +1,7 @@
 #include "string.h"
 
 
+
 wstring String::toWide(const char* str) {
     wstring res;
     res.reserve(20); //magic size of preallocation

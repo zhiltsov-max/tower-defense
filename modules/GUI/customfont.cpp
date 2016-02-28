@@ -98,7 +98,7 @@ const Graphics::TFont* TCustomFontsCache::load(const TCustomFont& font_) {
     string fontPath = TGUISettings::DEFAULT_FONTS_FOLDER + std::move(String::toLower(font_.getName()));
     if (font->loadFromFile(fontPath) == false) {
 #if defined(_DEBUG)
-        GUI::Debug::throw_("Font file '" + fontPath + "' not found", "TCustomFontsCache::load");
+        GUI_THROW("Font file '" + fontPath + "' not found");
 #else
         // TO DO: ...
 #endif

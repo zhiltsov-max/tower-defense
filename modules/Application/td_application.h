@@ -29,7 +29,7 @@ public:
     Settings& GetSettings();
 
 private:
-    typedef TApplication parent_t;
+    typedef TApplication parent_type;
 
 protected:
     typedef std::unique_ptr<TTDApplicationTask> Task;

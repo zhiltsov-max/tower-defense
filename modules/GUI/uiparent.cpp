@@ -4,17 +4,18 @@
 BEGIN_GUI
 
 TUIParent::TUIParent(const TUIParentSource& source) :
-    parent_t(source)
+    parent_type(source)
 {}
 
 bool TUIParent::IsVisible() const {
     return visible;
 }
 
-void TUIParent::SetParent(const TMenuObjectWeakRef& value) {
+void TUIParent::SetParent(const TWidgetWeakRef& value) {
 #if defined(_DEBUG)
-    throw_("Attempt to set parent of UIParent object.", "TUIParent::SetParent");
-#endif
+    GUI_WARNING("Attempt to set a parent for UIParent object.");
+#endif // _DEBUG
+
     UNUSED(value)
 }
 

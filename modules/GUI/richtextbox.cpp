@@ -7,7 +7,7 @@ TRichTextBoxSource::TRichTextBoxSource() :
 {}
 
 TRichTextBox::TRichTextBox(const TRichTextBoxSource& source) :
-    parent_t(source)
+    parent_type(source)
 {
     text.reset(new TRichTextArea(source.text, source.textPosition, this));
     text->SetFont(source.font);
@@ -22,7 +22,7 @@ const std::initializer_list<TextString> TRichTextBox::DEFAULT_SEPARATORS() {
 }
 
 void TRichTextBox::SetMaxSize(const TSize& value) {
-    parent_t::SetMaxSize(value);
+    parent_type::SetMaxSize(value);
     static_cast<TRichTextArea*>(text.get())->SetMaxSize(value);
 }
 

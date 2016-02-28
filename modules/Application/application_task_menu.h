@@ -34,7 +34,7 @@ public:
     virtual void HandleEvent(const TApplication::Event& event) override;
 
 private:
-    typedef TTDApplicationTask parent_t;
+    typedef TTDApplicationTask parent_type;
 
     TMainMenuBackground background;
     lua::State luaState;

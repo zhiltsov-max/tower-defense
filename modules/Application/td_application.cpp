@@ -19,7 +19,7 @@ TTowerDefenseApplication* TTowerDefenseApplication::GetInstance() {
 
 
 TTowerDefenseApplication::TTowerDefenseApplication(const TApplicationInfo& info) :
-    parent_t(info),
+    parent_type(info),
     task(nullptr),
     state(TDAppState::Exit)
 {}
@@ -75,7 +75,7 @@ void TTowerDefenseApplication::initialize(const TApplicationInfo& info_) {
     info.windowHeight = 768;
     info.style = sf::Style::Default;
 
-    parent_t::initialize(info);
+    parent_type::initialize(info);
     SetState(TDAppState::Menu);
 }
 
@@ -84,7 +84,7 @@ void TTowerDefenseApplication::update() {
         return;
     }
 
-    parent_t::update();
+    parent_type::update();
     task->Update();
 
     window->clear();
@@ -93,12 +93,12 @@ void TTowerDefenseApplication::update() {
 }
 
 void TTowerDefenseApplication::release() {
-    parent_t::release();
+    parent_type::release();
     task.release();
 }
 
 void TTowerDefenseApplication::handleEvent(const Event& event) {
-    parent_t::handleEvent(event);
+    parent_type::handleEvent(event);
     if (task != nullptr) {
         task->HandleEvent(event);
     }

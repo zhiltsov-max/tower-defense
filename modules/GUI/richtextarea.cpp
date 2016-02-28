@@ -3,8 +3,8 @@
 
 BEGIN_GUI
 
-TRichTextArea::TRichTextArea(const TextString& text, const TCoordinate& position, TMenuObject* parent) :
-    parent_t(text, position, parent),
+TRichTextArea::TRichTextArea(const TextString& text, const TCoordinate& position, TWidget* parent) :
+    parent_type(text, position, parent),
     lines(),
     separators(),
     maxSize(),
@@ -54,14 +54,14 @@ float TRichTextArea::GetHeight() const {
 
 void TRichTextArea::SetText(const TextString& value) {
     if (text != value) {
-        parent_t::SetText(value);
+        parent_type::SetText(value);
         _update();
     }
 }
 
 void TRichTextArea::SetFont(const TFont& value) {
     if (font != value) {
-        parent_t::SetFont(value);
+        parent_type::SetFont(value);
         _update();
     }
 }

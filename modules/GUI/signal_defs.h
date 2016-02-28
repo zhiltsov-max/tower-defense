@@ -2,7 +2,7 @@
 #define SIGNAL_DEFS_H
 
 #include "gui_core.h"
-#include "signal.h"
+#include "widget_signal.h"
 
 BEGIN_GUI
 
@@ -11,40 +11,27 @@ class DefaultSignalID
 public:
     DefaultSignalID() = delete;
 
-    static SignalID ObjectVisibilityChanged;
-    static SignalID ObjectShown;
-    static SignalID ObjectHidden;
+    static const SignalID ObjectVisibilityChanged;
+    static const SignalID ObjectShown;
+    static const SignalID ObjectHidden;
 
-    static SignalID ObjectTextChanged;
-    static SignalID ObjectPositionChanged;
-    static SignalID ObjectSizeChanged;
+    static const SignalID ObjectTextChanged;
+    static const SignalID ObjectPositionChanged;
+    static const SignalID ObjectSizeChanged;
 
-    static SignalID ObjectEnabled;
-    static SignalID ObjectDisabled;
+    static const SignalID ObjectEnabled;
+    static const SignalID ObjectDisabled;
 
-    static SignalID MouseEntered;
-    static SignalID MouseLeave;
-    static SignalID MouseClick;
-    static SignalID MouseDown;
-    static SignalID MouseUp;
+    static const SignalID MouseEntered;
+    static const SignalID MouseLeave;
+    static const SignalID MouseClick;
+    static const SignalID MouseDown;
+    static const SignalID MouseUp;
 
-    static std::vector<SignalID> enumerate() {
-        return {
-           ObjectVisibilityChanged,
-           ObjectShown,
-           ObjectHidden,
+    static const std::vector<SignalID>& enumerate();
 
-           /*ObjectTextChanged*/
-           ObjectPositionChanged,
-           ObjectSizeChanged,
-
-           MouseEntered,
-           MouseLeave,
-           MouseClick,
-           MouseDown,
-           MouseUp
-         };
-    }
+private:
+    static const std::vector<SignalID> _enumeration;
 };
 
 END_GUI

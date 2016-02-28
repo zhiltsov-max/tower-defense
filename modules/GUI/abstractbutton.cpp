@@ -3,7 +3,7 @@
 BEGIN_GUI
 
 TAbstractButton::TAbstractButton(const TAbstractButtonSource& source) :
-    parent_t(source),
+    parent_type(source),
     color(source.color),
     image(source.image)
 {
@@ -19,7 +19,7 @@ TAbstractButton::TAbstractButton(const TAbstractButtonSource& source) :
 }
 
 TAbstractButton::TAbstractButton(TAbstractButton&& other) :
-    parent_t(std::move(other)),
+    parent_type(std::move(other)),
     state(other.state),
     color(other.color),
     colorModifier(std::move(other.colorModifier)),
@@ -124,7 +124,7 @@ void TAbstractButton::SetFontColor(const TColor& value) {
 }
 
 std::list<TAbstractButton::Signal> TAbstractButton::_enumSignals() const {
-    std::list<Signal> signals = std::move(parent_t::_enumSignals());
+    std::list<Signal> signals = std::move(parent_type::_enumSignals());
 
     signals.emplace_back(DefaultSignalID::ObjectEnabled);
     signals.emplace_back(DefaultSignalID::ObjectDisabled);
@@ -134,10 +134,10 @@ std::list<TAbstractButton::Signal> TAbstractButton::_enumSignals() const {
 }
 
 std::list<TAbstractButton::Slot> TAbstractButton::_enumSlots() const {
-    std::list<Slot> slots = std::move(parent_t::_enumSlots());
+    std::list<Slot> slots = std::move(parent_type::_enumSlots());
 
-    //slots.push_back(Slot(new TMenuObjectsignal(this, DefaultSignalID::MouseClick, slot_OnClick)));
-    //slots.push_back(Slot(new TMenuObjectsignal(this, DefaultSignalID::MouseEntered, slot_OnHover)));
+    //slots.push_back(Slot(new TWidgetSignal(this, DefaultSignalID::MouseClick, slot_OnClick)));
+    //slots.push_back(Slot(new TWidgetSignal(this, DefaultSignalID::MouseEntered, slot_OnHover)));
 
     return slots;
 }
@@ -151,7 +151,7 @@ void TAbstractButton::_updateMouse() {
     if (IsEnabled() == false) {
         return;
     }
-    parent_t::_updateMouse();
+    parent_type::_updateMouse();
 }
 
 TColor TAbstractButton::_currentColor() const {

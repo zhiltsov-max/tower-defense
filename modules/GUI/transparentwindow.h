@@ -29,7 +29,7 @@ public:
     double GetMinOpacity() const;
     double GetMaxOpacity() const;
 protected:
-    typedef TWindow parent_t;
+    typedef TWindow parent_type;
 
     double thresholdOpacity;
     double maxOpacity;

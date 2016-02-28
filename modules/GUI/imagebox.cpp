@@ -3,7 +3,7 @@
 BEGIN_GUI
 
 TImageBox::TImageBox(const TImageBoxSource& source) :
-    parent_t(source),
+    parent_type(source),
     color(source.color),
     image(source.image)
 {}

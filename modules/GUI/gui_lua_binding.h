@@ -57,26 +57,26 @@ END_GUI_LUA_BINDING
     LUAPP_USERDATA(GUI::lua_binding::TText, "Text")
 #endif //GUI_LUA_NO_CORE_BINDING
 
-/* MenuObject export
- * Disabled by: GUI_LUA_NO_MENUOBJECT_BINDING
+/* Widget export
+ * Disabled by: GUI_LUA_NO_WIDGET_BINDING
 */
-#if !defined(GUI_LUA_NO_MENUOBJECT_BINDING)
-    #include "menuobject.h"
+#if !defined(GUI_LUA_NO_WIDGET_BINDING)
+    #include "widget.h"
 
 BEGIN_GUI_LUA_BINDING
-    using TMenuObjectSignal = GUI::TMenuObject::Signal*;
-    using TMenuObjectSlot = GUI::TMenuObject::Slot*;
-    using TMenuObject = GUI::TMenuObjectRef;
-    using TMenuObjectRef = GUI::TMenuObjectWeakRef;
+    using TWidgetSignal = GUI::TWidget::Signal*;
+    using TWidgetSlot = GUI::TWidget::Slot*;
+    using TWidget = GUI::TWidgetRef;
+    using TWidgetRef = GUI::TWidgetWeakRef;
     using SignalID = GUI::SignalID;
-    using TMenuObjectSource = GUI::TMenuObjectSource;
+    using TWidgetSource = GUI::TWidgetSource;
 
-    void bindMenuObject(lua::State& state);
+    void bindWidget(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_USERDATA(GUI::lua_binding::TMenuObject, "MenuObject")
-    LUAPP_USERDATA(GUI::lua_binding::TMenuObjectRef, "MenuObjectRef")
-#endif //GUI_LUA_NO_MENUOBJECT_BINDING
+    LUAPP_USERDATA(GUI::lua_binding::TWidget, "Widget")
+    LUAPP_USERDATA(GUI::lua_binding::TWidgetRef, "WidgetRef")
+#endif //GUI_LUA_NO_WIDGET_BINDING
 
 /* AbstractWindow export
  * Disabled by: GUI_LUA_NO_ABSTRACTWINDOW_BINDING
@@ -91,8 +91,8 @@ BEGIN_GUI_LUA_BINDING
     void bindAbstractWindow(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TAbstractWindow, { return std::dynamic_pointer_cast<GUI::TAbstractWindow>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TAbstractWindow, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TAbstractWindow, { return std::dynamic_pointer_cast<GUI::TAbstractWindow>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TAbstractWindow, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif //GUI_LUA_NO_ABSTRACTWINDOW_BINDING
 
 /* Window binding
@@ -108,8 +108,8 @@ BEGIN_GUI_LUA_BINDING
     void bindWindow(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TWindow, { return std::dynamic_pointer_cast<GUI::TWindow>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TWindow, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TWindow, { return std::dynamic_pointer_cast<GUI::TWindow>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TWindow, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif //GUI_LUA_NO_WINDOW_BINDING
 
 /* TransparentWindow binding
@@ -125,8 +125,8 @@ BEGIN_GUI_LUA_BINDING
     void bindTransparentWindow(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TTransparentWindow, { return std::dynamic_pointer_cast<GUI::TTransparentWindow>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TTransparentWindow, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TTransparentWindow, { return std::dynamic_pointer_cast<GUI::TTransparentWindow>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TTransparentWindow, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif
 
 /* UIParent binding
@@ -141,8 +141,8 @@ BEGIN_GUI_LUA_BINDING
     void bindUIParent(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TUIParent, { return std::dynamic_pointer_cast<GUI::TUIParent>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TUIParent, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TUIParent, { return std::dynamic_pointer_cast<GUI::TUIParent>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TUIParent, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif //GUI_LUA_NO_UIPARENT_BINDING
 
 /* AbstractButton binding
@@ -158,8 +158,8 @@ BEGIN_GUI_LUA_BINDING
     void bindAbstractButton(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TAbstractButton, { return std::dynamic_pointer_cast<GUI::TAbstractButton>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TAbstractButton, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TAbstractButton, { return std::dynamic_pointer_cast<GUI::TAbstractButton>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TAbstractButton, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif //GUI_LUA_NO_ABSTRACTBUTTON_BINDING
 
 
@@ -176,8 +176,8 @@ BEGIN_GUI_LUA_BINDING
     void bindPushButton(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TPushButton, { return std::dynamic_pointer_cast<GUI::TPushButton>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TPushButton, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TPushButton, { return std::dynamic_pointer_cast<GUI::TPushButton>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TPushButton, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif
 
 /* AbstractTextBox binding
@@ -193,8 +193,8 @@ BEGIN_GUI_LUA_BINDING
     void bindAbstractTextBox(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TAbstractTextBox, { return std::dynamic_pointer_cast<GUI::TAbstractTextBox>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TAbstractTextBox, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TAbstractTextBox, { return std::dynamic_pointer_cast<GUI::TAbstractTextBox>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TAbstractTextBox, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif
 
 /* SimpleTextBox binding
@@ -210,8 +210,8 @@ BEGIN_GUI_LUA_BINDING
     void bindSimpleTextBox(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TSimpleTextBox, { return std::dynamic_pointer_cast<GUI::TSimpleTextBox>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TSimpleTextBox, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TSimpleTextBox, { return std::dynamic_pointer_cast<GUI::TSimpleTextBox>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TSimpleTextBox, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif
 
 /* RichTextBox binding
@@ -228,8 +228,8 @@ BEGIN_GUI_LUA_BINDING
     void bindRichTextBox(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TRichTextBox, { return std::dynamic_pointer_cast<GUI::TRichTextBox>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TRichTextBox, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TRichTextBox, { return std::dynamic_pointer_cast<GUI::TRichTextBox>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TRichTextBox, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif
 
 /* ImageBox binding
@@ -245,8 +245,8 @@ BEGIN_GUI_LUA_BINDING
     void bindImageBox(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(GUI::lua_binding::TImageBox, { return std::dynamic_pointer_cast<GUI::TImageBox>(val.cast<GUI::lua_binding::TMenuObject>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TImageBox, { return context.ret(GUI::lua_binding::TMenuObject(val)); })
+    LUAPP_ARG_CONVERT(GUI::lua_binding::TImageBox, { return std::dynamic_pointer_cast<GUI::TImageBox>(val.cast<GUI::lua_binding::TWidget>()); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TImageBox, { return context.ret(GUI::lua_binding::TWidget(val)); })
 #endif
 
 

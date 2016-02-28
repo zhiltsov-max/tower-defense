@@ -13,7 +13,7 @@ public:
     virtual ~exception() override = default;
     const char* what() const noexcept;
 private:
-    typedef std::exception parent_t;
+    typedef std::exception parent_type;
     std::string message;
 };
 
@@ -21,6 +21,7 @@ private:
 #define THROW(message) \
     throw exception(std::string("Error at ") + __FILE__ + \
         ":" + std::to_string(__LINE__) + ": " + std::string(message));
+
 #define ASSERT(expr, message) \
     if ((expr) == false) {\
         THROW(message)\

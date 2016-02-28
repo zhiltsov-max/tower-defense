@@ -34,7 +34,7 @@ public:
     virtual void SetText(const TextString& value);
     virtual const TextString& GetText() const;
 private:
-    typedef TWindow parent_t;
+    typedef TWindow parent_type;
 protected:
     virtual std::list<Signal> _enumSignals() const override;
 

@@ -2,12 +2,12 @@
 #define ABSTRACTTEXTBOX_H
 
 #include "gui_main.h"
-#include "menuobject.h"
+#include "widget.h"
 #include "abstracttextarea.h"
 
 BEGIN_GUI
 
-struct TAbstractTextBoxSource : TMenuObjectSource
+struct TAbstractTextBoxSource : TWidgetSource
 {
     //Main
     TextString text;
@@ -26,7 +26,7 @@ struct TAbstractTextBoxSource : TMenuObjectSource
     TColor borderColor;
 };
 
-class TAbstractTextBox : public TMenuObject /*Abstract*/
+class TAbstractTextBox : public TWidget /*Abstract*/
 {
 public:
     TAbstractTextBox(const TAbstractTextBoxSource& source);
@@ -56,7 +56,7 @@ public:
     virtual const TFont& GetFont() const;
     virtual void SetFont(const TFont &value);
 private:
-    typedef TMenuObject parent_t;
+    typedef TWidget parent_type;
 protected:
     //Main
     typedef std::unique_ptr<TAbstractTextArea> Text;

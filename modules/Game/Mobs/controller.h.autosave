@@ -1,0 +1,40 @@
+#ifndef MOB_SCONTROLLER_H	
+#define MOB_SCONTROLLER_H
+
+#include "mob.h"
+
+class MobsController /*Abstract*/
+{
+public:
+	static bool isAnyMobsOnTile(const Point2ui& tilePos, int appearance = MobAppearance::Ground);
+	
+	static void updatePathes();
+
+    static TMobsInfo::TMobInfo::Value& getParameter(TMob::ClassId classId, const string& key);
+
+	static const TSceneResources& getResources();
+	
+	static const TPassabilityMap& getPassabilityMap();
+	
+	static const TNodeMap& getNodeMap();
+	
+	static TMobsFactory& getFactory();
+
+    static float getCurrentHealth(TMob::ClassId classId);
+	
+    static int getCurrentReward(TMob::ClassId classId);
+	
+    static float getCurrentSpeed(TMob::ClassId classId);
+	
+    static float getCurrentPoints(TMob::ClassId classId);
+
+	static int getPathSelectionPolicy();
+
+	MobsController() = delete;
+private:
+	static TLevel& getLevel();
+
+	static TScene::Objects getSceneObjects();
+};
+
+#endif

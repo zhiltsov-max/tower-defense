@@ -1,4 +1,6 @@
 #include "abstracttextarea.h"
+#include <limits>
+
 
 BEGIN_GUI
 
@@ -17,9 +19,9 @@ bool TAbstractTextArea::_parentExists() const {
 
 void TAbstractTextArea::_checkBorders() {
     float left = 0;
-    float right = WindowWidth();
+    float right = std::numeric_limits<float>::max();
     float top = 0;
-    float bottom = WindowHeight();
+    float bottom = std::numeric_limits<float>::max();
     if (_parentExists() == true) {
         const TPadding parentBorder = parent->GetInnerBorder();
         left = margin.left;

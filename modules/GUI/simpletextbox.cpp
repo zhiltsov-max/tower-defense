@@ -4,7 +4,7 @@
 BEGIN_GUI
 
 TSimpleTextBox::TSimpleTextBox(const TSimpleTextBoxSource& source) :
-    parent_t(source)
+    parent_type(source)
 {
     text.reset(new TTextArea(source.text, source.textPosition, this));
     text->SetFont(source.font);

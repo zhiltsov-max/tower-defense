@@ -20,7 +20,7 @@ public:
     void SetApplicationUI(TApplicationUI* instance);
 
 private:
-    using parent_t = TComponentSystem;
+    using parent_type = TComponentSystem;
     using ScriptEngine = TScriptEngine;
     using PScriptEngine = ScriptEngine *;
     PScriptEngine scriptEngine;

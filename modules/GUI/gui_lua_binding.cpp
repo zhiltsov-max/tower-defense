@@ -455,7 +455,11 @@ using namespace lua;
             "Critical",     (uint)::LogMessageImportance::Critical
         );
 
-        ctx.global["e_print"] = GUI::Debug::logMessage;
+        ctx.global["e_print"] = static_cast<
+            void (*)(const TextString&,
+                const TextString&,
+                ::LogMessageImportance
+            )>(GUI::Debug::logMessage);
         return ctx.ret();
     }
 
@@ -477,191 +481,191 @@ using namespace lua;
 #endif //GUI_LUA_NO_CORE_BINDING
 
 
-#if !defined(GUI_LUA_NO_MENUOBJECT_BINDING)
-    LUAPP_ARG_CONVERT(TMenuObjectSignal, { return static_cast<TMenuObjectSignal>(val.cast<LightUserData>()); })
-    LUAPP_RV_CONVERT (TMenuObjectSignal, { return context.ret((LightUserData)val); })
+#if !defined(GUI_LUA_NO_WIDGET_BINDING)
+    LUAPP_ARG_CONVERT(TWidgetSignal, { return static_cast<TWidgetSignal>(val.cast<LightUserData>()); })
+    LUAPP_RV_CONVERT (TWidgetSignal, { return context.ret((LightUserData)val); })
 
-    LUAPP_ARG_CONVERT(TMenuObjectSlot, { return static_cast<TMenuObjectSlot>(val.cast<LightUserData>()); })
-    LUAPP_RV_CONVERT (TMenuObjectSlot, { return context.ret((LightUserData)val); })
+    LUAPP_ARG_CONVERT(TWidgetSlot, { return static_cast<TWidgetSlot>(val.cast<LightUserData>()); })
+    LUAPP_RV_CONVERT (TWidgetSlot, { return context.ret((LightUserData)val); })
 
 
-    TMenuObjectRef eTMenuObjectRef_create(const TMenuObject& source) {
-        return TMenuObjectRef(source);
+    TWidgetRef eTWidgetRef_create(const TWidget& source) {
+        return TWidgetRef(source);
     }
-    void eTMenuObjectRef_destroy(TMenuObjectRef& self) {
+    void eTWidgetRef_destroy(TWidgetRef& self) {
         self.~__weak_ptr();
     }
-    bool eTMenuObjectRef_expired(TMenuObjectRef& self) {
+    bool eTWidgetRef_expired(TWidgetRef& self) {
         return self.expired();
     }
-    Retval exportTMenuObjectRef(Context& ctx) {
-        ctx.mt<TMenuObjectRef>() = Table::records(ctx,
-            "expired",      eTMenuObjectRef_expired,
-            "FromObject",   eTMenuObjectRef_create,
-            "ToObject",     TMenuObjectRef::lock,
-            "__gc",         eTMenuObjectRef_destroy
+    Retval exportTWidgetRef(Context& ctx) {
+        ctx.mt<TWidgetRef>() = Table::records(ctx,
+            "expired",      eTWidgetRef_expired,
+            "FromObject",   eTWidgetRef_create,
+            "ToObject",     TWidgetRef::lock,
+            "__gc",         eTWidgetRef_destroy
         );
-        ctx.mt<TMenuObjectRef>()["__index"] = ctx.mt<TMenuObjectRef>();
+        ctx.mt<TWidgetRef>()["__index"] = ctx.mt<TWidgetRef>();
         return ctx.ret();
     }
 
 
-    void eTMenuObject_destroy(TMenuObject& self) {
+    void eTWidget_destroy(TWidget& self) {
         self.~__shared_ptr();
     }  
-    bool eTMenuObject_hasSignal(const TMenuObject& self, const SignalID& signal) {
+    bool eTWidget_hasSignal(const TWidget& self, const SignalID& signal) {
         return self->HasSignal(signal);
     }
-    bool eTMenuObject_hasSlot(const TMenuObject& self, const SignalID& slot) {
+    bool eTWidget_hasSlot(const TWidget& self, const SignalID& slot) {
         return self->HasSlot(slot);
     }
-    TMenuObjectSignal eTMenuObject_getSignal(TMenuObject& self, const SignalID& name) {
+    TWidgetSignal eTWidget_getSignal(TWidget& self, const SignalID& name) {
         return &self->GetSignal(name);
     }
-    TMenuObjectSlot eTMenuObject_getSlot(TMenuObject& self, const SignalID& name) {
+    TWidgetSlot eTWidget_getSlot(TWidget& self, const SignalID& name) {
         return &self->GetSlot(name);
     }
-    void eTMenuObject_connect(const TMenuObject& signalOwner, TMenuObjectSignal signal, const TMenuObject& slotOwner, const TMenuObjectSlot slot) {
-        GUI::TMenuObject::Connect(signalOwner, *signal, slotOwner, *slot);
+    void eTWidget_connect(const TWidget& signalOwner, TWidgetSignal signal, const TWidget& slotOwner, const TWidgetSlot slot) {
+        GUI::TWidget::Connect(signalOwner, *signal, slotOwner, *slot);
     }
-    void eTMenuObject_disconnect(const TMenuObject& signalOwner, TMenuObjectSignal signal, const TMenuObject& slotOwner, const TMenuObjectSlot slot) {
-        GUI::TMenuObject::Disconnect(signalOwner, *signal, slotOwner, *slot);
+    void eTWidget_disconnect(const TWidget& signalOwner, TWidgetSignal signal, const TWidget& slotOwner, const TWidgetSlot slot) {
+        GUI::TWidget::Disconnect(signalOwner, *signal, slotOwner, *slot);
     }
-    TMenuObjectRef eTMenuObject_getParent(TMenuObject& self) {
+    TWidgetRef eTWidget_getParent(TWidget& self) {
         return self->GetParent();
     }
-    TMenuObject& eTMenuObject_setParent(TMenuObject& self, TMenuObjectRef& parent) {
+    TWidget& eTWidget_setParent(TWidget& self, TWidgetRef& parent) {
         self->SetParent(parent);
         return self;
     }
-    TMenuObjectRef eTMenuObject_findChild(TMenuObject& self, const GUI::TMenuObject::Key& key) {
+    TWidgetRef eTWidget_findChild(TWidget& self, const GUI::TWidget::Name& key) {
         return self->FindChild(key);
     }
-    TMenuObject eTMenuObject_removeChild(TMenuObject& self, const string& name) {
+    TWidget eTWidget_removeChild(TWidget& self, const string& name) {
         return self->RemoveChild(name);
     }
-    bool eTMenuObject_hasChild(const TMenuObject& self, const string& name) {
+    bool eTWidget_hasChild(const TWidget& self, const string& name) {
         return self->HasChild(name);
     }
-    bool eTMenuObject_hasThisChild(const TMenuObject& self, const TMenuObject& child) {
+    bool eTWidget_hasThisChild(const TWidget& self, const TWidget& child) {
         return self->HasChild(child);
     }
-    void eTMenuObject_addChild(TMenuObject& self, TMenuObject& value) {
+    void eTWidget_addChild(TWidget& self, TWidget& value) {
         self->AddChild(value);
     }
-    bool eTMenuObject_hasChildren(const TMenuObject& self) {
+    bool eTWidget_hasChildren(const TWidget& self) {
         return self->HasChildren();
     }
-    void eTMenuObject_removeChildren(TMenuObject& self) {
+    void eTWidget_removeChildren(TWidget& self) {
         self->RemoveChildren();
     }
-    bool eTMenuObject_isVisible(const TMenuObject& self) {
+    bool eTWidget_isVisible(const TWidget& self) {
         return self->IsVisible();
     }
-    bool eTMenuObject_isShown(const TMenuObject& self) {
+    bool eTWidget_isShown(const TWidget& self) {
         return self->IsShown();
     }
-    TMenuObject& eTMenuObject_show(TMenuObject& self) {
+    TWidget& eTWidget_show(TWidget& self) {
         self->Show();
         return self;
     }
-    TMenuObject& eTMenuObject_hide(TMenuObject& self) {
+    TWidget& eTWidget_hide(TWidget& self) {
         self->Hide();
         return self;
     }
-    TMenuObject& eTMenuObject_setVisibility(TMenuObject& self, bool value) {
+    TWidget& eTWidget_setVisibility(TWidget& self, bool value) {
         self->SetVisibility(value);
         return self;
     }
-    bool eTMenuObject_isMouseOver(const TMenuObject& self) {
+    bool eTWidget_isMouseOver(const TWidget& self) {
         return self->IsMouseOver();
     }
-    TSize eTMenuObject_getSize(const TMenuObject& self) {
+    TSize eTWidget_getSize(const TWidget& self) {
         return self->GetSize();
     }
-    TMenuObject& eTMenuObject_setSize(TMenuObject& self, const TSize& value) {
+    TWidget& eTWidget_setSize(TWidget& self, const TSize& value) {
         self->SetSize(value);
         return self;
     }
-    const TSize& eTMenuObject_getOwnSize(const TMenuObject& self) {
+    const TSize& eTWidget_getOwnSize(const TWidget& self) {
         return self->GetOwnSize();
     }
-    TMenuObject& eTMenuObject_setPosition(TMenuObject& self, float x, float y) {
+    TWidget& eTWidget_setPosition(TWidget& self, float x, float y) {
         self->SetPosition(x, y);
         return self;
     }
-    const TCoordinate& eTMenuObject_getPosition(TMenuObject& self) {
+    const TCoordinate& eTWidget_getPosition(TWidget& self) {
         return self->GetPosition();
     }
-    TMenuObject& eTMenuObject_setMargin(TMenuObject& self, const TPadding& value) {
+    TWidget& eTWidget_setMargin(TWidget& self, const TPadding& value) {
         self->SetMargin(value);
         return self;
     }
-    const TPadding& eTMenuObject_getMargin(const TMenuObject& self) {
+    const TPadding& eTWidget_getMargin(const TWidget& self) {
         return self->GetMargin();
     }
-    TPadding eTMenuObject_getInnerBorder(const TMenuObject& self) {
+    TPadding eTWidget_getInnerBorder(const TWidget& self) {
         return self->GetInnerBorder();
     }
-    const string& eTMenuObject_getName(const TMenuObject& self) {
+    const string& eTWidget_getName(const TWidget& self) {
         return self->GetName();
     }
-    Retval exportTMenuObject(Context& ctx) {
-        ctx.mt<TMenuObject>() = Table::records(ctx);
-        ctx.mt<TMenuObject>()["exists"] = static_cast<bool (TMenuObject::*)(void) const>(TMenuObject::operator bool);
-        ctx.mt<TMenuObject>()["keySep"] = string { GUI::TMenuObject::keySep() };
+    Retval exportTWidget(Context& ctx) {
+        ctx.mt<TWidget>() = Table::records(ctx);
+        ctx.mt<TWidget>()["exists"] = static_cast<bool (TWidget::*)(void) const>(TWidget::operator bool);
+        ctx.mt<TWidget>()["keySep"] = string { GUI::TWidget::keySep() };
 
-        ctx.mt<TMenuObject>()["HasSignal"] = eTMenuObject_hasSignal;
-        ctx.mt<TMenuObject>()["HasSlot"] = eTMenuObject_hasSlot;
-        ctx.mt<TMenuObject>()["GetSignal"] = eTMenuObject_getSignal;
-        ctx.mt<TMenuObject>()["GetSlot"] = eTMenuObject_getSlot;
-        ctx.mt<TMenuObject>()["Connect"] = eTMenuObject_connect;
-        ctx.mt<TMenuObject>()["Disconnect"] = eTMenuObject_disconnect;
+        ctx.mt<TWidget>()["HasSignal"] = eTWidget_hasSignal;
+        ctx.mt<TWidget>()["HasSlot"] = eTWidget_hasSlot;
+        ctx.mt<TWidget>()["GetSignal"] = eTWidget_getSignal;
+        ctx.mt<TWidget>()["GetSlot"] = eTWidget_getSlot;
+        ctx.mt<TWidget>()["Connect"] = eTWidget_connect;
+        ctx.mt<TWidget>()["Disconnect"] = eTWidget_disconnect;
 
-        ctx.mt<TMenuObject>()["GetParent"] = eTMenuObject_getParent;
-        ctx.mt<TMenuObject>()["SetParent"] = eTMenuObject_setParent;
+        ctx.mt<TWidget>()["GetParent"] = eTWidget_getParent;
+        ctx.mt<TWidget>()["SetParent"] = eTWidget_setParent;
 
-        ctx.mt<TMenuObject>()["FindChild"] = eTMenuObject_findChild;
-        ctx.mt<TMenuObject>()["AddChild"] = eTMenuObject_addChild;
-        ctx.mt<TMenuObject>()["RemoveChild"] = eTMenuObject_removeChild;
-        ctx.mt<TMenuObject>()["HasChild"] = eTMenuObject_hasChild;
-        ctx.mt<TMenuObject>()["HasThisChild"] = eTMenuObject_hasThisChild;
+        ctx.mt<TWidget>()["FindChild"] = eTWidget_findChild;
+        ctx.mt<TWidget>()["AddChild"] = eTWidget_addChild;
+        ctx.mt<TWidget>()["RemoveChild"] = eTWidget_removeChild;
+        ctx.mt<TWidget>()["HasChild"] = eTWidget_hasChild;
+        ctx.mt<TWidget>()["HasThisChild"] = eTWidget_hasThisChild;
 
-        ctx.mt<TMenuObject>()["HasChildren"] = eTMenuObject_hasChildren;
-        ctx.mt<TMenuObject>()["RemoveChildren"] = eTMenuObject_removeChildren;
+        ctx.mt<TWidget>()["HasChildren"] = eTWidget_hasChildren;
+        ctx.mt<TWidget>()["RemoveChildren"] = eTWidget_removeChildren;
 
-        ctx.mt<TMenuObject>()["IsVisible"] = eTMenuObject_isVisible;
-        ctx.mt<TMenuObject>()["Show"] = eTMenuObject_show;
-        ctx.mt<TMenuObject>()["Hide"] = eTMenuObject_hide;
-        ctx.mt<TMenuObject>()["SetVisibility"] = eTMenuObject_setVisibility;
-        ctx.mt<TMenuObject>()["IsShown"] = eTMenuObject_isShown;
+        ctx.mt<TWidget>()["IsVisible"] = eTWidget_isVisible;
+        ctx.mt<TWidget>()["Show"] = eTWidget_show;
+        ctx.mt<TWidget>()["Hide"] = eTWidget_hide;
+        ctx.mt<TWidget>()["SetVisibility"] = eTWidget_setVisibility;
+        ctx.mt<TWidget>()["IsShown"] = eTWidget_isShown;
 
-        ctx.mt<TMenuObject>()["IsMouseOver"] = eTMenuObject_isMouseOver;
+        ctx.mt<TWidget>()["IsMouseOver"] = eTWidget_isMouseOver;
 
-        ctx.mt<TMenuObject>()["GetSize"] = eTMenuObject_getSize;
-        ctx.mt<TMenuObject>()["GetOwnSize"] = eTMenuObject_getOwnSize;
-        ctx.mt<TMenuObject>()["SetSize"] = eTMenuObject_setSize;
+        ctx.mt<TWidget>()["GetSize"] = eTWidget_getSize;
+        ctx.mt<TWidget>()["GetOwnSize"] = eTWidget_getOwnSize;
+        ctx.mt<TWidget>()["SetSize"] = eTWidget_setSize;
 
-        ctx.mt<TMenuObject>()["SetPosition"] = eTMenuObject_setPosition;
-        ctx.mt<TMenuObject>()["GetPosition"] = eTMenuObject_getPosition;
+        ctx.mt<TWidget>()["SetPosition"] = eTWidget_setPosition;
+        ctx.mt<TWidget>()["GetPosition"] = eTWidget_getPosition;
 
-        ctx.mt<TMenuObject>()["SetMargin"] = eTMenuObject_setMargin;
-        ctx.mt<TMenuObject>()["GetMargin"] = eTMenuObject_getMargin;
-        ctx.mt<TMenuObject>()["GetInnerBorder"] = eTMenuObject_getInnerBorder;
+        ctx.mt<TWidget>()["SetMargin"] = eTWidget_setMargin;
+        ctx.mt<TWidget>()["GetMargin"] = eTWidget_getMargin;
+        ctx.mt<TWidget>()["GetInnerBorder"] = eTWidget_getInnerBorder;
 
-        ctx.mt<TMenuObject>()["GetName"] = eTMenuObject_getName;
+        ctx.mt<TWidget>()["GetName"] = eTWidget_getName;
 
-        ctx.mt<TMenuObject>()["GetRef"] = eTMenuObjectRef_create;
+        ctx.mt<TWidget>()["GetRef"] = eTWidgetRef_create;
 
-        ctx.mt<TMenuObject>()["__gc"] = eTMenuObject_destroy;
-        ctx.mt<TMenuObject>()["__index"] = ctx.mt<TMenuObject>();
+        ctx.mt<TWidget>()["__gc"] = eTWidget_destroy;
+        ctx.mt<TWidget>()["__index"] = ctx.mt<TWidget>();
 
-        ctx.global["TMenuObject"] = ctx.mt<TMenuObject>();
+        ctx.global["TWidget"] = ctx.mt<TWidget>();
         return ctx.ret();
     }
 
 
-    Retval exportTMenuObjectSignals(Context& ctx) {
+    Retval exportTWidgetSignals(Context& ctx) {
         ctx.global["SignalID"] = Table::records(ctx,
             "ObjectVisibilityChanged", GUI::DefaultSignalID::ObjectVisibilityChanged,
             "ObjectShown",          GUI::DefaultSignalID::ObjectShown,
@@ -684,16 +688,16 @@ using namespace lua;
     }
 
 
-    Retval eTMenuObjectSource_create(Context& ctx) {
+    Retval eTWidgetSource_create(Context& ctx) {
         if ((ctx.checkArgs<Table>(1) == false) && (ctx.args.size() != 0)) {
             throw exception("Wrong arguments: table or nil is expected.");
         }
         Table table = (ctx.checkArgs<Table>(1)) ? Table(ctx.args[0]) : Table(ctx);
         table["__index"] = table;
-        table.mt() = ctx.global["TMenuObjectSource"];
+        table.mt() = ctx.global["TWidgetSource"];
         return ctx.ret(table);
     }
-    void sTMenuObjectSource_get(Value ref, TMenuObjectSource& source) {
+    void sTWidgetSource_get(Value ref, TWidgetSource& source) {
         if (ref.is<Table>() == false) {
             return;
         }
@@ -704,9 +708,9 @@ using namespace lua;
         source.show = table["show"].cast<bool>();
         source.size = table["size"].cast<TSize>();
     }
-    Retval exportTMenuObjectSource(Context& ctx) {        
-        ctx.global["TMenuObjectSource"] = Table::records(ctx,
-            "create",       mkcf<eTMenuObjectSource_create>,
+    Retval exportTWidgetSource(Context& ctx) {        
+        ctx.global["TWidgetSource"] = Table::records(ctx,
+            "create",       mkcf<eTWidgetSource_create>,
 
             "name",         string(),
             "position",     TCoordinate(),
@@ -714,18 +718,18 @@ using namespace lua;
             "margin",       TPadding(),
             "show",         false
         );
-        ctx.global["TMenuObjectSource"]["__index"] = ctx.global["TMenuObjectSource"];
-        ctx.global["MenuObjectSource"] = mkcf<eTMenuObjectSource_create>;
+        ctx.global["TWidgetSource"]["__index"] = ctx.global["TWidgetSource"];
+        ctx.global["WidgetSource"] = mkcf<eTWidgetSource_create>;
         return ctx.ret();
     }
 
-    void GUI::lua_binding::bindMenuObject(State& state) {
-        state.call(mkcf<exportTMenuObjectSource>);
-        state.call(mkcf<exportTMenuObject>);
-        state.call(mkcf<exportTMenuObjectRef>);
-        state.call(mkcf<exportTMenuObjectSignals>);
+    void GUI::lua_binding::bindWidget(State& state) {
+        state.call(mkcf<exportTWidgetSource>);
+        state.call(mkcf<exportTWidget>);
+        state.call(mkcf<exportTWidgetRef>);
+        state.call(mkcf<exportTWidgetSignals>);
     }
-#endif //GUI_LUA_NO_MENUOBJECT_BINDING
+#endif //GUI_LUA_NO_WIDGET_BINDING
 
 #if !defined(GUI_LUA_NO_ABSTRACTWINDOW_BINDING)
     bool eTAbstractWindow_isEnabled(const TAbstractWindow& self) {
@@ -862,7 +866,7 @@ using namespace lua;
         ctx.global["TAbstractWindow"]["GetMaxSize"] = eTAbstractWindow_getMaxSize;
         ctx.global["TAbstractWindow"]["SetMaxSize"] = eTAbstractWindow_setMaxSize;
         ctx.global["TAbstractWindow"]["__index"] = ctx.global["TAbstractWindow"];
-        ctx.global["TAbstractWindow"].mt() = ctx.global["TMenuObject"];
+        ctx.global["TAbstractWindow"].mt() = ctx.global["TWidget"];
         return ctx.ret();
     }
 
@@ -880,7 +884,7 @@ using namespace lua;
             return;
         }
 
-        sTMenuObjectSource_get(ref, source);
+        sTWidgetSource_get(ref, source);
 
         Table table = ref;
         source.enabled = table["enabled"].cast<bool>();
@@ -918,7 +922,7 @@ using namespace lua;
         );
         ctx.global["TAbstractWindowSource"]["__index"] = ctx.global["TAbstractWindowSource"];
         ctx.runString("TAbstractWindowSource.image = ImageSource()");
-        ctx.global["TAbstractWindowSource"].mt() = ctx.global["TMenuObjectSource"];
+        ctx.global["TAbstractWindowSource"].mt() = ctx.global["TWidgetSource"];
         ctx.global["AbstractWindowSource"] = mkcf<eTAbstractWindowSource_create>;
         return ctx.ret();
     }
@@ -944,7 +948,7 @@ using namespace lua;
         }
         TWindowSource source;
         sTWindowSource_get(ctx.args[0], source);
-        return ctx.ret(TMenuObject(std::make_shared<GUI::TWindow>(source)));
+        return ctx.ret(TWidget(std::make_shared<GUI::TWindow>(source)));
     }
     Retval exportTWindow(Context& ctx) {
         ctx.global["TWindow"] = Table::records(ctx,
@@ -1003,7 +1007,7 @@ using namespace lua;
         }
         TTransparentWindowSource source;
         sTTransparentWindowSource_get(ctx.args[0], source);
-        return ctx.ret(TMenuObject(std::make_shared<GUI::TTransparentWindow>(source)));
+        return ctx.ret(TWidget(std::make_shared<GUI::TTransparentWindow>(source)));
     }
     TTransparentWindow eTTransparentWindow_setThresholdOpacity(TTransparentWindow self, double value) {
         self->SetThresholdOpacity(value);
@@ -1094,7 +1098,7 @@ using namespace lua;
             "HideChildren",             eTUIParent_hideChildren
         );
         ctx.global["TUIParent"]["__index"] = ctx.global["TUIParent"];
-        ctx.global["TUIParent"].mt() = ctx.global["TMenuObject"];
+        ctx.global["TUIParent"].mt() = ctx.global["TWidget"];
         return ctx.ret();
     }
 
@@ -1153,7 +1157,7 @@ using namespace lua;
     Retval exportTAbstractButton(Context& ctx) {
         ctx.global["TAbstractButton"] = Table::records(ctx);
         ctx.global["TAbstractButton"]["__index"] = ctx.global["TAbstractButton"];
-        ctx.global["TAbstractButton"].mt() = ctx.global["TMenuObject"];
+        ctx.global["TAbstractButton"].mt() = ctx.global["TWidget"];
         ctx.global["TAbstractButton"]["IsEnabled"] = eTAbstractButton_isEnabled;
         ctx.global["TAbstractButton"]["Enable"] = eTAbstractButton_enable;
         ctx.global["TAbstractButton"]["Disable"] = eTAbstractButton_disable;
@@ -1191,7 +1195,7 @@ using namespace lua;
             return;
         }
 
-        sTMenuObjectSource_get(ref, source);
+        sTWidgetSource_get(ref, source);
 
         Table table = ref;
 
@@ -1215,7 +1219,7 @@ using namespace lua;
         );
         ctx.global["TAbstractButtonSource"]["__index"] = ctx.global["TAbstractButtonSource"];
         ctx.runString("TAbstractButtonSource.image = ImageSource()");
-        ctx.global["TAbstractButtonSource"].mt() = ctx.global["TMenuObjectSource"];
+        ctx.global["TAbstractButtonSource"].mt() = ctx.global["TWidgetSource"];
         ctx.global["AbstractButtonSource"] = mkcf<eTAbstractButtonSource_create>;
         return ctx.ret();
     }
@@ -1245,7 +1249,7 @@ using namespace lua;
         }
         TPushButtonSource source;
         sTPushButtonSource_get(ctx.args[0], source);
-        return ctx.ret(TMenuObject(std::make_shared<GUI::TPushButton>(source)));
+        return ctx.ret(TWidget(std::make_shared<GUI::TPushButton>(source)));
     }
     Retval exportTPushButton(Context& ctx) {
         ctx.global["TPushButton"] = Table::records(ctx,
@@ -1340,7 +1344,7 @@ using namespace lua;
     Retval exportTAbstractTextBox(Context& ctx) {
         ctx.global["TAbstractTextBox"] = Table::records(ctx);
         ctx.global["TAbstractTextBox"]["__index"] = ctx.global["TAbstractTextBox"];
-        ctx.global["TAbstractTextBox"].mt() = ctx.global["TMenuObject"];
+        ctx.global["TAbstractTextBox"].mt() = ctx.global["TWidget"];
 
         ctx.global["TAbstractTextBox"]["GetText"] = eTAbstractTextBox_getText;
         ctx.global["TAbstractTextBox"]["SetText"] = eTAbstractTextBox_setText;
@@ -1380,7 +1384,7 @@ using namespace lua;
             return;
         }
 
-        sTMenuObjectSource_get(ref, source);
+        sTWidgetSource_get(ref, source);
 
         Table table = ref;
         source.text = table["text"].cast<TextString>();
@@ -1409,7 +1413,7 @@ using namespace lua;
             "borderColor",      TColor()
         );
         ctx.global["TAbstractTextBoxSource"]["__index"] = ctx.global["TAbstractTextBoxSource"];
-        ctx.global["TAbstractTextBoxSource"].mt() = ctx.global["TMenuObjectSource"];
+        ctx.global["TAbstractTextBoxSource"].mt() = ctx.global["TWidgetSource"];
         ctx.global["AbstractTextBoxSource"] = mkcf<eTAbstractTextBoxSource_create>;
         return ctx.ret();
     }
@@ -1436,7 +1440,7 @@ using namespace lua;
         }
         TSimpleTextBoxSource source;
         sTSimpleTextBoxSource_get(ctx.args[0], source);
-        return ctx.ret(TMenuObject(std::make_shared<GUI::TSimpleTextBox>(source)));
+        return ctx.ret(TWidget(std::make_shared<GUI::TSimpleTextBox>(source)));
     }
     Retval exportTSimpleTextBox(Context& ctx) {
         ctx.global["TSimpleTextBox"] = Table::records(ctx,
@@ -1502,7 +1506,7 @@ using namespace lua;
         }
         TRichTextBoxSource source;
         sTRichTextBoxSource_get(ctx.args[0], source);
-        return ctx.ret(TMenuObject(std::make_shared<GUI::TRichTextBox>(source)));
+        return ctx.ret(TWidget(std::make_shared<GUI::TRichTextBox>(source)));
     }
     Retval exportTRichTextBox(Context& ctx) {
         ctx.global["TRichTextBox"] = Table::records(ctx,
@@ -1546,7 +1550,7 @@ using namespace lua;
         if (ref.is<Table>() == false) {
             return;
         }
-        sTMenuObjectSource_get(ref, source);
+        sTWidgetSource_get(ref, source);
 
         Table table = ref;
         source.color = table["color"].cast<TColor>();
@@ -1573,14 +1577,14 @@ using namespace lua;
         }
         TImageBoxSource source;
         sTImageBoxSource_get(ctx.args[0], source);
-        return ctx.ret(TMenuObject(std::make_shared<GUI::TImageBox>(source)));
+        return ctx.ret(TWidget(std::make_shared<GUI::TImageBox>(source)));
     }
     Retval exportTImageBox(Context& ctx) {
         ctx.global["TImageBox"] = Table::records(ctx,
             "create",       mkcf<eTImageBox_create>
         );
         ctx.global["TImageBox"]["__index"] = ctx.global["TImageBox"];
-        ctx.global["TImageBox"].mt() = ctx.global["TMenuObject"];
+        ctx.global["TImageBox"].mt() = ctx.global["TWidget"];
 
         ctx.global["TImageBox"]["GetColor"] = eTImageBox_getColor;
         ctx.global["TImageBox"]["SetColor"] = eTImageBox_setColor;
@@ -1609,7 +1613,7 @@ using namespace lua;
         );
         ctx.global["TImageBoxSource"]["__index"] = ctx.global["TImageBoxSource"];
         ctx.runString("TImageBoxSource.imageSource = ImageSource()");
-        ctx.global["TImageBoxSource"].mt() = ctx.global["TMenuObjectSource"];
+        ctx.global["TImageBoxSource"].mt() = ctx.global["TWidgetSource"];
         ctx.global["ImageBoxSource"] = mkcf<eTImageBoxSource_create>;
         return ctx.ret();
     }
@@ -1623,7 +1627,7 @@ using namespace lua;
 
 void GUI::lua_binding::bindToLUA(State& state) {
     GUI::lua_binding::bindCore(state);
-    GUI::lua_binding::bindMenuObject(state);
+    GUI::lua_binding::bindWidget(state);
     GUI::lua_binding::bindUIParent(state);
     
     GUI::lua_binding::bindAbstractWindow(state);

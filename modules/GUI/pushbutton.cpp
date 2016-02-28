@@ -10,7 +10,7 @@ const TColorModifier TPushButton::COLOR_MODIFIER_DISABLED { 0.5, 0.5, 0.5 };
 
 
 TPushButton::TPushButton(const TPushButtonSource& source) :
-    parent_t(source),
+    parent_type(source),
     buttonClick_impl(source.buttonClick)
 {}
 

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <initializer_list>
 
 #include "defs.h"
 #include "exception.h"
@@ -21,16 +22,17 @@ private:
 
 public:
     Point() { data.fill(T()); }
+    Point(const std::initializer_list<T>& il) : data(il) {}
 
     const T& operator[](size_t index) const {
 #if defined(_DEBUG)
-        ASSERT(dims <= index, "Point data index is out of bounds.")
+        ASSERT(index < dims, "Point data index is out of bounds.")
 #endif
         return data[index];
     }
     T& operator[](size_t index) {
 #if defined(_DEBUG)
-        ASSERT(dims <= index, "Point data index is out of bounds.")
+        ASSERT(index < dims, "Point data index is out of bounds.")
 #endif
         return data[index];
     }
@@ -207,13 +209,13 @@ public:
 
     const T& operator[](size_t index) const {
 #if defined(_DEBUG)
-        ASSERT(2 <= index, "Point data index is out of bounds.")
+        ASSERT(index < 2, "Point data index is out of bounds.")
 #endif
         return data[index];
 	}
     T& operator[](size_t index) {
 #if defined(_DEBUG)
-        ASSERT(2 <= index, "Point data index is out of bounds.")
+        ASSERT(index < 2, "Point data index is out of bounds.")
 #endif
 		return data[index];
 	}
@@ -227,7 +229,7 @@ public:
     }
 
 	bool isInRect(const Point& p1, const Point& p2) const {
-        return isPointInRect(x, y, p1.x, p2.x, p1.y, p2.y);
+        return isPointInRect(x, y, p1.x, p1.y, p2.x, p2.y);
     }
 };
 

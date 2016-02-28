@@ -2,17 +2,17 @@
 #define IMAGEBOX_H
 
 #include "gui_main.h"
-#include "menuobject.h"
+#include "widget.h"
 
 BEGIN_GUI
 
-struct TImageBoxSource : TMenuObjectSource
+struct TImageBoxSource : TWidgetSource
 {
     TImageSource image;
     TColor color;
 };
 
-class TImageBox : public TMenuObject
+class TImageBox : public TWidget
 {
 public:
     typedef TImageContainer Image;
@@ -29,7 +29,7 @@ public:
     const Image& GetImage() const;
     void SetImage(Image&& value);
 private:
-    typedef TMenuObject parent_t;
+    typedef TWidget parent_type;
 protected:
     Image image;
 

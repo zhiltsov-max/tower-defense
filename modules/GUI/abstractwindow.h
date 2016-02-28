@@ -1,12 +1,12 @@
 #ifndef ABSTRACTWINDOW_H
 #define ABSTRACTWINDOW_H
 
-#include "menuobject.h"
+#include "widget.h"
 #include "textarea.h"
 
 BEGIN_GUI
 
-struct TAbstractWindowSource : TMenuObjectSource
+struct TAbstractWindowSource : TWidgetSource
 {
     bool enabled;
     bool allowMoving;
@@ -27,7 +27,7 @@ struct TAbstractWindowSource : TMenuObjectSource
     TAbstractWindowSource() = default;
 };
 
-class TAbstractWindow : public TMenuObject /*Abstract*/
+class TAbstractWindow : public TWidget /*Abstract*/
 {
 public:
     typedef TImageContainer Image;
@@ -80,7 +80,7 @@ public:
 
     virtual TPadding GetInnerBorder() const;
 private:
-    typedef TMenuObject parent_t;
+    typedef TWidget parent_type;
 protected:
     enum class State : uchar {
         _min = 0,

@@ -5,7 +5,7 @@
 BEGIN_GUI
 
 TMovingText::TMovingText(const TMovingTextSource& source) :
-    parent_t(source),    
+    parent_type(source),    
     speed(source.speed),
     allowFading(source.allowFading),
     lifeTime(source.lifeTime),
@@ -13,7 +13,7 @@ TMovingText::TMovingText(const TMovingTextSource& source) :
 {}
 
 void TMovingText::_update() {
-    parent_t::_update();
+    parent_type::_update();
     if (allowFading == true) {
         auto currentTime = app()->getTime() - createTime;
         if (lifeTime * thresholdTime < currentTime) {
@@ -32,7 +32,7 @@ void TMovingText::_update() {
     position += speed;
 }
 
-TMenuObjectRef TMovingText::CreateDefaultMessage(const TextString& message, const TCoordinate& position, const TColor& color) {
+TWidgetRef TMovingText::CreateDefaultMessage(const TextString& message, const TCoordinate& position, const TColor& color) {
     TMovingTextSource src;
     src.lifeTime = (time_t)1.5f * 1000.f;
     src.speed = TCoordinate(0.f, -1.f);
@@ -54,7 +54,7 @@ TMenuObjectRef TMovingText::CreateDefaultMessage(const TextString& message, cons
 
     src.allowFading = true;
 
-    TMenuObjectRef ref(new TMovingText(src));
+    TWidgetRef ref(new TMovingText(src));
     return ref;
 }
 

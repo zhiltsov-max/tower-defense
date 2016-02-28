@@ -14,7 +14,7 @@ void CSUiSystem::Update(const TTime& step) {
     if (ui != nullptr) {
         ui->update();
     }
-    parent_t::Update(step);
+    parent_type::Update(step);
 }
 
 void CSUiSystem::Draw(Graphics::TRenderTarget& target) {

@@ -4,7 +4,7 @@
 BEGIN_GUI
 
 TSimpleText::TSimpleText(const TSimpleTextSource& source) :
-    parent_t(source),
+    parent_type(source),
     borderSize(source.borderSize),
     borderColor(source.borderColor),
     borderOffset(source.borderOffset),
@@ -58,8 +58,8 @@ TColor TSimpleText::_currentBackgroundColor() const {
     return colorModifier.modify(backgroundColor);
 }
 
-std::list<TMenuObject::Signal> TSimpleText::_enumSignals() const {
-    auto signals = parent_t::_enumSignals();
+std::list<TWidget::Signal> TSimpleText::_enumSignals() const {
+    auto signals = parent_type::_enumSignals();
 
     signals.emplace_back(DefaultSignalID::ObjectTextChanged);
 

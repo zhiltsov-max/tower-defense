@@ -9,7 +9,7 @@
 using namespace TD;
 
 TGame::TGame(TTowerDefenseApplication* app) :
-    parent_t(app),
+    parent_type(app),
     debugTools(),
     gameEngine(),
     world(nullptr),

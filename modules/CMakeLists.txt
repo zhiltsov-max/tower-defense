@@ -216,7 +216,7 @@ set(td_sources main.cpp)
 
 add_executable(TowerDefense ${td_headers} ${td_sources})
 target_link_libraries(TowerDefense
-    ${LIBRARY_PATH}
+    -L"${LIBRARY_PATH}"
     -lglew32
     -lsfml-system
     -lsfml-main

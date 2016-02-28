@@ -3,7 +3,7 @@
 BEGIN_GUI
 
 TAbstractTextBox::TAbstractTextBox(const TAbstractTextBoxSource& source) :
-    parent_t(source),    
+    parent_type(source),    
     color(source.color),
     colorModifier(),
     maxSize(source.maxSize),
@@ -17,7 +17,7 @@ TAbstractTextBox::TAbstractTextBox(const TAbstractTextBoxSource& source) :
 }
 
 std::list<TAbstractTextBox::Signal> TAbstractTextBox::_enumSignals() const {
-    auto signals = std::move(parent_t::_enumSignals());
+    auto signals = std::move(parent_type::_enumSignals());
 
     signals.emplace_back(DefaultSignalID::ObjectTextChanged);
 
@@ -25,9 +25,9 @@ std::list<TAbstractTextBox::Signal> TAbstractTextBox::_enumSignals() const {
 }
 
 std::list<TAbstractTextBox::Slot> TAbstractTextBox::_enumSlots() const {
-    std::list<Slot> slots = std::move(parent_t::_enumSlots());
+    std::list<Slot> slots = std::move(parent_type::_enumSlots());
 
-    //slots.push_back(std::make_shared<TMenuObjectSlot>(this, DefaultSignalName::MouseClick, slot_OnClick));
+    //slots.push_back(std::make_shared<TWidgetSlot>(this, DefaultSignalName::MouseClick, slot_OnClick));
 
     return slots;
 }
@@ -147,7 +147,7 @@ void TAbstractTextBox::SetSize(const TSize& value) {
     if ((IsResizable() == true) &&
        ((maxSize != TSize()) && (value <= maxSize) && (minSize <= value)))
     {
-        parent_t::SetSize(value);
+        parent_type::SetSize(value);
     }
 }
 

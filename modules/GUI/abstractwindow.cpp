@@ -3,7 +3,7 @@
 BEGIN_GUI
 
 TAbstractWindow::TAbstractWindow(const TAbstractWindowSource& source) :
-    parent_t(source),
+    parent_type(source),
     allowMoving(source.allowMoving),
     headerHeight(source.headerHeight),
     headerColor(source.headerColor),
@@ -200,7 +200,7 @@ void TAbstractWindow::SetSize(const TSize& value) {
     if ((IsResizable() == true) &&
        ((maxSize != TSize()) && (value <= maxSize) && (minSize <= value)))
     {
-        parent_t::SetSize(value);
+        parent_type::SetSize(value);
     }
 }
 
@@ -220,14 +220,14 @@ void TAbstractWindow::_update() {
     if (IsEnabled() == false) {
         return;
     }
-    parent_t::_update();
+    parent_type::_update();
 }
 
 void TAbstractWindow::_updateChildren() {
     if (IsEnabled() == false) {
         return;
     }
-    parent_t::_updateChildren();
+    parent_type::_updateChildren();
 }
 
 
@@ -237,8 +237,8 @@ bool TAbstractWindow::_isMouseOverHeader() const {
     }
 
     const TCoordinate position = std::move(GetScreenPosition());
-    return IO::IsCursorInRect(position.x, position.x + size.x,
-                          position.y, position.y + headerHeight);
+    return IO::IsCursorInRect(position.x, position.y,
+        position.x + size.x, position.y + headerHeight);
 }
 
 void TAbstractWindow::_draw(TRenderTarget& target) {
@@ -286,15 +286,11 @@ void TAbstractWindow::_draw(TRenderTarget& target) {
         rectText.setPosition(position.x, position.y);
         target.draw(rectText);
     }
-#endif
+#endif // _DEBUG
 }
 
 
 void TAbstractWindow::_OnClick() {
-#if defined(_DEBUG)
-    Debug::logMessage("Mouse click on " + name);
-#endif
-
     if ((IsMoveable() == true) && (_isMouseOverHeader() == true)) {
         clickPosition = IO::MousePos() - GetScreenPosition();
         state = State::Moving;
@@ -302,17 +298,11 @@ void TAbstractWindow::_OnClick() {
 }
 
 void TAbstractWindow::_OnMouseDown() {
-#if defined(_DEBUG)
-    Debug::logMessage("Mouse down on " + name);
-#endif
     if ((IsMoveable() == true) && (state == State::Moving)) {
         SetPosition(IO::MousePos() - clickPosition);
     }
 }
 void TAbstractWindow::_OnMouseUp() {
-#if defined(_DEBUG)
-    Debug::logMessage("Mouse up on " + name);
-#endif
     if ((IsMoveable() == true) && (state == State::Moving)) {
         SetPosition(IO::MousePos() - clickPosition);
         state = State::Normal;

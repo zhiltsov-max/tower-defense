@@ -129,15 +129,17 @@ public:
     TImageContainer& operator=(TImageContainer&& source) = default;
     ~TImageContainer() = default;
 
+
+    bool operator==(const TImageContainer& other) const;
+    bool operator!=(const TImageContainer& other) const;
+
+
     typedef std::shared_ptr<TImage> Image;
     typedef std::unique_ptr<TTexture> Texture;
     typedef std::unique_ptr<TSprite> DrawingObject;
     Image image;
     Texture texture;
     DrawingObject drawingObject;
-
-    bool operator==(const TImageContainer& other) const;
-    bool operator!=(const TImageContainer& other) const;
 };
 
 class TRenderObject
@@ -163,8 +165,8 @@ private:
     typedef std::unique_ptr<sf::RenderTexture> RenderTexture;
     RenderTexture renderTexture;
 
-    typedef std::unique_ptr<DrawingObject> DrawingObjectP;
-    DrawingObjectP drawingObject;
+    typedef std::unique_ptr<DrawingObject> PDrawingObject;
+    PDrawingObject drawingObject;
 };
 
 
@@ -182,7 +184,7 @@ using KeyboardKey = ::IO::KeyboardKey;
 
 bool IsMouseMoved();
 bool IsCursorInRect(const TCoordinate& p1, const TCoordinate& p2);
-bool IsCursorInRect(float x1, float x2, float y1, float y2);
+bool IsCursorInRect(float x1, float y1, float x2,  float y2);
 bool IsMouseHit(MouseKey key);
 bool IsMouseDown(MouseKey key);
 int MouseX();
@@ -195,19 +197,13 @@ void SetGraphicsDevice(::IO::TSFMLGraphicsDevice* value);
 } //namespace IO
 
 
-uint WindowWidth();
-uint WindowHeight();
-
-
 //### Debug ###
 namespace Debug {
 
-void throw_(const string& message, const string& where = "GUI");
+void Throw(const string& message, const string& where = "GUI");
 
-#define GUI_ASSERT(expr, message) \
-    if ((expr) == false) { \
-        GUI::Debug::throw_(message, string(__FILE__ ":") + std::to_string(__LINE__)); \
-    }
+#define GUI_THROW(message) THROW(message)
+#define GUI_ASSERT(expr, message) ASSERT(expr, message)
 
 bool& show_frames();
 
@@ -216,6 +212,20 @@ void logMessage(
     const TextString& where = TEXT("GUI"),
     ::LogMessageImportance importance = ::LogMessageImportance::Usual
 );
+
+#if defined(UNICODE)
+void logMessage(
+    const string& message,
+    const TextString& where = TEXT("GUI"),
+    ::LogMessageImportance importance = ::LogMessageImportance::Usual
+);
+#endif // UNICODE
+
+#define GUI_WARNING(message) \
+    ::GUI::Debug::logMessage(message, \
+        TextString(TEXT(__FILE__)) + TextString(TEXT(":")) + \
+            String::toTextString(__LINE__), \
+        ::LogMessageImportance::Warning);
 
 } //Debug
 

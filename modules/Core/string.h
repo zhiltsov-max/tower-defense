@@ -124,6 +124,12 @@ basic_string<CharT> toUpper(
     const std::locale& locale = std::locale()
 );
 
+
+// Number to text conversion
+template< class Number >
+TextString toTextString(const Number& number);
+
+
 // To wide
 wstring toWide(const char* str);
 wstring toWide(const string& str);
@@ -374,6 +380,16 @@ basic_string<CharT> String::toUpper(const CharT* str, const std::locale& locale)
     }
 
     return res;
+}
+
+
+template< class Number >
+TextString String::toTextString(const Number& number) {
+#if defined(UNICODE)
+    return std::to_wstring(number);
+#else
+    return std::to_string(number);
+#endif
 }
 
 #endif //STRING_H

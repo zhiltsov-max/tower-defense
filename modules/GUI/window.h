@@ -11,10 +11,10 @@ struct TWindowSource : TAbstractWindowSource
 class TWindow : public TAbstractWindow
 {
 private:
-    typedef TAbstractWindow parent_t;
+    typedef TAbstractWindow parent_type;
 public:
     TWindow(const TWindowSource& source) :
-        parent_t(source)
+        parent_type(source)
     {}
     TWindow(const TWindow& other) = delete;
     TWindow& operator=(const TWindow& other) = delete;

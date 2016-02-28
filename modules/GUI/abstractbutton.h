@@ -5,7 +5,7 @@
 
 BEGIN_GUI
 
-struct TAbstractButtonSource : TMenuObjectSource
+struct TAbstractButtonSource : TWidgetSource
 {
     bool enabled;
 
@@ -19,7 +19,7 @@ struct TAbstractButtonSource : TMenuObjectSource
     TImageSource image;
 };
 
-class TAbstractButton : public TMenuObject /*Abstract*/
+class TAbstractButton : public TWidget /*Abstract*/
 {
 public:
     typedef TImageContainer Image;
@@ -48,7 +48,7 @@ public:
     virtual const TColor& GetFontColor() const;
     virtual void SetFontColor(const TColor& value);
 private:
-    typedef TMenuObject parent_t;
+    typedef TWidget parent_type;
 protected:
     enum class State : uchar {
         _min = 0,

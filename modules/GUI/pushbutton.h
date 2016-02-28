@@ -1,7 +1,7 @@
 #ifndef PUSHBUTTON_H
 #define PUSHBUTTON_H
 
-#include "menuobject.h"
+#include "widget.h"
 #include "abstractbutton.h"
 #include <functional>
 
@@ -25,7 +25,7 @@ public:
     ~TPushButton() = default;
 
 private:
-    typedef TAbstractButton parent_t;
+    typedef TAbstractButton parent_type;
 protected:
     static const TColorModifier COLOR_MODIFIER_HOVER;
     static const TColorModifier COLOR_MODIFIER_NORMAL;

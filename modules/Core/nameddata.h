@@ -15,33 +15,33 @@ class TNamedData : public std::map<string, T>
 private:
     char keySeparator;
 public:
-	typedef std::map<string, T> parent_t;
-	typedef typename parent_t::const_iterator const_iterator;
-	typedef typename parent_t::iterator iterator;
-	typedef typename parent_t::reverse_iterator reverse_iterator;
-	typedef typename parent_t::const_reverse_iterator const_reverse_iterator;
+	typedef std::map<string, T> parent_type;
+	typedef typename parent_type::const_iterator const_iterator;
+	typedef typename parent_type::iterator iterator;
+	typedef typename parent_type::reverse_iterator reverse_iterator;
+	typedef typename parent_type::const_reverse_iterator const_reverse_iterator;
 
 
 	TNamedData(char keySeparator_ = ':') :
-        parent_t(),
+        parent_type(),
         keySeparator(keySeparator_)
 	{}
 	TNamedData(const TNamedData& other) :
-        parent_t(other),
+        parent_type(other),
         keySeparator(other.keySeparator)
 	{}
 	TNamedData(TNamedData&& other) :
-        parent_t(std::move(other)),
+        parent_type(std::move(other)),
         keySeparator(other.keySeparator)
 	{}
     TNamedData(std::initializer_list< std::pair<const string, T> > list) :
-        parent_t(list),
+        parent_type(list),
         keySeparator(':')
     {}
 	TNamedData& operator=(const TNamedData& other) {
 		if (this != &other) {
 			clear();
-			parent_t::operator=(other);
+			parent_type::operator=(other);
 			keySeparator = other.keySeparator;
 		}	
 		return *this;
@@ -49,7 +49,7 @@ public:
     TNamedData& operator=(TNamedData&& prot) {
         if (this != &prot) {
             clear();
-            parent_t::operator=(prot);
+            parent_type::operator=(prot);
             keySeparator = prot.keySeparator;
         }
         return *this;
@@ -57,13 +57,13 @@ public:
     ~TNamedData() = default;
 
 	bool contains(const string& key) const {
-		return parent_t::count(key) != 0; 
+		return parent_type::count(key) != 0; 
 	}
 	bool empty() const {
-		return parent_t::empty();
+		return parent_type::empty();
 	}
 	size_t size() const { 
-		return parent_t::size();
+		return parent_type::size();
 	}
 	
 	char keySep() const {
@@ -71,69 +71,69 @@ public:
 	}
 
 	const T& at(const string& key) const {
-		return parent_t::at(key);
+		return parent_type::at(key);
 	}
 	T& at(const string& key) {
-		return parent_t::at(key);
+		return parent_type::at(key);
 	}
 	const T& operator[](const string& key) const {
 		return at(key); 
 	}
 	T& operator[](const string& key) {
-		return parent_t::operator[](key); 
+		return parent_type::operator[](key); 
 	}
 
 	void insert(const string& key, const T& value) {
-		parent_t::insert( std::pair<string, T>(key, value) );
+		parent_type::insert( std::pair<string, T>(key, value) );
 	}
 
 	void erase(const string& key) {
-		parent_t::erase(key);
+		parent_type::erase(key);
 	}
 	void clear() {
-		parent_t::clear();
+		parent_type::clear();
 	}
 
 	const_iterator cbegin() const {
-		return parent_t::cbegin();
+		return parent_type::cbegin();
 	}
 	const_iterator cend() const {
-		return parent_t::cend();
+		return parent_type::cend();
 	}
 
     const_iterator begin() const {
-        return parent_t::begin();
+        return parent_type::begin();
     }
     const_iterator end() const {
-        return parent_t::end();
+        return parent_type::end();
     }
 
     iterator begin() {
-		return parent_t::begin();
+		return parent_type::begin();
 	}
     iterator end() {
-		return parent_t::end();
+		return parent_type::end();
 	}
 
     reverse_iterator rbegin() {
-		return parent_t::rbegin();
+		return parent_type::rbegin();
 	}
     reverse_iterator rend() {
-		return parent_t::rend();
+		return parent_type::rend();
 	}
 
 	const_reverse_iterator crbegin() const {
-		return parent_t::crbegin();
+		return parent_type::crbegin();
 	}
 	const_reverse_iterator crend() const {
-		return parent_t::crend();
+		return parent_type::crend();
 	}
 
     const_reverse_iterator rbegin() const {
-        return parent_t::rbegin();
+        return parent_type::rbegin();
     }
     const_reverse_iterator rend() const {
-        return parent_t::rend();
+        return parent_type::rend();
     }
 	
 	T& front() {

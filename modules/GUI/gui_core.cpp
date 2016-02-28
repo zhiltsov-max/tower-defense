@@ -6,20 +6,22 @@
 BEGIN_GUI
 
 TImageContainer::TImageContainer(const TImageSource& source) :
-    image(nullptr),
+    image(new TImage),
     texture(nullptr),
     drawingObject(nullptr)
 {
-    image = std::make_shared<TImage>();
-    if ((source.path.empty() == true) || (image->loadFromFile(source.path) == false)) {
+    if ((source.path.empty() == true) ||
+        (image->loadFromFile(source.path) == false))
+    {
+#if defined(_DEBUG)
         if (source.path.empty() == false) {
-            Debug::logMessage(TEXT("Failed to load image '") + String::toWide(source.path) + TEXT("'."),
-                       TEXT("TImageContainer::TImageContainer"),
-                       ::LogMessageImportance::Error);
+            GUI_WARNING(TEXT("Failed to load image '") +
+                String::toWide(source.path) + TEXT("'."));
         }
+#endif // _DEBUG
         image.reset();
     } else {
-        texture.reset(new TTexture());
+        texture.reset(new TTexture);
         texture->loadFromImage(*image);
         TSprite* sprite = new TSprite(*texture);
         drawingObject.reset(sprite);
@@ -53,9 +55,8 @@ TRenderObject::TRenderObject(const TSize& size) :
 void TRenderObject::resize(const TSize& size) {
     auto currentSize = std::move(renderTexture->getSize());
     if (currentSize.x != size.x || currentSize.y != size.y) {
-        if (renderTexture->create(size.x, size.y) == false) {
-            Debug::throw_("Failed to create a RenderTexture.", "TRenderImage::resize");
-        }
+        GUI_ASSERT(renderTexture->create(size.x, size.y) == true,
+            "Failed to create a RenderTexture.");
         drawingObject->setOrigin(0.f, size.y);
     }
 }
@@ -87,10 +88,10 @@ bool IO::IsMouseMoved() {
 }
 
 bool IO::IsCursorInRect(const TCoordinate &p1, const TCoordinate &p2) {
-    return IsCursorInRect(p1.x, p2.x, p1.y, p2.y);
+    return IsCursorInRect(p1.x, p1.y, p2.x, p2.y);
 }
 
-bool IO::IsCursorInRect(float x1, float x2, float y1, float y2) {
+bool IO::IsCursorInRect(float x1, float y1, float x2, float y2) {
     return isPointInRect(MouseX(), MouseY(), x1, y1, x2, y2);
 }
 
@@ -130,26 +131,32 @@ bool& Debug::show_frames() {
     return _show_frames;
 }
 
-void Debug::throw_(const string& message, const string& where_) {
+void Debug::Throw(const string& message, const string& where_) {
     Throw(message, where_);
 }
 
-void Debug::logMessage(
-    const TextString& message,
-    const TextString& where,
-    ::LogMessageImportance importance)
+void Debug::logMessage(const TextString& message,
+    const TextString& where, ::LogMessageImportance importance)
 {
-    app()->getDebugTools().log(TEXT("@") + where + TEXT(": ") + message, importance);
+    auto* application = app();
+    if (application != nullptr) {
+        application->getDebugTools().log(TEXT("@") + where + TEXT(": ") + message, importance);
+    } else {
+#if defined(UNICODE)
+        std::wcerr << TEXT("@") + where + TEXT(": ") + message << std::endl;
+#else
+        std::cerr << TEXT("@") + where + TEXT(": ") + message << std::endl;
+#endif
+    }
 }
 
-
-
-uint WindowWidth() {
-    return app()->getWindowWidth();
+#if defined(UNICODE)
+void Debug::logMessage(const string& message,
+    const TextString& where, LogMessageImportance importance)
+{
+    logMessage(String::toWide(message), where, importance);
 }
-uint WindowHeight() {
-    return app()->getWindowHeight();
-}
+#endif // UNICODE
 
 
 END_GUI

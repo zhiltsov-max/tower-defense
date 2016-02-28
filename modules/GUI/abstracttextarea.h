@@ -1,7 +1,7 @@
 #ifndef ABSTRACTTEXTAREA_H
 #define ABSTRACTTEXTAREA_H
 
-#include "menuobject.h"
+#include "widget.h"
 
 BEGIN_GUI
 
@@ -13,7 +13,7 @@ enum class DefaultMessageColor : uint {
 class TAbstractTextArea /*Abstract*/
 {
 public:
-    typedef TMenuObject* Parent;
+    typedef TWidget* Parent;
 
     TAbstractTextArea(const TextString& text_ = TextString(), const TCoordinate& position_ = TCoordinate(), const Parent& parent_ = Parent(nullptr));
     TAbstractTextArea(const TAbstractTextArea& other) = default;
@@ -65,7 +65,7 @@ protected:
 
     TFont font;
 
-    bool _parentExists() const;
+    virtual bool _parentExists() const;
     virtual void _checkBorders();
 };
 

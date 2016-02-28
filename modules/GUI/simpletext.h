@@ -6,7 +6,7 @@
 
 BEGIN_GUI
 
-struct TSimpleTextSource : TMenuObjectSource
+struct TSimpleTextSource : TWidgetSource
 {
     TextString text;
     TColor textColor;
@@ -19,7 +19,7 @@ struct TSimpleTextSource : TMenuObjectSource
     TColor backgroundColor;
 };
 
-class TSimpleText : public TMenuObject
+class TSimpleText : public TWidget
 {
 public:
     TSimpleText(const TSimpleTextSource& source);
@@ -43,7 +43,7 @@ public:
     const TColor& GetBackgroundColor() const;
     void SetBackgroundColor(const TColor &value);
 private:
-    typedef TMenuObject parent_t;
+    typedef TWidget parent_type;
 protected:
     //Main
     typedef std::unique_ptr<TAbstractTextArea> Text;

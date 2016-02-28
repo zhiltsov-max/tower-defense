@@ -23,7 +23,7 @@ void TMainMenuBackground::draw(Graphics::TRenderTarget& target) {
 
 
 TMainMenu::TMainMenu(TTowerDefenseApplication* app) :
-    parent_t(app),
+    parent_type(app),
     background(),
     luaState(),
     fpsCounter()

@@ -396,7 +396,7 @@ TEST(toWide, wstring_1) {
 #endif //UNICODE
 
 
-//### PARSER ###
+//### PARSER TESTS ###
 TEST(parserTest, parse_test_1) {
     const string fileData = "{map:{size:{width:16;height:12;};layers:{count:4;0:{tiles:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];};1:{tiles:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,3,3,3,4,0,0,0,0,0,0,3,3,4,0,0,2,0,0,0,7,4,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,2,0,0,0,0,0,0,0,7,3,3,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];};2:[];3:[];};nodes:{enters:{count:1;0:[0,3];};exits:{count:1;0:[10,5];};pathes:{count:1;0:{count:17;enter:0;0:[1,3];1:[2,3];2:[2,4];3:[2,5];4:[3,5];5:[4,5];6:[5,5];7:[5,4];8:[5,3];9:[5,2];10:[6,2];11:[7,2];12:[8,2];13:[9,2];14:[9,3];15:[10,3];16:[10,4];exit:0;};};};gameObjects:{count:2;0:{type:building;id:-1;x:10.5;y:5.5;};1:{type:building;id:4;x:2.5;y:6;messageBubbleName:MessageBubble;};};tileset:Data/Levels/tileData.dat;};scripts:{pathes:[scriptCore.lua,level1.lua];};stages:{mobs:{healthGrowth:1.1;rewardGrowth:1.3;speedGrowth:1.1;};count:5;0:{buildings:{-1:{repairable:1;};};quests:{2:[1,1];};scripts:{_:1;};};1:{quests:{3:[1,1];};};2:{quests:{4:[1,1];};};3:{quests:{5:[1,1];};};4:{quests:{6:[1,1];};mobs:{1:{health:10;};};};};player:{credits:2000;};resources:{gameObjects:{mobs:{id:[1,3];};buildings:{id:[-1,1,2,3,4];};};tileset:I64,64,Data/Levels/Tiles.png,0,128;};};";
     std::stringstream ss;
@@ -462,6 +462,77 @@ TEST(parserTest, parse_test_unexpected_value) {
 }
 
 
+//### POINT TESTS ###
+TEST(pointTest, arihmetics_and_logics_operators) {
+    using Point = Point2i;
+
+    Point p1(10, 15);
+    Point p2(4, 5);
+
+    EXPECT_TRUE(p1 > p2);
+    EXPECT_FALSE(p1 < p2);
+    EXPECT_FALSE(p1 == p2);
+    EXPECT_TRUE(p1 != p2);
+
+    EXPECT_EQ(Point(14, 20), p1 + p2);
+    EXPECT_EQ(Point(6, 10), p1 - p2);
+    EXPECT_EQ(Point(20, 45), p1 * Point(2, 3));
+    EXPECT_EQ(Point(2, 3), p1 / Point(5, 5));
+
+    EXPECT_EQ(Point(50, 75), p1 * 5);
+    EXPECT_EQ(Point(2, 3), p1 / 5);
+    EXPECT_EQ(Point(12, 17), p1 + 2);
+    EXPECT_EQ(Point(8, 13), p1 - 2);
+
+    EXPECT_NO_THROW(p1 += p2);
+    EXPECT_EQ(Point(14, 20), p1);
+
+#if defined(_DEBUG)
+    EXPECT_ANY_THROW(p1[3]);
+#else
+    EXPECT_NO_THROW(p1[3]);
+#endif
+}
+
+TEST(pointTest, operatons) {
+    using Point = Point2i;
+
+    EXPECT_DOUBLE_EQ(5.0, norm(Point(3, 4)));
+    EXPECT_DOUBLE_EQ(25.0, norm(Point(3, 4), NormType::NORM_SQUARED));
+
+    EXPECT_EQ(Point(1, 2), abs(Point(-1, 2)));
+
+
+    EXPECT_TRUE(Point(1, 2).isInRect(
+            Point(0, 1), Point(2, 3)
+        ));
+    EXPECT_TRUE(Point(1, 2).isInRect(
+            Point(2, 3), Point(0, 1)
+        ));
+
+    EXPECT_FALSE(Point(1, 2).isInRect(
+            Point(1, 3), Point(2, 3)
+        ));
+    EXPECT_FALSE(Point(1, 2).isInRect(
+            Point(2, 3), Point(1, 3)
+        ));
+}
+
+TEST(pointTest, serialization) {
+    using Point = Point<double, 5>;
+    Point point;
+    point[0] = 4.0;
+    point[1] = 2.0;
+    point[2] = 1.0;
+    point[3] = 1.0;
+    point[4] = 6.0;
+
+    EXPECT_FALSE(string(point).empty());
+
+#if defined(UNICODE)
+    EXPECT_FALSE(wstring(point).empty());
+#endif
+}
 
 
 

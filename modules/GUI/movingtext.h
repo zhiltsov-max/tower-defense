@@ -17,7 +17,7 @@ class TMovingText : public TSimpleText
 public:
     typedef uint Time;
 
-    static TMenuObjectRef CreateDefaultMessage(const TextString& message, const TCoordinate& position, const TColor& color = (uint)DefaultMessageColor::information);
+    static TWidgetRef CreateDefaultMessage(const TextString& message, const TCoordinate& position, const TColor& color = (uint)DefaultMessageColor::information);
 
     TMovingText(const TMovingTextSource& source);
     TMovingText(const TMovingText& other) = delete;
@@ -33,7 +33,7 @@ public:
     const TCoordinate& GetSpeed() const;
     void SetSpeed(const TCoordinate& value);
 private:
-    typedef TSimpleText parent_t;
+    typedef TSimpleText parent_type;
 protected:
     const float thresholdTime = 0.5f;
 

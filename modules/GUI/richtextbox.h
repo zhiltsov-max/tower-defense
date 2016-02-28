@@ -27,7 +27,7 @@ public:
 
     virtual void SetMaxSize(const TSize& value) override;
 private:
-    typedef TAbstractTextBox parent_t;
+    typedef TAbstractTextBox parent_type;
 };
 
 END_GUI

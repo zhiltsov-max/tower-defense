@@ -48,16 +48,30 @@ public:
         LogMessageImportance importance = LogMessageImportance::Usual
     );
 
-    bool isTechInfoVisible() const;
-    void setTechInfoVisibility(bool value);
-
 private:
-	bool showTechnicalInformation;
-
     using DebugLog = std::wofstream;
     DebugLog debugLog;
 };
 
+
 void Throw(const string& message, const string& where_);
+
+
+#if defined(THROW)
+    #undef THROW
+#endif
+#define THROW(message) \
+    Throw(std::string(message), \
+        std::string("Error at ") + __FILE__ + ":" + \
+        std::to_string(__LINE__) + ": ");
+
+#if defined(ASSERT)
+    #undef ASSERT
+#endif
+#define ASSERT(expr, message) \
+    if ((expr) == false) {\
+        THROW(message)\
+    }
+
 
 #endif //DEBUG_H

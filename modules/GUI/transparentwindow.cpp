@@ -3,7 +3,7 @@
 BEGIN_GUI
 
 TTransparentWindow::TTransparentWindow(const TTransparentWindowSource& source) :
-    parent_t(source),
+    parent_type(source),
     thresholdOpacity(source.thresholdOpacity),
     minOpacity(source.minOpacity),
     maxOpacity(source.maxOpacity),
@@ -38,7 +38,7 @@ void TTransparentWindow::_update() {
     if (IsVisible() == false) {
         return;
     }
-    parent_t::_update();
+    parent_type::_update();
     _updateOpacity();
 }
 
@@ -63,7 +63,7 @@ void TTransparentWindow::_updateOpacity() {
 
 void TTransparentWindow::_drawChildren(TRenderTarget& target) {
     if (thresholdOpacity < colorModifier.aMod * color.a) {
-        parent_t::_drawChildren(target);
+        parent_type::_drawChildren(target);
     }
 }
 

@@ -2,7 +2,7 @@
 
 
 exception::exception(const std::string &message) :
-    parent_t(),
+    parent_type(),
     message(message)
 {}
 

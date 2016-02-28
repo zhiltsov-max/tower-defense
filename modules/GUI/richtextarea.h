@@ -10,7 +10,7 @@ class TRichTextArea : public TAbstractTextArea
 public:
     typedef std::vector<TextString> Separators;
 
-    TRichTextArea(const TextString& text, const TCoordinate& position, TMenuObject* parent);
+    TRichTextArea(const TextString& text, const TCoordinate& position, TWidget* parent);
 
     template< class InpIt >
     void SetSeparators(InpIt begin_, InpIt end_);
@@ -38,7 +38,7 @@ public:
 
     void Draw(TRenderTarget& target, const TCoordinate& position = TCoordinate());
 private:
-    typedef TAbstractTextArea parent_t;
+    typedef TAbstractTextArea parent_type;
 protected:
     static constexpr float DEFAULT_LINE_HEIGHT = 20.f;
     static constexpr float DEFAULT_SPACING_BETWEEN_LINES = 5.f;

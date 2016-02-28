@@ -4,8 +4,16 @@ set(PROJECT_NAME TowerDefense)
 project(${PROJECT_NAME})
 set(ROOT_DIR ${PROJECT_SOURCE_DIR})
 
-if(not ${CMAKE_BUILD_TYPE} ) 
-    set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configs" FORCE)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+set(TESTING_ENABLED 1)
+
+
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+    add_definitions(-D_DEBUG)
 endif()
 
 add_definitions(-DSFML -DUNICODE)
@@ -21,10 +29,17 @@ include_directories(${ROOT_DIR}/Modules)
 include_directories(${ROOT_DIR}/include)
 include_directories(${ROOT_DIR}/include/lua52)
 include_directories(${ROOT_DIR}/include/luapp)
-set(LIBRARY_PATH ${LIBRARY_PATH} "-L\"${PROJECT_SOURCE_DIR}/lib\"")
+set(LIBRARY_PATH ${LIBRARY_PATH} ${PROJECT_SOURCE_DIR}/lib)
 
 add_subdirectory(Modules)
 
 
-enable_testing()
-add_subdirectory(Tests)
+if(TESTING_ENABLED)
+    enable_testing()
+    add_subdirectory(Tests)
+endif()
+
+message("Config: Build type - " ${CMAKE_BUILD_TYPE})
+if(TESTING_ENABLED)
+    message("Config: Testing enabled")
+endif()

@@ -1,0 +1,16 @@
+#include "game_state_level_loading.h"
+
+
+namespace TD {
+
+
+TGameState_LevelLoading::TGameState_LevelLoading(TGame* game) :
+    game(game)
+{}
+
+void TGameState_LevelLoading::Update() {
+    
+}
+
+
+} //namespace TD

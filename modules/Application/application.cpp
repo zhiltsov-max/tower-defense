@@ -11,7 +11,8 @@
 std::unique_ptr<TApplication> TApplication::_instance = nullptr;
 
 TApplication& TApplication::Create(const TApplicationInfo& info) {
-    new TApplication(info); // _instance set in constructor
+    ASSERT(_instance == nullptr, "Can not create multiple instances of Application.")
+    _instance.reset(new TApplication(info));
     return *_instance;
 }
 
@@ -29,7 +30,6 @@ TApplication::TApplication(const TApplicationInfo& info) :
     isRun(false)
 {
     ASSERT(_instance == nullptr, "Can not create multiple instances of Application.")
-    _instance.reset(this);
 
     initialize(info);
 

@@ -19,7 +19,7 @@ public:
 
     virtual void SetEditable(bool value) override;
 private:
-    typedef TAbstractTextBox parent_t;
+    typedef TAbstractTextBox parent_type;
 };
 
 

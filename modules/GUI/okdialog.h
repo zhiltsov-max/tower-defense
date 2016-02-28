@@ -3,7 +3,10 @@
 
 #include "messagebox.h"
 
+
+
 BEGIN_GUI
+
 
 struct TOkDialogSource : TMessageBoxSource
 { /*none*/ };
@@ -23,18 +26,21 @@ public:
     const TPushButton& GetOkButton() const;
 
     virtual Style GetStyle() const override;
+
 private:
-    typedef TMessageBox parent_t;
+    using parent_type = TMessageBox;
+
 protected:
     /*
         Returns a list of slots that have to be created.
     */
     virtual std::list<Slot> _enumSlots() const override;
 
-    static void slot_OkButtonClicked(TMenuObject* this_, void** args);
+    static void slot_OkButtonClicked(TWidget* this_, void** args);
 
     TPushButton& GetOkButton();
 };
+
 
 END_GUI
 
