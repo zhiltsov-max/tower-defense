@@ -3,9 +3,6 @@
 #include "gtest.h"
 
 
-#if !defined(SFML)
-    #error Only SFML supported now.
-#endif //SFML
 
 using namespace Graphics;
 
@@ -40,8 +37,6 @@ TEST(graphicsTest, argb_test_3) {
     EXPECT_EQ(0x77u, argb.g);
     EXPECT_EQ(0x88u, argb.b);
 }
-
-
 
 
 
