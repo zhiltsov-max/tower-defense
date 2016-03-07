@@ -88,7 +88,7 @@ add_test(NAME test_graphics
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
-add_executable(gui_application_test gui_app_test.cpp)
+add_executable(gui_application_test examples/gui_app_test.cpp)
 target_link_libraries(gui_application_test
     -L"${LIBRARY_PATH}"
     -L"${PROJECT_SOURCE_DIR}/lib"

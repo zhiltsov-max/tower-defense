@@ -51,7 +51,7 @@ void loadInterface() {
 int main(int argc, char** argv) {
     TApplicationInfo info;
     info.appTitle = TEXT("GUI test");
-    info.style = sf::Style::Default;
+    info.style = sf::Style::Close | sf::Style::Titlebar;
     info.windowWidth = 800;
     info.windowHeight = 600;
     auto& app = TTestApplication::Create(info);
