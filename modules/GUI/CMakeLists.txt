@@ -5,7 +5,8 @@ set(gui_headers
     abstracttextarea.h 
     abstracttextbox.h 
     abstractwindow.h 
-    customfont.h 
+    customfont.h
+    customfonts_cache.h
     widget_event_system.h
     gui_core.h 
     gui_lua_binding.h 
@@ -36,6 +37,7 @@ set(gui_sources
     abstracttextbox.cpp 
     abstractwindow.cpp 
     customfont.cpp 
+    customfonts_cache.cpp
     widget_event_system.cpp
     gui_core.cpp 
     gui_lua_binding.cpp 

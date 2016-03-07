@@ -69,7 +69,7 @@ void TImageBox::_draw(TRenderTarget& target) {
         boundingRect.setPosition(position.x, position.y);
         target.draw(boundingRect);
 
-        sf::Text rectText = TFont().createText(String::toWide(name));
+        sf::Text rectText = TFont().CreateText(String::toWide(name));
         rectText.setPosition(position.x, position.y);
         target.draw(rectText);
     }

@@ -38,7 +38,7 @@ TWidgetRef TMovingText::CreateDefaultMessage(const TextString& message, const TC
     src.speed = TCoordinate(0.f, -1.f);
 
     src.text = message;
-    src.font = TFont("Calibri.ttf", 20, TCustomFont::FontStyle::BOLDFONT);
+    src.font = TFont("Calibri.ttf", 20, TCustomFont::Style::Bold);
     src.size = TSize(100.f, 22.f);
     src.textColor = TColor(color);
     src.position = position + TCoordinate(-src.font.GetTextWidth(message) * 0.5f, 0.f);

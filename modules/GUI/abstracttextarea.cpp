@@ -120,7 +120,7 @@ const TFont& TAbstractTextArea::GetFont() const {
 
 void TAbstractTextArea::Draw(TRenderTarget& target, const TCoordinate& position_) {
     const auto pos = position_ + position;
-    auto textShape = std::move(font.createText(text));
+    auto textShape = std::move(font.CreateText(text));
     textShape.setColor(color);
     textShape.setPosition( sf::Vector2f(pos.x, pos.y) );
 

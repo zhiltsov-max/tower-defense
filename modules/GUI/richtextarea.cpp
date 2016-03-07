@@ -148,7 +148,7 @@ void TRichTextArea::Draw(TRenderTarget& target, const TCoordinate& position) {
         lineHeight = font.GetTextHeight(lines[0]) + spacingBetweenLines;
     }
 
-    sf::Text textSprite = std::move(font.createText(TEXT("")));
+    sf::Text textSprite = std::move(font.CreateText(TEXT("")));
     textSprite.setColor(color);
     for(size_t i = 0; i != lines.size(); ++i) {
         if ( (((0 < maxSize.x) && (maxSize.y < i * lineHeight)) == false) ||

@@ -1,15 +1,18 @@
-#include "gui_core.h"
 #include "customfont.h"
+#include "gui_core.h"
 #include "settings.h"
+#include "customfonts_cache.h"
 
-const TCustomFont::Style TCustomFont::DEFAULT_FLAGS = TCustomFont::FontStyle::REGULAR;
+
+
+const TCustomFont::Style TCustomFont::DEFAULT_FLAGS = TCustomFont::Style::Regular;
 const TCustomFont::Size  TCustomFont::DEFAULT_SIZE  = 14;
 const char*              TCustomFont::DEFAULT_NAME  = TGUISettings::DEFAULT_FONT;
 
-TCustomFont::TCustomFont(const string& name_, Size size_, Style style_) :
-    flags(style_), name(name_), size(size_)
+TCustomFont::TCustomFont(const string& name, const Size& size, const Style& style) :
+    flags(style), name(name), size(size)
 {
-    font = TCustomFontsCache::getInstance().get(*this);
+    font = TCustomFontsCache::GetInstance().Get(*this);
 }
 
 bool TCustomFont::operator==(const TCustomFont& other) const {
@@ -20,15 +23,15 @@ bool TCustomFont::operator!=(const TCustomFont& other) const {
     return font != other.font;
 }
 
-const string& TCustomFont::getName() const {
+const string& TCustomFont::GetName() const {
     return name;
 }
 
-TCustomFont::Size TCustomFont::getSize() const {
+const TCustomFont::Size& TCustomFont::GetSize() const {
     return size;
 }
 
-TCustomFont::Style TCustomFont::getStyle() const {
+const TCustomFont::Style& TCustomFont::GetStyle() const {
     return flags;
 }
 
@@ -49,76 +52,22 @@ float TCustomFont::GetTextHeight(const TextString& text, const TCustomFont& font
 }
 
 float TCustomFont::GetTextWidth(const TextString& text) const {
-    Graphics::TText textRepr = std::move(createText(text));
+    Graphics::TText textRepr = std::move(CreateText(text));
     return textRepr.getGlobalBounds().width;
 }
 float TCustomFont::GetTextHeight(const TextString& text) const {
-    Graphics::TText textRepr = std::move(createText(text));
+    Graphics::TText textRepr = std::move(CreateText(text));
     return textRepr.getGlobalBounds().height;
 }
 
-Graphics::TText TCustomFont::createText(const TextString& text) const {
+Graphics::TText TCustomFont::CreateText(const TextString& text) const {
     Graphics::TText result(text, getFont(), size);
-    result.setStyle(flags);
+    result.setStyle(static_cast<uint>(flags));
     return result;
 }
 
-Graphics::TText TCustomFont::createText(TextString&& text) const {
+Graphics::TText TCustomFont::CreateText(TextString&& text) const {
     Graphics::TText result(std::move(text), getFont(), size);
-    result.setStyle(flags);
+    result.setStyle(static_cast<uint>(flags));
     return result;
-}
-
-
-TCustomFontsCache* TCustomFontsCache::_instance = nullptr;
-
-TCustomFontsCache::TCustomFontsCache()
-{
-    if (_instance != nullptr) {
-         throw exception("Can not create multiple instances of TCustomFontsCache.");
-    }
-    _instance = this;
-}
-
-TCustomFontsCache& TCustomFontsCache::getInstance() {
-    if (_instance == nullptr) {
-        _instance = new TCustomFontsCache;
-    }
-    return *_instance;
-}
-
-const Graphics::TFont* TCustomFontsCache::load(const TCustomFont& font_) {
-    const Key key = makeKey(font_);
-    if (isLoaded(key) == true) {
-        return loadedFonts.at(key).get();
-    }
-
-    Entry& font = loadedFonts[key];
-    font.reset(new Graphics::TFont());
-    string fontPath = TGUISettings::DEFAULT_FONTS_FOLDER + std::move(String::toLower(font_.getName()));
-    if (font->loadFromFile(fontPath) == false) {
-#if defined(_DEBUG)
-        GUI_THROW("Font file '" + fontPath + "' not found");
-#else
-        // TO DO: ...
-#endif
-    }
-    return font.get();
-}
-
-const Graphics::TFont* TCustomFontsCache::get(const TCustomFont& font) {
-    const Key key = makeKey(font);
-    if (isLoaded(key) == true) {
-        return loadedFonts.at(key).get();
-    } else {
-        return load(font);
-    }
-}
-
-TCustomFontsCache::Key TCustomFontsCache::makeKey(const TCustomFont& font) {
-    return font.getName();
-}
-
-bool TCustomFontsCache::isLoaded(const Key& key) const {
-    return loadedFonts.count(key) != 0;
 }

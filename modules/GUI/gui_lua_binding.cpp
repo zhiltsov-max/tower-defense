@@ -282,10 +282,7 @@ using namespace lua;
 
 
     TFont eTFont_create(const string& name, size_t size, TFontStyle style) {
-        return TFont(name, size, style);
-    }
-    TFontStyle eTFont_getStyle(TFont& self) {
-        return self.getStyle();
+        return TFont(name, size, static_cast<TCustomFont::Style>(style));
     }
     void  eTFont_destroy(TFont& self) {
         self.~TCustomFont();
@@ -293,11 +290,11 @@ using namespace lua;
     Retval exportTFont(Context& ctx) {
         ctx.mt<TFont>() = Table::records(ctx,
             "Create",       eTFont_create,
-            "name",         TFont::getName,
-            "size",         TFont::getSize,
-            "style",        eTFont_getStyle,
+            "name",         TFont::GetName,
+            "size",         TFont::GetSize,
+            "style",        TFont::GetStyle,
             "IsDefault",    TFont::isDefault,
-            "CreateText",   static_cast<TText (TFont::*)(const TextString&) const>(TFont::createText),
+            "CreateText",   static_cast<TText (TFont::*)(const TextString&) const>(TFont::CreateText),
             "GetTextWidth", static_cast<float (TFont::*)(const TextString&) const>(TFont::GetTextWidth),
             "GetTextHeight",static_cast<float (TFont::*)(const TextString&) const>(TFont::GetTextHeight),
             "__eq",         TFont::operator ==,
@@ -308,11 +305,11 @@ using namespace lua;
         ctx.global["TFont"] = ctx.mt<TFont>();
 
         ctx.global["FontStyle"] = Table::records(ctx,
-            "regular",      TFont::FontStyle::REGULAR,
-            "bold",         TFont::FontStyle::BOLDFONT,
-            "italic",       TFont::FontStyle::ITALICFONT,
-            "strikethrough",TFont::FontStyle::STRIKETHROUGH,
-            "underlined",   TFont::FontStyle::UNDERLINED
+            "regular",      static_cast<TFontStyle>(TFont::Style::Regular),
+            "bold",         static_cast<TFontStyle>(TFont::Style::Bold),
+            "italic",       static_cast<TFontStyle>(TFont::Style::Italic),
+            "strikethrough",static_cast<TFontStyle>(TFont::Style::Strikethrough),
+            "underlined",   static_cast<TFontStyle>(TFont::Style::Underlined)
         );
 
         return ctx.ret();
@@ -320,10 +317,10 @@ using namespace lua;
 
 
     TText eTText_create1(const TextString& text) {
-        return TFont().createText(text);
+        return TFont().CreateText(text);
     }
     TText eTText_create2(const TextString& text, const TFont& font) {
-        return font.createText(text);
+        return font.CreateText(text);
     }
     void  eTText_setColor(TText& self, TColor& color) {
         self.setColor(color);

@@ -42,6 +42,9 @@ END_GUI_LUA_BINDING
     LUAPP_ARG_CONVERT(GUI::lua_binding::TImage, { return static_cast<GUI::lua_binding::TImage>(val.cast<LightUserData>()); })
     LUAPP_RV_CONVERT (GUI::lua_binding::TImage, { return context.ret((LightUserData)val); })
 
+    LUAPP_ARG_CONVERT(TCustomFont::Style, { return static_cast<TCustomFont::Style>(val.cast<int>()); })
+    LUAPP_RV_CONVERT(TCustomFont::Style, { return context.ret(static_cast<GUI::lua_binding::TFontStyle>(val)); })
+
     LUAPP_USERDATA(Vec2f, "Vec2f")
     //LUAPP_USERDATA(GUI::TSize, "Size")
     //LUAPP_USERDATA(GUI::TCoordinate, "Coordinate")
