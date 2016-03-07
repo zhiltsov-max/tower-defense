@@ -16,6 +16,10 @@
 # Fortran module files
 *.mod
 
+# Old code files
+*.bmx
+*.autosave
+
 # Compiled Static libraries
 *.lai
 *.la

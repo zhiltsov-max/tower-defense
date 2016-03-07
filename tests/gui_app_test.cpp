@@ -4,11 +4,12 @@
 #include "GUI/gui_lua_binding.h"
 
 
+
 class TTestApplication : public TApplication
 {
 public:
     static TTestApplication& Create(const TApplicationInfo& info) {
-        new TTestApplication(info);
+        _instance.reset(new TTestApplication(info));
         return *GetInstance();
     }
 
@@ -49,7 +50,7 @@ void loadInterface() {
 
 int main(int argc, char** argv) {
     TApplicationInfo info;
-    info.appTitle = L"GUI test";
+    info.appTitle = TEXT("GUI test");
     info.style = sf::Style::Default;
     info.windowWidth = 800;
     info.windowHeight = 600;

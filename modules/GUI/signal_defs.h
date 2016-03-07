@@ -29,9 +29,6 @@ public:
     static const SignalID MouseUp;
 
     static const std::vector<SignalID>& enumerate();
-
-private:
-    static const std::vector<SignalID> _enumeration;
 };
 
 END_GUI

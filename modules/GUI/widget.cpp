@@ -620,18 +620,17 @@ void TWidget::RegisterSlot(TWidgetSlot&& slot) {
     eventSystem.AddSlot(std::move(slot));
 }
 
-const std::list<TWidget::Signal> TWidget::_basicSignals_cache = [] {
-    std::list<Signal> cache;
-    for (const auto& signalID : DefaultSignalID::enumerate()) {
-        cache.emplace_back(signalID);
-    }
-    return cache;
-} ();
-
 /*
     Returns a list of common signals.
 */
 const list<TWidget::Signal>& TWidget::_basicSignals() {
+    static const std::list<TWidget::Signal> _basicSignals_cache = [] {
+        std::list<TWidget::Signal> cache;
+        for (const auto& signalID : DefaultSignalID::enumerate()) {
+            cache.emplace_back(signalID);
+        }
+        return cache;
+    } ();
     return _basicSignals_cache;
 }
 

@@ -19,23 +19,22 @@ const SignalID DefaultSignalID::MouseClick = "mcl";
 const SignalID DefaultSignalID::MouseDown = "mdn";
 const SignalID DefaultSignalID::MouseUp = "mup";
 
-const std::vector<SignalID> DefaultSignalID::_enumeration = {
-   ObjectVisibilityChanged,
-   ObjectShown,
-   ObjectHidden,
-
-   /*ObjectTextChanged*/
-   ObjectPositionChanged,
-   ObjectSizeChanged,
-
-   MouseEntered,
-   MouseLeave,
-   MouseClick,
-   MouseDown,
-   MouseUp
-};
-
 const std::vector<SignalID>& DefaultSignalID::enumerate() {
+    static const std::vector<SignalID> DefaultSignalID::_enumeration {
+        ObjectVisibilityChanged,
+        ObjectShown,
+        ObjectHidden,
+
+        /*ObjectTextChanged*/
+        ObjectPositionChanged,
+        ObjectSizeChanged,
+
+        MouseEntered,
+        MouseLeave,
+        MouseClick,
+        MouseDown,
+        MouseUp
+    };
     return _enumeration;
 }
 

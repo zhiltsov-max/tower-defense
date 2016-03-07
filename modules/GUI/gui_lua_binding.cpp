@@ -948,7 +948,9 @@ using namespace lua;
         }
         TWindowSource source;
         sTWindowSource_get(ctx.args[0], source);
-        return ctx.ret(TWidget(std::make_shared<GUI::TWindow>(source)));
+        TWidget window = std::make_shared<GUI::TWindow>(source);
+        window->Initialize();
+        return ctx.ret(window);
     }
     Retval exportTWindow(Context& ctx) {
         ctx.global["TWindow"] = Table::records(ctx,
@@ -1007,7 +1009,9 @@ using namespace lua;
         }
         TTransparentWindowSource source;
         sTTransparentWindowSource_get(ctx.args[0], source);
-        return ctx.ret(TWidget(std::make_shared<GUI::TTransparentWindow>(source)));
+        TWidget widget = std::make_shared<GUI::TTransparentWindow>(source);
+        widget->Initialize();
+        return ctx.ret(widget);
     }
     TTransparentWindow eTTransparentWindow_setThresholdOpacity(TTransparentWindow self, double value) {
         self->SetThresholdOpacity(value);
@@ -1249,7 +1253,9 @@ using namespace lua;
         }
         TPushButtonSource source;
         sTPushButtonSource_get(ctx.args[0], source);
-        return ctx.ret(TWidget(std::make_shared<GUI::TPushButton>(source)));
+        TWidget widget = std::make_shared<GUI::TPushButton>(source);
+        widget->Initialize();
+        return ctx.ret(widget);
     }
     Retval exportTPushButton(Context& ctx) {
         ctx.global["TPushButton"] = Table::records(ctx,
@@ -1440,7 +1446,9 @@ using namespace lua;
         }
         TSimpleTextBoxSource source;
         sTSimpleTextBoxSource_get(ctx.args[0], source);
-        return ctx.ret(TWidget(std::make_shared<GUI::TSimpleTextBox>(source)));
+        TWidget widget = std::make_shared<GUI::TSimpleTextBox>(source);
+        widget->Initialize();
+        return ctx.ret(widget);
     }
     Retval exportTSimpleTextBox(Context& ctx) {
         ctx.global["TSimpleTextBox"] = Table::records(ctx,
@@ -1506,7 +1514,9 @@ using namespace lua;
         }
         TRichTextBoxSource source;
         sTRichTextBoxSource_get(ctx.args[0], source);
-        return ctx.ret(TWidget(std::make_shared<GUI::TRichTextBox>(source)));
+        TWidget widget = std::make_shared<GUI::TRichTextBox>(source);
+        widget->Initialize();
+        return ctx.ret(widget);
     }
     Retval exportTRichTextBox(Context& ctx) {
         ctx.global["TRichTextBox"] = Table::records(ctx,
@@ -1577,7 +1587,9 @@ using namespace lua;
         }
         TImageBoxSource source;
         sTImageBoxSource_get(ctx.args[0], source);
-        return ctx.ret(TWidget(std::make_shared<GUI::TImageBox>(source)));
+        TWidget widget = std::make_shared<GUI::TImageBox>(source);
+        widget->Initialize();
+        return ctx.ret(widget);
     }
     Retval exportTImageBox(Context& ctx) {
         ctx.global["TImageBox"] = Table::records(ctx,

@@ -245,8 +245,6 @@ protected:
     */
     virtual std::list<Signal> _enumSignals() const;
 
-    static const std::list<Signal> _basicSignals_cache;
-
     /*
         Returns a list of common signals.
     */

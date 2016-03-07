@@ -87,3 +87,20 @@ add_test(NAME test_graphics
     COMMAND graphics_test
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
+
+add_executable(gui_application_test gui_app_test.cpp)
+target_link_libraries(gui_application_test
+    -L"${LIBRARY_PATH}"
+    -L"${PROJECT_SOURCE_DIR}/lib"
+    -lgtest.dll
+    -lglew32
+    -lsfml-system
+    -lsfml-main
+    -lsfml-window
+    -lsfml-graphics
+    -llua52
+
+    td_core_LIB
+    td_gui_LIB
+    td_application_core_LIB
+)
