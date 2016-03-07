@@ -272,6 +272,10 @@ void TWidget::_OnResized() {
     renderImage.resize(size);
 }
 
+void TWidget::_OnParentChanged() {
+    _checkBorders();
+}
+
 bool TWidget::IsMouseOver() const {
     return IsVisible() && mouseOver;
 }
@@ -331,6 +335,9 @@ void TWidget::SetParent(const TWidgetWeakRef& value) {
         }
     }
     parent = value;
+
+    _OnParentChanged();
+    GetSignal(DefaultSignalID::ObjectParentChanged).Send();
 }
 
 TWidgetWeakRef TWidget::GetParent() const {
@@ -342,16 +349,12 @@ void TWidget::AddChild(const TWidgetRef& obj) {
 
     const auto objCurrentParent = obj->parent.lock();
 
-    GUI_ASSERT( (
-            (HasChild(obj->name) == true) &&
-            (objCurrentParent.get() != this)
-        ) == false,
+    GUI_ASSERT( (HasChild(obj->name) == false) &&
+        (objCurrentParent.get() != this),
         "Menu object '" + name + "' already contains "
         "child with name '" + obj->name + "'.")
 
-    if ((objCurrentParent.get() != this) &&
-        (objCurrentParent != nullptr))
-    {
+    if (objCurrentParent != nullptr) {
         if (objCurrentParent->HasChild(obj->name) == true) {
             objCurrentParent->children.erase(obj->name); //since obj in the same group of shared_ptrs
         }
@@ -359,6 +362,9 @@ void TWidget::AddChild(const TWidgetRef& obj) {
 
     obj->parent = shared_from_this();
     children[obj->name] = obj;
+
+    obj->_OnParentChanged();
+    GetSignal(DefaultSignalID::ObjectParentChanged).Send();
 }
 
 TWidget::Child TWidget::RemoveChild(const Name& name) {

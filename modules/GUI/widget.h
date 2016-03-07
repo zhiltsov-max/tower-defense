@@ -239,6 +239,7 @@ protected:
     virtual void _OnMouseDown();
     virtual void _OnMouseUp();
     virtual void _OnResized();
+    virtual void _OnParentChanged();
 
     /*
         Returns a list of signals that have to be created.

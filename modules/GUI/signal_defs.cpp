@@ -9,6 +9,7 @@ const SignalID DefaultSignalID::ObjectHidden = "hid";
 const SignalID DefaultSignalID::ObjectTextChanged = "otc";
 const SignalID DefaultSignalID::ObjectPositionChanged = "mov";
 const SignalID DefaultSignalID::ObjectSizeChanged = "siz";
+const SignalID DefaultSignalID::ObjectParentChanged = "opc";
 
 const SignalID DefaultSignalID::ObjectEnabled = "ena";
 const SignalID DefaultSignalID::ObjectDisabled = "dis";
@@ -20,7 +21,7 @@ const SignalID DefaultSignalID::MouseDown = "mdn";
 const SignalID DefaultSignalID::MouseUp = "mup";
 
 const std::vector<SignalID>& DefaultSignalID::enumerate() {
-    static const std::vector<SignalID> DefaultSignalID::_enumeration {
+    static const std::vector<SignalID> _enumeration {
         ObjectVisibilityChanged,
         ObjectShown,
         ObjectHidden,
@@ -28,6 +29,7 @@ const std::vector<SignalID>& DefaultSignalID::enumerate() {
         /*ObjectTextChanged*/
         ObjectPositionChanged,
         ObjectSizeChanged,
+        ObjectParentChanged,
 
         MouseEntered,
         MouseLeave,

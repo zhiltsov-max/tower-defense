@@ -18,6 +18,7 @@ public:
     static const SignalID ObjectTextChanged;
     static const SignalID ObjectPositionChanged;
     static const SignalID ObjectSizeChanged;
+    static const SignalID ObjectParentChanged;
 
     static const SignalID ObjectEnabled;
     static const SignalID ObjectDisabled;
