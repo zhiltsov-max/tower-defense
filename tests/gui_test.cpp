@@ -220,7 +220,6 @@ TEST_F(TestWidget, modification) {
     EXPECT_EQ(true, IsShown());
 }
 
-
 class CustomWidget : public TWidget
 {
 public:
@@ -231,37 +230,110 @@ private:
     virtual void _draw(TRenderTarget&) override {}
 };
 
-TEST(WidgetTest, tree_operations) {
+TEST(WidgetTest, tree_operations_addition_as_child) {
     TWidgetSource source;
     source.name = "testRoot";
     source.size = TSize(1, 1);
     auto widget1 = std::make_shared<CustomWidget>(source);
     widget1->Initialize();
 
-    source.name = "testChild1";
+    source.name = "testChild";
     auto widget2 = std::make_shared<CustomWidget>(source);
     widget2->Initialize();
 
-    source.name = "testChild2";
-    auto widget3 = std::make_shared<CustomWidget>(source);
-    widget3->Initialize();
-
     EXPECT_NO_THROW(widget1->AddChild(widget2));
+	EXPECT_ANY_THROW(widget1->AddChild(widget2));
+
     EXPECT_EQ(widget1.get(), widget2->GetParent().lock().get());
     EXPECT_TRUE(widget1->HasChild(widget2->GetName()));
+	EXPECT_TRUE(widget1->HasChild(widget2));
     EXPECT_TRUE(widget1->HasChildren());
     EXPECT_EQ(widget2.get(), widget1->FindChild(widget2->GetName()).lock().get());
     EXPECT_EQ(widget2.get(), widget1->FindChild<CustomWidget>(widget2->GetName()).lock().get());
-    EXPECT_NO_THROW(widget1->RemoveChild(widget2->GetName()));
-    EXPECT_FALSE(widget1->HasChild(widget2->GetName()));
-    EXPECT_FALSE(widget1->HasChildren());
-
-    EXPECT_NO_THROW(widget1->AddChild(widget2));
-    EXPECT_NO_THROW(widget1->AddChild(widget3));
-    EXPECT_NO_THROW(widget1->RemoveChildren());
-    EXPECT_FALSE(widget1->HasChildren());
 }
 
+TEST(WidgetTest, tree_operations_addition_by_parent) {
+	TWidgetSource source;
+	source.name = "testRoot";
+	source.size = TSize(1, 1);
+	auto widget1 = std::make_shared<CustomWidget>(source);
+	widget1->Initialize();
+
+	source.name = "testChild";
+	auto widget2 = std::make_shared<CustomWidget>(source);
+	widget2->Initialize();
+	
+	EXPECT_NO_THROW(widget2->SetParent(widget1));
+	EXPECT_ANY_THROW(widget2->SetParent(widget1));
+
+	EXPECT_EQ(widget1.get(), widget2->GetParent().lock().get());
+	EXPECT_TRUE(widget1->HasChild(widget2->GetName()));
+	EXPECT_TRUE(widget1->HasChild(widget2));
+	EXPECT_TRUE(widget1->HasChildren());
+	EXPECT_EQ(widget2.get(), widget1->FindChild(widget2->GetName()).lock().get());
+	EXPECT_EQ(widget2.get(), widget1->FindChild<CustomWidget>(widget2->GetName()).lock().get());
+}
+
+TEST(WidgetTest, tree_operations_deletion_as_child) {
+	TWidgetSource source;
+	source.name = "testRoot";
+	source.size = TSize(1, 1);
+	auto widget1 = std::make_shared<CustomWidget>(source);
+	widget1->Initialize();
+
+	source.name = "testChild";
+	auto widget2 = std::make_shared<CustomWidget>(source);
+	widget2->Initialize();
+
+	EXPECT_NO_THROW(widget1->AddChild(widget2));
+	
+	EXPECT_ANY_THROW(widget1->RemoveChild(widget2->GetName()));
+
+	EXPECT_FALSE(widget1->HasChild(widget2));
+	EXPECT_EQ(nullptr, widget2->GetParent().lock().get());
+	EXPECT_EQ(nullptr, widget1->FindChild(widget2->GetName()).lock().get());
+}
+
+TEST(WidgetTest, tree_operations_deletion_by_parent) {
+	TWidgetSource source;
+	source.name = "testRoot";
+	source.size = TSize(1, 1);
+	auto widget1 = std::make_shared<CustomWidget>(source);
+	widget1->Initialize();
+
+	source.name = "testChild";
+	auto widget2 = std::make_shared<CustomWidget>(source);
+	widget2->Initialize();
+
+	EXPECT_NO_THROW(widget2->SetParent(TWidgetRef()));
+	
+	EXPECT_ANY_THROW(widget1->RemoveChild(widget2->GetName()));
+
+	EXPECT_FALSE(widget1->HasChild(widget2));
+	EXPECT_EQ(nullptr, widget2->GetParent().lock().get());
+	EXPECT_EQ(nullptr, widget1->FindChild(widget2->GetName()).lock().get());
+}
+
+TEST(WidgetTest, tree_operations_group) {
+	TWidgetSource source;
+	source.name = "testRoot";
+	source.size = TSize(1, 1);
+	auto widget1 = std::make_shared<CustomWidget>(source);
+	widget1->Initialize();
+
+	source.name = "testChild1";
+	auto widget2 = std::make_shared<CustomWidget>(source);
+	widget2->Initialize();
+
+	source.name = "testChild2";
+	auto widget3 = std::make_shared<CustomWidget>(source);
+	widget3->Initialize();
+
+	EXPECT_NO_THROW(widget1->AddChild(widget2));
+	EXPECT_NO_THROW(widget1->AddChild(widget3));
+	EXPECT_NO_THROW(widget1->RemoveChildren());
+	EXPECT_FALSE(widget1->HasChildren());
+}
 
 
 int main(int argc, char** argv) {
