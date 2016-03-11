@@ -68,6 +68,7 @@ public:
 
     virtual void AddChild(const TWidgetRef& obj);
     virtual Child RemoveChild(const Name& name);
+    virtual Child RemoveChild(const Child& obj);
     virtual bool HasChild(const Name& name) const;
 
     /*

@@ -378,6 +378,10 @@ TWidget::Child TWidget::RemoveChild(const Name& name) {
     return child;
 }
 
+TWidget::Child TWidget::RemoveChild(const Child& obj) {
+    return RemoveChild(obj->GetName());
+}
+
 bool TWidget::HasChild(const Name& name) const {
     return children.count(name) != 0;
 }
@@ -414,6 +418,9 @@ TWidget::ConstChildRef TWidget::FindChild(const Name& key) const {
             currentObject = currentObject->children.at(part);
         }
     }
+    if (currentObject.get() == this) {
+        currentObject.reset();
+    }
     return currentObject;
 }
 
@@ -433,6 +440,9 @@ TWidget::ChildRef TWidget::FindChild(const Name& key) {
         } else {
             currentObject = currentObject->children.at(part);
         }
+    }
+    if (currentObject.get() == this) {
+        currentObject.reset();
     }
     return currentObject;
 }

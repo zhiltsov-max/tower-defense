@@ -34,12 +34,11 @@ protected:
     }
 };
 
-
 void loadInterface() {
     try {
         lua::State state;
         GUI::lua_binding::bindToLUA(state);
-        state.runFile("resources/InterfaceClasses.lua");
+        state.runFile("resources/testInterface.lua");
         std::cout << "Interface loaded successfully." << std::endl;
         GUI::Debug::show_frames() = true;
     } catch (const std::exception& e) {

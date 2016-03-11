@@ -92,7 +92,7 @@ TEST(SlotTest, initialization_and_execution) {
     TWidgetSlot slot(TWidgetWeakRef(), id, method);
     EXPECT_EQ(id, slot.GetID());
     EXPECT_TRUE(slot.HasPtr());
-    EXPECT_EQ(nullptr, slot.GetOwner().lock().get() );
+    EXPECT_EQ(TWidgetRef(), slot.GetOwner().lock());
 
     EXPECT_NO_THROW(slot.Invoke());
     EXPECT_TRUE(methodExecuted);
@@ -208,7 +208,7 @@ TEST_F(TestWidget, modification) {
     EXPECT_EQ(TPadding(4, 3, 2, 1), GetMargin());
 
     EXPECT_NO_THROW(SetParent(TWidgetWeakRef()));
-    EXPECT_EQ(TWidgetWeakRef().lock().get(), GetParent().lock().get());
+    EXPECT_EQ(TWidgetWeakRef().lock(), GetParent().lock());
 
     EXPECT_NO_THROW(SetPosition(TCoordinate(3, 3)));
     EXPECT_EQ(TCoordinate(3, 3), GetPosition());
@@ -248,8 +248,8 @@ TEST(WidgetTest, tree_operations_addition_as_child) {
     EXPECT_TRUE(widget1->HasChild(widget2->GetName()));
 	EXPECT_TRUE(widget1->HasChild(widget2));
     EXPECT_TRUE(widget1->HasChildren());
-    EXPECT_EQ(widget2.get(), widget1->FindChild(widget2->GetName()).lock().get());
-    EXPECT_EQ(widget2.get(), widget1->FindChild<CustomWidget>(widget2->GetName()).lock().get());
+    EXPECT_EQ(widget2, widget1->FindChild(widget2->GetName()).lock());
+    EXPECT_EQ(widget2, widget1->FindChild<CustomWidget>(widget2->GetName()).lock());
 }
 
 TEST(WidgetTest, tree_operations_addition_by_parent) {
@@ -264,14 +264,13 @@ TEST(WidgetTest, tree_operations_addition_by_parent) {
 	widget2->Initialize();
 	
 	EXPECT_NO_THROW(widget2->SetParent(widget1));
-	EXPECT_ANY_THROW(widget2->SetParent(widget1));
 
-	EXPECT_EQ(widget1.get(), widget2->GetParent().lock().get());
+    EXPECT_EQ(widget1, widget2->GetParent().lock());
 	EXPECT_TRUE(widget1->HasChild(widget2->GetName()));
 	EXPECT_TRUE(widget1->HasChild(widget2));
 	EXPECT_TRUE(widget1->HasChildren());
-	EXPECT_EQ(widget2.get(), widget1->FindChild(widget2->GetName()).lock().get());
-	EXPECT_EQ(widget2.get(), widget1->FindChild<CustomWidget>(widget2->GetName()).lock().get());
+    EXPECT_EQ(widget2, widget1->FindChild(widget2->GetName()).lock());
+    EXPECT_EQ(widget2, widget1->FindChild<CustomWidget>(widget2->GetName()).lock());
 }
 
 TEST(WidgetTest, tree_operations_deletion_as_child) {
@@ -286,12 +285,10 @@ TEST(WidgetTest, tree_operations_deletion_as_child) {
 	widget2->Initialize();
 
 	EXPECT_NO_THROW(widget1->AddChild(widget2));
-	
-	EXPECT_ANY_THROW(widget1->RemoveChild(widget2->GetName()));
-
+    EXPECT_NO_THROW(widget1->RemoveChild(widget2->GetName()));
 	EXPECT_FALSE(widget1->HasChild(widget2));
-	EXPECT_EQ(nullptr, widget2->GetParent().lock().get());
-	EXPECT_EQ(nullptr, widget1->FindChild(widget2->GetName()).lock().get());
+    EXPECT_EQ(TWidgetRef(), widget2->GetParent().lock());
+    EXPECT_EQ(TWidgetRef(), widget1->FindChild(widget2->GetName()).lock());
 }
 
 TEST(WidgetTest, tree_operations_deletion_by_parent) {
@@ -306,12 +303,10 @@ TEST(WidgetTest, tree_operations_deletion_by_parent) {
 	widget2->Initialize();
 
 	EXPECT_NO_THROW(widget2->SetParent(TWidgetRef()));
-	
-	EXPECT_ANY_THROW(widget1->RemoveChild(widget2->GetName()));
 
 	EXPECT_FALSE(widget1->HasChild(widget2));
-	EXPECT_EQ(nullptr, widget2->GetParent().lock().get());
-	EXPECT_EQ(nullptr, widget1->FindChild(widget2->GetName()).lock().get());
+    EXPECT_EQ(TWidgetRef(), widget2->GetParent().lock());
+    EXPECT_EQ(TWidgetRef(), widget1->FindChild(widget2->GetName()).lock());
 }
 
 TEST(WidgetTest, tree_operations_group) {
