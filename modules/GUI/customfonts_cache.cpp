@@ -49,14 +49,6 @@ const Graphics::TFont* TCustomFontsCache::Get(const TCustomFont& font) {
     }
 }
 
-const string& TCustomFontsCache::GetSearchPath() const {
-    return searchPath;
-}
-
-void TCustomFontsCache::SetSearchPath(const string& path) {
-    searchPath = path;
-}
-
 TCustomFontsCache::Key TCustomFontsCache::makeKey(const TCustomFont& font) {
     return font.GetName();
 }

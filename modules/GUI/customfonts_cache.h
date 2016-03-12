@@ -24,9 +24,6 @@ public:
 
     const Graphics::TFont* Get(const TCustomFont& font);
 
-    const string& GetSearchPath() const;
-    void SetSearchPath(const string& path);
-
 private:
     static std::unique_ptr<TCustomFontsCache> _instance;
 
