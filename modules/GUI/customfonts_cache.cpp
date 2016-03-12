@@ -3,6 +3,9 @@
 
 
 
+namespace GUI {
+
+
 std::unique_ptr<TCustomFontsCache> TCustomFontsCache::_instance(nullptr);
 
 TCustomFontsCache::TCustomFontsCache() {
@@ -27,14 +30,12 @@ const Graphics::TFont* TCustomFontsCache::load(const TCustomFont& font_) {
     Entry& font = loadedFonts[key];
     font.reset(new Graphics::TFont);
     string fontPath = font_.GetName();
-    if (fontPath.empty() == false) {
-        if (font->loadFromFile(fontPath) == false) {
+    if (font->loadFromFile(fontPath) == false) {
 #if defined(_DEBUG)
         GUI_THROW("Font file '" + fontPath + "' not found");
 #else
         // TO DO: ...
 #endif
-        }
     }
     return font.get();
 }
@@ -48,6 +49,14 @@ const Graphics::TFont* TCustomFontsCache::Get(const TCustomFont& font) {
     }
 }
 
+const string& TCustomFontsCache::GetSearchPath() const {
+    return searchPath;
+}
+
+void TCustomFontsCache::SetSearchPath(const string& path) {
+    searchPath = path;
+}
+
 TCustomFontsCache::Key TCustomFontsCache::makeKey(const TCustomFont& font) {
     return font.GetName();
 }
@@ -55,3 +64,6 @@ TCustomFontsCache::Key TCustomFontsCache::makeKey(const TCustomFont& font) {
 bool TCustomFontsCache::isLoaded(const Key& key) const {
     return loadedFonts.count(key) != 0;
 }
+
+
+} // namespace GUI

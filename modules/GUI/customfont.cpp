@@ -1,18 +1,30 @@
 #include "customfont.h"
 #include "gui_core.h"
-#include "gui_settings.h"
 #include "customfonts_cache.h"
 
 
 
+namespace GUI {
+
+
 const TCustomFont::Style TCustomFont::DEFAULT_FLAGS = TCustomFont::Style::Regular;
 const TCustomFont::Size  TCustomFont::DEFAULT_SIZE  = 14;
-const char*              TCustomFont::DEFAULT_NAME  = "";
 
-TCustomFont::TCustomFont(const string& name, const Size& size, const Style& style) :
-    flags(style), name(name), size(size)
+#if defined(_DEBUG)
+const string TCustomFont::DEFAULT_NAME = "defaultfont.ttf";
+#else
+const string TCustomFont::DEFAULT_NAME = "";
+#endif
+
+
+TCustomFont::TCustomFont(const string& filePath,
+    const Size& size, const Style& style
+) :
+    flags(style), filePath(filePath), size(size)
 {
-    font = TCustomFontsCache::GetInstance().Get(*this);
+    if (filePath.empty() == false) {
+        font = TCustomFontsCache::GetInstance().Get(*this);
+    }
 }
 
 bool TCustomFont::operator==(const TCustomFont& other) const {
@@ -24,7 +36,7 @@ bool TCustomFont::operator!=(const TCustomFont& other) const {
 }
 
 const string& TCustomFont::GetName() const {
-    return name;
+    return filePath;
 }
 
 const TCustomFont::Size& TCustomFont::GetSize() const {
@@ -36,13 +48,10 @@ const TCustomFont::Style& TCustomFont::GetStyle() const {
 }
 
 const Graphics::TFont& TCustomFont::getFont() const {
+#if defined(_DEBUG)
+    GUI_ASSERT(font != nullptr, "Attempt to use an uninitialized font")
+#endif // _DEBUG
     return *font;
-}
-
-bool TCustomFont::isDefault() const {
-    return (name.compare(DEFAULT_NAME) == 0) &&
-        (flags == DEFAULT_FLAGS) &&
-        (size == DEFAULT_SIZE);
 }
 
 float TCustomFont::GetTextWidth(const TextString& text, const TCustomFont& font) {
@@ -73,3 +82,6 @@ Graphics::TText TCustomFont::CreateText(TextString&& text) const {
     result.setStyle(static_cast<uint>(flags));
     return result;
 }
+
+
+} // namespace GUI

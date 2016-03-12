@@ -5,6 +5,9 @@
 
 
 
+namespace GUI {
+
+
 class TCustomFont
 {
 public:
@@ -20,10 +23,10 @@ public:
 private:
     static const Style DEFAULT_FLAGS;
     static const Size  DEFAULT_SIZE;
-    static const char* DEFAULT_NAME;
+    static const string DEFAULT_NAME;
 
 public:
-    TCustomFont(const string& name = DEFAULT_NAME,
+    TCustomFont(const string& filePath = DEFAULT_NAME,
         const Size& size = DEFAULT_SIZE,
         const Style& style = DEFAULT_FLAGS
     );
@@ -43,11 +46,9 @@ public:
     float GetTextWidth(const TextString& text) const;
     float GetTextHeight(const TextString& text) const;
 
-    bool isDefault() const;
-
 private:
     Style flags;
-    string name;
+    string filePath;
     Size size;
 
     typedef const Graphics::TFont* Font;
@@ -57,7 +58,9 @@ private:
 };
 
 
-typedef TCustomFont TFont;
 typedef Graphics::TText TText;
+
+
+} // namespace GUI
 
 #endif // CUSTOMFONT_H
