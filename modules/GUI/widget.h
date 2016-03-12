@@ -43,11 +43,7 @@ public:
     using Slot = TWidgetEventSystem::Slot;
 
 
-    TWidget() = default;
-    TWidget(const TWidgetSource& source);
-    TWidget(const TWidget& other);
     virtual TWidget& operator = (const TWidget& other);
-    TWidget(TWidget&& prot);
     virtual TWidget& operator = (TWidget&& prot);
     virtual ~TWidget();
 
@@ -217,6 +213,11 @@ protected:
     bool clicked;
     bool needsRedraw;
 
+
+    TWidget() = default;
+    TWidget(const TWidgetSource& source);
+    TWidget(const TWidget& other);
+    TWidget(TWidget&& prot);
 
     virtual void _initializeEvents();
 

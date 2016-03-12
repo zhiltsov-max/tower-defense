@@ -364,7 +364,7 @@ void TWidget::AddChild(const TWidgetRef& obj) {
     children[obj->name] = obj;
 
     obj->_OnParentChanged();
-    GetSignal(DefaultSignalID::ObjectParentChanged).Send();
+    obj->GetSignal(DefaultSignalID::ObjectParentChanged).Send();
 }
 
 TWidget::Child TWidget::RemoveChild(const Name& name) {
