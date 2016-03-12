@@ -184,11 +184,34 @@ public:
     virtual void RegisterSlot(const TWidgetSlot& slot) final;
     virtual void RegisterSlot(TWidgetSlot&& slot) final;
 
+
+    /*
+        Connect one widget's signal with other's slot.
+        This form is requires explicitly specified signal and slot owners.
+        Usage example can be found in examples and test.
+    */
     static void Connect(const TWidgetRef& signalOwner,
         Signal& signal, const TWidgetRef& slotOwner, const Slot& slot);
 
+    /*
+        Disconnect previously connected widget's signal and slot pair.
+    */
     static void Disconnect(const TWidgetRef& signalOwner,
         Signal& signal, const TWidgetRef& slotOwner, const Slot& slot);
+
+    /*
+        Connect one widget's signal with arbitary "slot" function.
+        This form does not require existance of owner.
+        Usage example can be found in examples and test.
+    */
+    static void Connect(const TWidgetRef& signalOwner,
+        Signal& signal, const Slot& slot);
+
+    /*
+        Disconnect previously connected signal and slot pair.
+    */
+    static void Disconnect(const TWidgetRef& signalOwner,
+        Signal& signal, const Slot& slot);
 
 private:
     using parent_type = std::enable_shared_from_this<TWidget>;

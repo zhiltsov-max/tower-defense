@@ -662,7 +662,7 @@ std::list<TWidget::Slot> TWidget::_enumSlots() const {
 void TWidget::Connect(const TWidgetRef& signalOwner,
     Signal& signal, const TWidgetRef& slotOwner, const Slot& slot)
 {
-    GUI_ASSERT(signalOwner && slotOwner, "Signal or slot is null.")
+    GUI_ASSERT(signalOwner && slotOwner, "Signal or slot owner is not specified.")
 
     GUI_ASSERT(signalOwner->HasSignal(signal) == true,
         "Object '" + signalOwner->GetName() + "' does not send this signal.")
@@ -676,13 +676,35 @@ void TWidget::Connect(const TWidgetRef& signalOwner,
 void TWidget::Disconnect(const TWidgetRef& signalOwner,
     Signal& signal, const TWidgetRef& slotOwner, const Slot& slot)
 {
-    GUI_ASSERT(signalOwner && slotOwner, "Signal or slot is null.")
+    GUI_ASSERT(signalOwner && slotOwner, "Signal or slot owner is not specified.")
 
     GUI_ASSERT(signalOwner->HasSignal(signal) == true,
         "Object '" + signalOwner->GetName() + "' does not send this signal.")
 
     GUI_ASSERT(slotOwner->HasSlot(slot) == true,
         "Object '" + slotOwner->GetName() + "' does not have this slot.")
+
+    signal.RemoveListener(slot);
+}
+
+void TWidget::Connect(const TWidgetRef& signalOwner,
+    Signal& signal, const Slot& slot)
+{
+    GUI_ASSERT(signalOwner, "Signal owner is not specified.")
+
+    GUI_ASSERT(signalOwner->HasSignal(signal) == true,
+        "Object '" + signalOwner->GetName() + "' does not send this signal.")
+
+    signal.AddListener(slot);
+}
+
+void TWidget::Disconnect(const TWidgetRef& signalOwner,
+    Signal& signal, const Slot& slot)
+{
+    GUI_ASSERT(signalOwner, "Signal onwer is not specified.")
+
+    GUI_ASSERT(signalOwner->HasSignal(signal) == true,
+        "Object '" + signalOwner->GetName() + "' does not send this signal.")
 
     signal.RemoveListener(slot);
 }
