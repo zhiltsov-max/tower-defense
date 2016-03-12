@@ -16,3 +16,11 @@ wstring String::toWide(const string& str) {
     return String::toWide(str.c_str());
 }
 
+
+wstring String::toWide(const wchar_t* str) {
+    return wstring{str};
+}
+
+wstring String::toWide(const wstring& str) {
+    return str;
+}

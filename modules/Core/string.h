@@ -133,6 +133,8 @@ TextString toTextString(const Number& number);
 // To wide
 wstring toWide(const char* str);
 wstring toWide(const string& str);
+wstring toWide(const wchar_t* str);
+wstring toWide(const wstring& str);
 
 } // namespace String
 
