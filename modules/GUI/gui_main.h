@@ -3,13 +3,15 @@
 
 #include "gui_core.h"
 #include "customfont.h"
-
-BEGIN_GUI
-
 #include "gui_settings.h"
 
 
-using TFont = ::TFont;
+
+BEGIN_GUI
+
+
+using TFont = TCustomFont;
+
 
 END_GUI
 
