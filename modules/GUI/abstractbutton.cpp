@@ -1,21 +1,21 @@
 #include "abstractbutton.h"
 
+
+
 BEGIN_GUI
+
 
 TAbstractButton::TAbstractButton(const TAbstractButtonSource& source) :
     parent_type(source),
     color(source.color),
-    image(source.image)
+    image(source.image),
+    textArea(source.textArea, this)
 {
     if (source.enabled == true) {
         state = State::Normal;
     } else {
         state = State::Disabled;
     }
-
-    text.reset(new TTextArea(source.text, source.textPosition, this));
-    text->SetFont(source.font);
-    text->SetColor(source.textColor);
 }
 
 TAbstractButton::TAbstractButton(TAbstractButton&& other) :
@@ -24,11 +24,9 @@ TAbstractButton::TAbstractButton(TAbstractButton&& other) :
     color(other.color),
     colorModifier(std::move(other.colorModifier)),
     image(std::move(other.image)),
-    text(std::move(other.text))
+    textArea(std::move(other.textArea))
 {
-    if (text != nullptr) {
-        text->SetParent(this);
-    }
+    textArea.SetParent(this);
 }
 
 
@@ -92,33 +90,33 @@ void TAbstractButton::SetImage(Image&& value) {
 
 
 const TextString& TAbstractButton::GetText() const {
-    return text->GetText();
+    return textArea.GetText();
 }
 
 void TAbstractButton::SetText(const TextString& value) {
-    text->SetText(value);
+    textArea.SetText(value);
     _OnTextChanged();
     GetSignal(DefaultSignalID::ObjectTextChanged).Send();
 }
 
 const TFont& TAbstractButton::GetFont() const {
-    return text->GetFont();
+    return textArea.GetFont();
 }
 
 void TAbstractButton::SetFont(const TFont& value) {
-    if (value != text->GetFont()) {
-        text->SetFont(value);
+    if (value != textArea.GetFont()) {
+        textArea.SetFont(value);
         _OnImageChanged();
     }
 }
 
 const TColor& TAbstractButton::GetFontColor() const {
-    return text->GetColor();
+    return textArea.GetColor();
 }
 
 void TAbstractButton::SetFontColor(const TColor& value) {
-    if (text->GetColor() != value) {
-        text->SetColor(value);
+    if (textArea.GetColor() != value) {
+        textArea.SetColor(value);
         _OnImageChanged();
     }
 }
@@ -135,10 +133,6 @@ std::list<TAbstractButton::Signal> TAbstractButton::_enumSignals() const {
 
 std::list<TAbstractButton::Slot> TAbstractButton::_enumSlots() const {
     std::list<Slot> slots = std::move(parent_type::_enumSlots());
-
-    //slots.push_back(Slot(new TWidgetSignal(this, DefaultSignalID::MouseClick, slot_OnClick)));
-    //slots.push_back(Slot(new TWidgetSignal(this, DefaultSignalID::MouseEntered, slot_OnHover)));
-
     return slots;
 }
 
@@ -157,5 +151,6 @@ void TAbstractButton::_updateMouse() {
 TColor TAbstractButton::_currentColor() const {
     return colorModifier.modify(color);
 }
+
 
 END_GUI

@@ -1,13 +1,17 @@
-#ifndef SIMPLETEXTBOX_H
-#define SIMPLETEXTBOX_H
+#ifndef SIMPLE_TEXT_BOX_H
+#define SIMPLE_TEXT_BOX_H
 
-#include "gui_main.h"
 #include "abstracttextbox.h"
+#include "textarea.h"
+
+
 
 BEGIN_GUI
 
-struct TSimpleTextBoxSource : TAbstractTextBoxSource
-{};
+
+struct TSimpleTextBoxSource : TAbstractTextBoxSource {
+    TTextAreaSource textArea;
+};
 
 class TSimpleTextBox : public TAbstractTextBox
 {
@@ -16,8 +20,6 @@ public:
     TSimpleTextBox(const TSimpleTextBox& other) = delete;
     TSimpleTextBox& operator=(const TSimpleTextBox& other) = delete;
     ~TSimpleTextBox() = default;
-
-    virtual void SetEditable(bool value) override;
 private:
     typedef TAbstractTextBox parent_type;
 };
@@ -25,5 +27,4 @@ private:
 
 END_GUI
 
-
-#endif // SIMPLETEXTBOX_H
+#endif // SIMPLE_TEXT_BOX_H

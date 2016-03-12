@@ -1,35 +1,44 @@
-#ifndef RICHTEXTBOX_H
-#define RICHTEXTBOX_H
+#ifndef RICH_TEXT_BOX_H
+#define RICH_TEXT_BOX_H
 
 #include "gui_main.h"
 #include "abstracttextbox.h"
 #include "richtextarea.h"
 
+
+
 BEGIN_GUI
 
-struct TRichTextBoxSource : TAbstractTextBoxSource
-{
-    typedef TRichTextArea::Separators Separators;
-    Separators separators;
 
-    TRichTextBoxSource();
-};
+struct TRichTextBoxSource;
 
 class TRichTextBox : public TAbstractTextBox
 {
 public:
-    TRichTextBox(const TRichTextBoxSource& source);
-    TRichTextBox(const TRichTextBox& other) = delete;
-    TRichTextBox& operator=(const TRichTextBox& other) = delete;
-    ~TRichTextBox() = default;
-
     static const std::initializer_list<TextString> DEFAULT_SEPARATORS();
 
+
+    TRichTextBox(const TRichTextBoxSource& source);
+    ~TRichTextBox() = default;
+
     virtual void SetMaxSize(const TSize& value) override;
+
 private:
     typedef TAbstractTextBox parent_type;
+
+    TRichTextArea& _textArea();
 };
+
+
+struct TRichTextBoxSource : TAbstractTextBoxSource {
+    typedef TRichTextArea::Separators Separators;
+    Separators separators;
+    TRichTextAreaSource textArea;
+
+    TRichTextBoxSource();
+};
+
 
 END_GUI
 
-#endif // RICHTEXTBOX_H
+#endif // RICH_TEXT_BOX_H

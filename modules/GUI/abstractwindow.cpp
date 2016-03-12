@@ -1,13 +1,15 @@
 #include "abstractwindow.h"
 
+
+
 BEGIN_GUI
+
 
 TAbstractWindow::TAbstractWindow(const TAbstractWindowSource& source) :
     parent_type(source),
     allowMoving(source.allowMoving),
     headerHeight(source.headerHeight),
     headerColor(source.headerColor),
-    headerText(new TTextArea(source.headerText, TCoordinate(1, 1), this)),
     color(source.color),
     colorModifier(),
     image(source.image),
@@ -23,7 +25,9 @@ TAbstractWindow::TAbstractWindow(const TAbstractWindowSource& source) :
         state = State::Disabled;
     }
 
-    headerText->SetColor(source.headerTextColor);
+    if (HasHeader() == true) {
+        headerText.reset(new TTextArea(source.headerText, this));
+    }
 }
 
 
@@ -314,5 +318,6 @@ void TAbstractWindow::_OnEnabled() { needsRedraw = true; }
 void TAbstractWindow::_OnDisabled() { needsRedraw = true; }
 void TAbstractWindow::_OnHeaderChanged() { needsRedraw = true; }
 void TAbstractWindow::_OnImageChanged() { needsRedraw = true; }
+
 
 END_GUI

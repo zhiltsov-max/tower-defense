@@ -1,10 +1,13 @@
-#ifndef SIMPLETEXT_H
-#define SIMPLETEXT_H
+#ifndef SIMPLE_TEXT_H
+#define SIMPLE_TEXT_H
 
 #include "abstracttextbox.h"
 #include "abstracttextarea.h"
 
+
+
 BEGIN_GUI
+
 
 struct TSimpleTextSource : TWidgetSource
 {
@@ -41,9 +44,11 @@ public:
     const TCoordinate& GetBorderOffset() const;
 
     const TColor& GetBackgroundColor() const;
-    void SetBackgroundColor(const TColor &value);
+    void SetBackgroundColor(const TColor& value);
+
 private:
     typedef TWidget parent_type;
+
 protected:
     //Main
     typedef std::unique_ptr<TAbstractTextArea> Text;
@@ -56,18 +61,20 @@ protected:
     TColor borderColor;
     TCoordinate borderOffset;
 
+
     std::list<Signal> _enumSignals() const;
 
     void _draw(TRenderTarget& target);
     void _update();
 
-    TColor _currentBorderColor() const;
-    TColor _currentBackgroundColor() const;
+    virtual TColor _currentBorderColor() const;
+    virtual TColor _currentBackgroundColor() const;
 
     virtual void _OnTextChanged();
     virtual void _OnImageChanged();
 };
 
+
 END_GUI
 
-#endif // SIMPLETEXT_H
+#endif // SIMPLE_TEXT_H

@@ -21,7 +21,7 @@ public:
     TOkDialog& operator=(const TOkDialog& other) = delete;
     ~TOkDialog() = default;
 
-    void Initialize(const TOkDialogSource& source);
+    virtual void Initialize(const TOkDialogSource& source);
 
     const TPushButton& GetOkButton() const;
 

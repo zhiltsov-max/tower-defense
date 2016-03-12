@@ -1,10 +1,13 @@
-#ifndef ABSTRACTWINDOW_H
-#define ABSTRACTWINDOW_H
+#ifndef ABSTRACT_WINDOW_H
+#define ABSTRACT_WINDOW_H
 
 #include "widget.h"
 #include "textarea.h"
 
+
+
 BEGIN_GUI
+
 
 struct TAbstractWindowSource : TWidgetSource
 {
@@ -13,8 +16,7 @@ struct TAbstractWindowSource : TWidgetSource
 
     float headerHeight;
     TColor headerColor;
-    TextString headerText;
-    TColor headerTextColor;
+    TTextAreaSource headerText;
 
     TColor color;
 
@@ -32,9 +34,7 @@ class TAbstractWindow : public TWidget /*Abstract*/
 public:
     typedef TImageContainer Image;
 
-    TAbstractWindow(const TAbstractWindowSource& source);
-    TAbstractWindow(const TAbstractWindow& other) = delete;
-    TAbstractWindow& operator=(const TAbstractWindow& other) = delete;
+
     ~TAbstractWindow() = default;
 
     virtual bool IsEnabled() const;
@@ -79,8 +79,14 @@ public:
     virtual void SetSize(const TSize& value);
 
     virtual TPadding GetInnerBorder() const;
+
 private:
     typedef TWidget parent_type;
+
+
+    TColor _currentColor() const;
+    TColor _currentHeaderColor() const;
+
 protected:
     enum class State : uchar {
         _min = 0,
@@ -113,10 +119,10 @@ protected:
     TCoordinate clickPosition;
     bool clicked;
 
-    State _getState() const;
 
-    TColor _currentColor() const;
-    TColor _currentHeaderColor() const;
+    TAbstractWindow(const TAbstractWindowSource& source);
+    TAbstractWindow(const TAbstractWindow& other) = delete;
+    TAbstractWindow& operator=(const TAbstractWindow& other) = delete;
 
     virtual void _update() override;
     virtual void _updateChildren() override;
@@ -132,8 +138,12 @@ protected:
     virtual void _OnDisabled();
     virtual void _OnHeaderChanged();
     virtual void _OnImageChanged();
+
+private:
+    State _getState() const;
 };
+
 
 END_GUI
 
-#endif // ABSTRACTWINDOW_H
+#endif // ABSTRACT_WINDOW_H

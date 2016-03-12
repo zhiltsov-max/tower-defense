@@ -1,7 +1,10 @@
 #include "simpletext.h"
 #include "textarea.h"
 
+
+
 BEGIN_GUI
+
 
 TSimpleText::TSimpleText(const TSimpleTextSource& source) :
     parent_type(source),
@@ -10,9 +13,11 @@ TSimpleText::TSimpleText(const TSimpleTextSource& source) :
     borderOffset(source.borderOffset),
     backgroundColor(source.backgroundColor)
 {
-    text.reset(new TTextArea(source.text, TCoordinate(0.f, 0.f), this));
-    text->SetFont(source.font);
-    text->SetColor(source.textColor);
+    TTextAreaSource textAreaSource;
+    textAreaSource.color = source.textColor;
+    textAreaSource.font = source.font;
+    textAreaSource.text = source.text;
+    text.reset(new TTextArea(textAreaSource, this));
 }
 
 void TSimpleText::_draw(TRenderTarget& target) {
@@ -136,5 +141,6 @@ void TSimpleText::SetBackgroundColor(const TColor& value) {
 
 void TSimpleText::_OnTextChanged() { needsRedraw = true; }
 void TSimpleText::_OnImageChanged() { needsRedraw = true; }
+
 
 END_GUI

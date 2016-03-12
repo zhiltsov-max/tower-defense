@@ -1,21 +1,17 @@
-#ifndef ABSTRACTBUTTON_H
-#define ABSTRACTBUTTON_H
+#ifndef ABSTRACT_BUTTON_H
+#define ABSTRACT_BUTTON_H
 
 #include "textarea.h"
 
+
+
 BEGIN_GUI
 
-struct TAbstractButtonSource : TWidgetSource
-{
+
+struct TAbstractButtonSource : TWidgetSource {
     bool enabled;
-
-    TextString text;
-    TCoordinate textPosition;
-    TColor textColor;
-    TFont font;
-
+    TTextAreaSource textArea;
     TColor color;
-
     TImageSource image;
 };
 
@@ -24,13 +20,12 @@ class TAbstractButton : public TWidget /*Abstract*/
 public:
     typedef TImageContainer Image;
 
-    TAbstractButton(const TAbstractButtonSource& source);
-    TAbstractButton(TAbstractButton&& other);
+
     ~TAbstractButton() = default;
 
     virtual bool IsEnabled() const;
-    void Enable();
-    void Disable();
+    virtual void Enable();
+    virtual void Disable();
 
     virtual const TColor& GetColor() const;
     virtual void SetColor(const TColor& value);
@@ -47,8 +42,10 @@ public:
 
     virtual const TColor& GetFontColor() const;
     virtual void SetFontColor(const TColor& value);
+
 private:
     typedef TWidget parent_type;
+
 protected:
     enum class State : uchar {
         _min = 0,
@@ -68,9 +65,11 @@ protected:
 
     Image image;
 
-    typedef std::unique_ptr<TAbstractTextArea> Text;
-    Text text;
+    TTextArea textArea;
 
+
+    TAbstractButton(const TAbstractButtonSource& source);
+    TAbstractButton(TAbstractButton&& other);
 
     virtual State _getState() const;
     virtual void SetState(State value);
@@ -84,10 +83,10 @@ protected:
     virtual void _OnImageChanged();
 
     virtual void _updateMouse() override;
-
-    TColor _currentColor() const;
+    virtual TColor _currentColor() const;
 };
+
 
 END_GUI
 
-#endif // ABSTRACTBUTTON_H
+#endif // ABSTRACT_BUTTON_H

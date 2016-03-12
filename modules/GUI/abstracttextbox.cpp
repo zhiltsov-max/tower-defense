@@ -1,6 +1,9 @@
 #include "abstracttextbox.h"
 
+
+
 BEGIN_GUI
+
 
 TAbstractTextBox::TAbstractTextBox(const TAbstractTextBoxSource& source) :
     parent_type(source),    
@@ -10,11 +13,9 @@ TAbstractTextBox::TAbstractTextBox(const TAbstractTextBoxSource& source) :
     minSize(source.minSize),
     allowEdit(source.allowEdit),
     borderSize(source.borderSize),
-    borderColor(source.borderColor)
-{
-    text.reset(new TAbstractTextArea(source.text, source.textPosition, this));
-    text->SetColor(source.color);
-}
+    borderColor(source.borderColor),
+    text()
+{}
 
 std::list<TAbstractTextBox::Signal> TAbstractTextBox::_enumSignals() const {
     auto signals = std::move(parent_type::_enumSignals());
@@ -22,14 +23,6 @@ std::list<TAbstractTextBox::Signal> TAbstractTextBox::_enumSignals() const {
     signals.emplace_back(DefaultSignalID::ObjectTextChanged);
 
     return signals;
-}
-
-std::list<TAbstractTextBox::Slot> TAbstractTextBox::_enumSlots() const {
-    std::list<Slot> slots = std::move(parent_type::_enumSlots());
-
-    //slots.push_back(std::make_shared<TWidgetSlot>(this, DefaultSignalName::MouseClick, slot_OnClick));
-
-    return slots;
 }
 
 void TAbstractTextBox::_draw(TRenderTarget& target) {
@@ -191,5 +184,6 @@ void TAbstractTextBox::SetFont(const TFont& value) {
         _OnTextChanged();
     }
 }
+
 
 END_GUI

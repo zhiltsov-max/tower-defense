@@ -2,15 +2,18 @@
 #include <limits>
 
 
+
 BEGIN_GUI
 
-TAbstractTextArea::TAbstractTextArea(const TextString& text_, const TCoordinate& position_, const Parent& parent_) :
-    parent(parent_),    
-    position(position_),
-    margin(),
-    text(text_),
-    color(),
-    font()
+
+TAbstractTextArea::TAbstractTextArea(
+    const TAbstractTextAreaSource& source, const Parent& parent
+) :
+    parent(parent),
+    position(source.position),
+    text(source.text),
+    color(source.color),
+    font(source.font)
 {}
 
 bool TAbstractTextArea::_parentExists() const {
@@ -24,9 +27,9 @@ void TAbstractTextArea::_checkBorders() {
     float bottom = std::numeric_limits<float>::max();
     if (_parentExists() == true) {
         const TPadding parentBorder = parent->GetInnerBorder();
-        left = margin.left;
+        left = 0;
         right = std::max(parent->GetOwnSize().x - parentBorder.right - GetWidth(), 0.f);
-        top = margin.top;
+        top = 0;
         bottom = std::max(parent->GetOwnSize().y - parentBorder.bottom - GetHeight(), 0.f);
     }
 
@@ -48,7 +51,8 @@ const TCoordinate& TAbstractTextArea::GetPosition() const {
 TCoordinate TAbstractTextArea::GetScreenPosition() const {
     if (_parentExists() == true) {
         TPadding innerBorder = std::move(parent->GetInnerBorder());
-        return position + parent->GetScreenPosition() + TCoordinate(innerBorder.left, innerBorder.top);
+        return position + parent->GetScreenPosition() +
+            TCoordinate(innerBorder.left, innerBorder.top);
     } else {
         return position;
     }
@@ -71,26 +75,17 @@ void TAbstractTextArea::SetPosition(float x, float y) {
 
 float TAbstractTextArea::GetWidth() const {
     float width = font.GetTextWidth(text);
-    return width + margin.left + margin.right;
+    return width;
 }
 
 float TAbstractTextArea::GetHeight() const {
     float height = font.GetTextHeight(text);
-    return height + margin.top + margin.bottom;
+    return height;
 }
 
 TSize TAbstractTextArea::GetSize() const {
     return TSize(GetWidth(), GetHeight());
 }
-
-const TPadding& TAbstractTextArea::GetMargin() const {
-    return margin;
-}
-
-void TAbstractTextArea::SetMargin(const TPadding& value) {
-    margin = value;
-}
-
 
 void TAbstractTextArea::SetText(const TextString& value) {
     text = value;
@@ -109,8 +104,7 @@ const TColor& TAbstractTextArea::GetColor() const {
     return color;
 }
 
-
-void TAbstractTextArea::SetFont(const TFont &value) {
+void TAbstractTextArea::SetFont(const TFont& value) {
     font = value;
 }
 
@@ -118,13 +112,16 @@ const TFont& TAbstractTextArea::GetFont() const {
     return font;
 }
 
-void TAbstractTextArea::Draw(TRenderTarget& target, const TCoordinate& position_) {
-    const auto pos = position_ + position;
+void TAbstractTextArea::Draw(TRenderTarget& target,
+    const TCoordinate& offset)
+{
+    const auto drawingPosition = offset + position;
     auto textShape = std::move(font.CreateText(text));
     textShape.setColor(color);
-    textShape.setPosition( sf::Vector2f(pos.x, pos.y) );
+    textShape.setPosition(drawingPosition);
 
     target.draw(textShape);
 }
+
 
 END_GUI

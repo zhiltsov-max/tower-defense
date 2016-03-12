@@ -1,69 +1,72 @@
-#ifndef RICHTEXTAREA_H
-#define RICHTEXTAREA_H
+#ifndef RICH_TEXT_AREA_H
+#define RICH_TEXT_AREA_H
 
 #include "abstracttextarea.h"
 
+
+
 BEGIN_GUI
+
+struct TRichTextAreaSource;
 
 class TRichTextArea : public TAbstractTextArea
 {
 public:
     typedef std::vector<TextString> Separators;
 
-    TRichTextArea(const TextString& text, const TCoordinate& position, TWidget* parent);
 
-    template< class InpIt >
-    void SetSeparators(InpIt begin_, InpIt end_);
+    TRichTextArea(const TRichTextAreaSource& source, const Parent& parent);
 
-    const Separators& GetSeparators() const;
+    virtual void SetSeparators(const Separators& value);
+    virtual const Separators& GetSeparators() const;
 
-    void SetSpacingBetweenLines(float value);
-    float GetSpacingBetweenLines() const;
+    virtual void SetLineSpacing(float value);
+    virtual float GetLineSpacing() const;
 
-
-    void SetMaxSize(const TSize& value);
-    const TSize& GetMaxSize() const;
     /*
-        Returns full width with margin.
+        Set maximum size.
+        Values <= 0 is equivalent to unlimited size.
     */
-    float GetWidth() const;
-    /*
-        Returns full height with margin.
-    */
-    float GetHeight() const;
+    virtual void SetMaxSize(const TSize& value);
+    virtual const TSize& GetMaxSize() const;
 
-    void SetText(const TextString& value);
+    virtual void SetText(const TextString& value) override;
 
-    void SetFont(const TFont& value);
+    virtual void SetFont(const TFont& value) override;
 
-    void Draw(TRenderTarget& target, const TCoordinate& position = TCoordinate());
+    virtual void Draw(TRenderTarget& target,
+        const TCoordinate& offset = TCoordinate()) override;
+
 private:
     typedef TAbstractTextArea parent_type;
+
 protected:
     static constexpr float DEFAULT_LINE_HEIGHT = 20.f;
-    static constexpr float DEFAULT_SPACING_BETWEEN_LINES = 5.f;
 
-    float spacingBetweenLines;
 
     typedef std::vector<TextString> Lines;
     Lines lines;
+    float lineSpacing;
 
     Separators separators;
     TSize maxSize;
 
-    Lines _splitStringBySeparators(const TextString& text, const Separators& separators) const;
-    Lines _splitStringByLength(const TextString& text, size_t length) const;
-    void _splitTextByLines();
 
-    void _update();
+    virtual void _splitTextByLines();
+    virtual void _update();
 };
 
-template< class InpIt >
-void TRichTextArea::SetSeparators(InpIt begin_, InpIt end_) {
-    separators = Separators(begin_, end_);
-    _update();
-}
+
+struct TRichTextAreaSource : TAbstractTextAreaSource {
+    static constexpr float DEFAULT_SPACING_BETWEEN_LINES = 5.f;
+
+
+    TRichTextArea::Separators separators;
+    float lineSpacing = DEFAULT_SPACING_BETWEEN_LINES;
+    TSize maxSize;
+};
+
 
 END_GUI
 
-#endif // RICHTEXTAREA_H
+#endif // RICH_TEXT_AREA_H

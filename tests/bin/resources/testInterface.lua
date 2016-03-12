@@ -32,6 +32,7 @@ function GetWindowHeight()
 end
 
 
+defaultFont = "resources/font.ttf"
 
 windowSource = WindowSource({
 	name = "TestWindow1",
@@ -42,6 +43,7 @@ windowSource = WindowSource({
 	headerHeight = 20,
 	headerText = Wstr("Test window"),
 	headerTextColor = Color(0, 0, 255, 255),
+	headerTextFont = Font(defaultFont, 18, FontStyle.regular),
 	innerElementsPadding = Padding(10, 15, 5, 30),
 	position = Coordinate(GetWindowWidth(), GetWindowHeight()) * 0.3,
 	show = true,
@@ -57,7 +59,7 @@ button1source = PushButtonSource({
     name = "Button1",
     color = Color(255, 255, 0, 255),
     enabled = true,
-    font = Font("arial.ttf", 15, FontStyle.strikethrough),
+    font = Font(defaultFont, 15, FontStyle.strikethrough),
     position = Coordinate(10, 10),
     show = true,
     size = Size(100, 50),
@@ -73,7 +75,7 @@ button2Source = PushButtonSource({
     name = "Button2",
     color = Color(0, 255, 255, 255),
     enabled = true,
-    font = Font("arial.ttf", 15, FontStyle.underlined),
+    font = Font(defaultFont, 15, FontStyle.underlined),
     position = Coordinate(40, 30),
     show = true,
     size = Size(100, 50),

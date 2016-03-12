@@ -16,7 +16,7 @@ void TOkDialog::Initialize(const TOkDialogSource& source) {
     TPushButtonSource buttonsSource = source.buttonsSource;
     buttonsSource.name = "Ok";
     buttonsSource.enabled = true;
-    buttonsSource.text = TEXT("Ok");
+    buttonsSource.textArea.text = TEXT("Ok");
     TWidgetRef okButton(new TPushButton(buttonsSource));
 
     Connect(okButton, okButton->GetSignal(DefaultSignalID::MouseClick),

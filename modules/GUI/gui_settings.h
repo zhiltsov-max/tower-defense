@@ -10,4 +10,5 @@ public:
     TGUISettings() = delete;
 };
 
+
 #endif // GUI_SETTINGS_H

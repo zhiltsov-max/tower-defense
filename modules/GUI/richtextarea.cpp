@@ -1,27 +1,58 @@
 #include "richtextarea.h"
 #include <algorithm>
 
+
+
 BEGIN_GUI
 
-TRichTextArea::TRichTextArea(const TextString& text, const TCoordinate& position, TWidget* parent) :
-    parent_type(text, position, parent),
+template< class CharT >
+static std::pair<size_t, size_t>
+_findEarliestOccurrence(
+    const std::vector< basic_string<CharT> >& separators,
+    const basic_string<CharT>& text,
+    const size_t& start
+);
+
+template< class CharT >
+static std::vector< basic_string<CharT> >
+_splitStringBySeparators(
+    const basic_string<CharT>& text,
+    const std::vector< basic_string<CharT> >& separators
+);
+
+template< class CharT >
+static size_t _determineLineCharacterCount(
+    const basic_string<CharT>& text,
+    float maxSize
+);
+
+
+
+TRichTextArea::TRichTextArea(const TRichTextAreaSource& source,
+    const Parent& parent
+) :
+    parent_type(source, parent),
     lines(),
-    separators(),
-    maxSize(),
-    spacingBetweenLines(DEFAULT_SPACING_BETWEEN_LINES)
+    separators(source.separators),
+    maxSize(source.maxSize),
+    lineSpacing(source.lineSpacing)
 {}
 
 const TRichTextArea::Separators& TRichTextArea::GetSeparators() const {
     return separators;
 }
 
-
-void TRichTextArea::SetSpacingBetweenLines(float value) {
-    spacingBetweenLines = value;
+void TRichTextArea::SetSeparators(const Separators& value) {
+    separators = value;
+    _update();
 }
 
-float TRichTextArea::GetSpacingBetweenLines() const {
-    return spacingBetweenLines;
+void TRichTextArea::SetLineSpacing(float value) {
+    lineSpacing = value;
+}
+
+float TRichTextArea::GetLineSpacing() const {
+    return lineSpacing;
 }
 
 
@@ -34,22 +65,6 @@ void TRichTextArea::SetMaxSize(const TSize& value) {
 
 const TSize& TRichTextArea::GetMaxSize() const {
     return maxSize;
-}
-
-float TRichTextArea::GetWidth() const {
-    float width = font.GetTextWidth(text);
-    if (0 < maxSize.x) {
-        width = std::min(width, maxSize.x);
-    }
-    return width + margin.left + margin.right;
-}
-
-float TRichTextArea::GetHeight() const {
-    float height = (font.GetTextHeight(text) + spacingBetweenLines) * lines.size();
-    if (0 < maxSize.y) {
-        height = std::min(height, maxSize.y);
-    }
-    return height + margin.top + margin.bottom;
 }
 
 void TRichTextArea::SetText(const TextString& value) {
@@ -66,71 +81,101 @@ void TRichTextArea::SetFont(const TFont& value) {
     }
 }
 
-size_t findEarliestOccurrence(const std::vector<TextString>& separators, const TextString& text, size_t start) {
+template< class CharT >
+static std::pair<size_t, size_t>
+_findEarliestOccurrence(
+    const std::vector< basic_string<CharT> >& separators,
+    const basic_string<CharT>& text,
+    const size_t& start
+) {
     size_t min = text.size();
     size_t res = separators.size();
-    for (auto it = separators.cbegin(), iend = separators.cend(); it != iend; ++it) {
+    for (auto it = separators.cbegin(), iend = separators.cend();
+        it != iend; ++it)
+    {
         const auto& sep = *it;
-        TextString::size_type pos = text.find(sep.c_str(), start, sep.size());
-        if (pos != text.npos) {
-            if (pos < min) {
-                min = pos;
-                res = it - separators.cbegin();
-            }
+        const auto pos = text.find(sep.c_str(), start, sep.size());
+        if ((pos != text.npos) && (pos < min)) {
+            min = pos;
+            res = std::distance(separators.cbegin(), it);
         }
     };
-    return res;
+    return std::make_pair(res, min);
 }
 
-TRichTextArea::Lines TRichTextArea::_splitStringBySeparators(const TextString& text, const Separators& separators) const {
-    Lines res;
+template< class CharT >
+static std::vector< basic_string<CharT> >
+_splitStringBySeparators(
+    const basic_string<CharT>& text,
+    const std::vector< basic_string<CharT> >& separators
+) {
+    std::vector< basic_string<CharT> > result;
 
-    TextString::size_type firstChar = 0;
-    size_t sepIndex = separators.size();
-    for(TextString::size_type i = 0; i != text.size(); ++i) {
-        sepIndex = findEarliestOccurrence(separators, text, i);
+    TextString::size_type start = 0;
+    while(start != text.size()) {
+        const auto occurrence = _findEarliestOccurrence(
+            separators, text, start);
+        const auto& sepIndex = occurrence.first;
 
         if (sepIndex < separators.size()) {
-            size_t delta = i - firstChar;
-            if (delta != 0) {
-                res.emplace_back(text.substr(firstChar, delta));
-            }
-            firstChar = i + separators[sepIndex].size();
+            const auto& distance = occurrence.second;
+            result.emplace_back(text.substr(start, distance));
+            start += distance + separators[sepIndex].size();
+        } else {
+            result.emplace_back(text.substr(start, text.size() - start));
+            break;
         }
     }
-    if (firstChar == 0) {
-        res.emplace_back(text);
-    }
-    return res;
+    return result;
 }
 
-TRichTextArea::Lines TRichTextArea::_splitStringByLength(const TextString& text, size_t length) const {
-    Lines res;
-
-    size_t step = std::min(text.size(), length);
-
-    for (size_t pos = 0; pos != text.size(); pos += step) {
-        res.emplace_back(text.substr(pos, step));
-        step = std::min(text.size() - pos, step);
+template< class CharT >
+static size_t _determineLineCharacterCount(
+    const basic_string<CharT>& text,
+    float maxSize,
+    const TFont& font
+) {
+    if (font.GetTextWidth(text) < maxSize) {
+        return text.size();
     }
 
-    return res;
+    using size = TextString::size_type;
+
+    size lb = 0;
+    size ub = text.size();
+    while (lb < ub) {
+        const size middle = lb + (ub - lb) / 2;
+
+        if (font.GetTextWidth(text.substr(0, middle)) < maxSize) {
+            lb = middle + 1;
+        } else {
+            ub = middle - 1;
+        }
+    }
+    return ub;
 }
 
 void TRichTextArea::_splitTextByLines() {
-    lines.clear();
-
     lines = std::move(_splitStringBySeparators(text, separators));
 
-    if (0 < maxSize.x) {
-        size_t maxChars = maxSize.x / font.GetTextWidth(TEXT("W"));
+    if (maxSize.x <= 0) { // maximum size is unlimited
+        return;
+    }
 
-        for(auto it = lines.begin(); it != lines.end(); ++it) {
-            if (maxChars < (*it).size()) {
-                auto spl = std::move(_splitStringByLength(*it, maxChars));
-                lines.insert(it, spl.cbegin(), spl.cend());
-                it += spl.size();
-            }
+    for(auto it = lines.begin(); it != lines.end(); ++it) {
+        const size_t maxChars = _determineLineCharacterCount(
+            *it, maxSize.x, font);
+
+        if (maxChars == 0) {
+            it = lines.erase(it);
+        } else if (maxChars < (*it).size()) {
+            it = lines.emplace(it, String::left(*it, maxChars));
+            ++it;
+            it = lines.emplace(it, String::right(*it, maxChars));
+            ++it;
+            it = lines.erase(it);
+        } else {
+            /* none */
         }
     }
 }
@@ -139,19 +184,14 @@ void TRichTextArea::_update() {
     _splitTextByLines();
 }
 
-/*
-    Draws this text area at specified coordinate.
-*/
-void TRichTextArea::Draw(TRenderTarget& target, const TCoordinate& position) {
-    float lineHeight = DEFAULT_LINE_HEIGHT;
-    if (font.isDefault() == false) {
-        lineHeight = font.GetTextHeight(lines[0]) + spacingBetweenLines;
-    }
+void TRichTextArea::Draw(TRenderTarget& target, const TCoordinate& offset) {
+    const auto position = GetPosition() + offset;
 
-    sf::Text textSprite = std::move(font.CreateText(TEXT("")));
+    auto textSprite = font.CreateText(TEXT(""));
     textSprite.setColor(color);
     for(size_t i = 0; i != lines.size(); ++i) {
-        if ( (((0 < maxSize.x) && (maxSize.y < i * lineHeight)) == false) ||
+        const float lineHeight = font.GetTextHeight(lines[i]) + lineSpacing;
+        if ( ( ((0 < maxSize.x) && (maxSize.y < i * lineHeight)) == false) ||
              (maxSize.y == 0)
            )
         {
@@ -161,5 +201,6 @@ void TRichTextArea::Draw(TRenderTarget& target, const TCoordinate& position) {
         }
     }
 }
+
 
 END_GUI

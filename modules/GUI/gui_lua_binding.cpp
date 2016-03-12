@@ -282,7 +282,7 @@ using namespace lua;
 
 
     TFont eTFont_create(const string& name, size_t size, TFontStyle style) {
-        return TFont(name, size, static_cast<TCustomFont::Style>(style));
+        return TFont(name, size, static_cast<GUI::TCustomFont::Style>(style));
     }
     void  eTFont_destroy(TFont& self) {
         self.~TCustomFont();
@@ -293,7 +293,6 @@ using namespace lua;
             "name",         TFont::GetName,
             "size",         TFont::GetSize,
             "style",        TFont::GetStyle,
-            "IsDefault",    TFont::isDefault,
             "CreateText",   static_cast<TText (TFont::*)(const TextString&) const>(TFont::CreateText),
             "GetTextWidth", static_cast<float (TFont::*)(const TextString&) const>(TFont::GetTextWidth),
             "GetTextHeight",static_cast<float (TFont::*)(const TextString&) const>(TFont::GetTextHeight),
@@ -889,8 +888,10 @@ using namespace lua;
 
         source.headerHeight = table["headerHeight"].cast<float>();
         source.headerColor = table["headerColor"].cast<TColor>();
-        source.headerText = table["headerText"].cast<TextString>();
-        source.headerTextColor = table["headerTextColor"].cast<TColor>();
+        source.headerText.text = table["headerText"].cast<TextString>();
+        source.headerText.color = table["headerTextColor"].cast<TColor>();
+        source.headerText.font = table["headerTextFont"].cast<TFont>();
+        source.headerText.position = table["headerTextPosition"].cast<TCoordinate>();
 
         source.color = table["color"].cast<TColor>();
         sTImageSource_get(Value(table["image"]), source.image);
@@ -910,6 +911,8 @@ using namespace lua;
             "headerColor",		TColor(),
             "headerText",		TextString(),
             "headerTextColor",	TColor(),
+            "headerTextFont",   TFont(),
+            "headerTextPosition",TCoordinate(),
 
             "color",            TColor(),
 
@@ -1201,10 +1204,10 @@ using namespace lua;
         Table table = ref;
 
         source.enabled = table["enabled"].cast<bool>();
-        source.text = table["text"].cast<TextString>();
-        source.textPosition = table["textPosition"].cast<TCoordinate>();
-        source.textColor = table["textColor"].cast<TColor>();
-        source.font = table["font"].cast<TFont>();
+        source.textArea.text = table["text"].cast<TextString>();
+        source.textArea.position = table["textPosition"].cast<TCoordinate>();
+        source.textArea.color = table["textColor"].cast<TColor>();
+        source.textArea.font = table["font"].cast<TFont>();
         source.color = table["color"].cast<TColor>();
         sTImageSource_get(Value(table["image"]), source.image);
     }
@@ -1390,10 +1393,6 @@ using namespace lua;
         sTWidgetSource_get(ref, source);
 
         Table table = ref;
-        source.text = table["text"].cast<TextString>();
-        source.textPosition = table["textPosition"].cast<TCoordinate>();
-        source.textColor = table["textColor"].cast<TColor>();
-        source.font = table["font"].cast<TFont>();
         source.color = table["color"].cast<TColor>();
         source.maxSize = table["maxSize"].cast<TSize>();
         source.minSize = table["minSize"].cast<TSize>();
@@ -1434,6 +1433,12 @@ using namespace lua;
             return;
         }
         sTAbstractTextBoxSource_get(ref, source);
+
+        Table table = ref;
+        source.textArea.text = table["text"].cast<TextString>();
+        source.textArea.position = table["textPosition"].cast<TCoordinate>();
+        source.textArea.color = table["textColor"].cast<TColor>();
+        source.textArea.font = table["font"].cast<TFont>();
     }
 
 
@@ -1502,6 +1507,10 @@ using namespace lua;
 
         Table table = ref;
         sTRichTextBoxSeparators_get(Table(table["separators"]), source.separators);
+        source.textArea.text = table["text"].cast<TextString>();
+        source.textArea.position = table["textPosition"].cast<TCoordinate>();
+        source.textArea.color = table["textColor"].cast<TColor>();
+        source.textArea.font = table["font"].cast<TFont>();
     }
 
 

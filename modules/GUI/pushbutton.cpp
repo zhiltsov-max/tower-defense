@@ -1,5 +1,5 @@
 #include "pushbutton.h"
-#include "../Application/application_ui.h"
+#include "Application/application_ui.h"
 
 
 BEGIN_GUI
@@ -28,8 +28,8 @@ void TPushButton::_draw(TRenderTarget& target) {
             localTarget.draw(*image.drawingObject);
         }
 
-        if (text->GetText().empty() == false) {
-            text->Draw(localTarget);
+        if (textArea.GetText().empty() == false) {
+            textArea.Draw(localTarget);
         }
 
         renderImage.createDrawingObject();
