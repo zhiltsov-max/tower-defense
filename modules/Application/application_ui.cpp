@@ -14,6 +14,7 @@ TApplicationUI::TApplicationUI(const TApplicationInfo& info) :
     src.size = GUI::TSize(info.windowWidth, info.windowHeight);
 
     uiParent.reset(new GUI::TUIParent(src));
+    uiParent->Initialize();
 }
 
 
