@@ -1,5 +1,5 @@
 #include "customfonts_cache.h"
-#include "settings.h"
+#include "gui_settings.h"
 
 
 
@@ -25,14 +25,16 @@ const Graphics::TFont* TCustomFontsCache::load(const TCustomFont& font_) {
     }
 
     Entry& font = loadedFonts[key];
-    font.reset(new Graphics::TFont());
-    string fontPath = TGUISettings::DEFAULT_FONTS_FOLDER + std::move(String::toLower(font_.GetName()));
-    if (font->loadFromFile(fontPath) == false) {
+    font.reset(new Graphics::TFont);
+    string fontPath = font_.GetName();
+    if (fontPath.empty() == false) {
+        if (font->loadFromFile(fontPath) == false) {
 #if defined(_DEBUG)
         GUI_THROW("Font file '" + fontPath + "' not found");
 #else
         // TO DO: ...
 #endif
+        }
     }
     return font.get();
 }

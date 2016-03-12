@@ -1627,7 +1627,7 @@ using namespace lua;
         return ctx.ret();
     }
 
-    void GUI::lua_binding::bindImageBox(State &state) {
+    void GUI::lua_binding::bindImageBox(State& state) {
         state.call(mkcf<exportTImageBoxSource>);
         state.call(mkcf<exportTImageBox>);
     }

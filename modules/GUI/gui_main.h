@@ -6,7 +6,7 @@
 
 BEGIN_GUI
 
-#include "settings.h"
+#include "gui_settings.h"
 
 
 using TFont = ::TFont;

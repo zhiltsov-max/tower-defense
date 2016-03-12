@@ -11,6 +11,7 @@ set(gui_headers
     gui_core.h 
     gui_lua_binding.h 
     gui_main.h 
+    gui_settings.h
     imagebox.h 
     widget.h
     messagebox.h 
@@ -19,7 +20,6 @@ set(gui_headers
     pushbutton.h 
     richtextarea.h 
     richtextbox.h 
-    settings.h 
     widget_signal.h
     signal_defs.h 
     simpletext.h 

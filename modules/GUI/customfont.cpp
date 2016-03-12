@@ -1,13 +1,13 @@
 #include "customfont.h"
 #include "gui_core.h"
-#include "settings.h"
+#include "gui_settings.h"
 #include "customfonts_cache.h"
 
 
 
 const TCustomFont::Style TCustomFont::DEFAULT_FLAGS = TCustomFont::Style::Regular;
 const TCustomFont::Size  TCustomFont::DEFAULT_SIZE  = 14;
-const char*              TCustomFont::DEFAULT_NAME  = TGUISettings::DEFAULT_FONT;
+const char*              TCustomFont::DEFAULT_NAME  = "";
 
 TCustomFont::TCustomFont(const string& name, const Size& size, const Style& style) :
     flags(style), name(name), size(size)
@@ -40,7 +40,9 @@ const Graphics::TFont& TCustomFont::getFont() const {
 }
 
 bool TCustomFont::isDefault() const {
-    return (name.compare(DEFAULT_NAME) == 0) && (flags == DEFAULT_FLAGS) && (size == DEFAULT_SIZE);
+    return (name.compare(DEFAULT_NAME) == 0) &&
+        (flags == DEFAULT_FLAGS) &&
+        (size == DEFAULT_SIZE);
 }
 
 float TCustomFont::GetTextWidth(const TextString& text, const TCustomFont& font) {
