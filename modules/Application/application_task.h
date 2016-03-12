@@ -17,7 +17,6 @@ class TTowerDefenseApplication;
 class TTDApplicationTask /*Abstract*/
 {
 public:
-    TTDApplicationTask(TTowerDefenseApplication* app = nullptr);
     virtual ~TTDApplicationTask() = default;
 
     virtual void Update() = 0;
@@ -31,6 +30,9 @@ public:
 protected:
     using PApplication = TTowerDefenseApplication *;
     PApplication app;
+
+
+    TTDApplicationTask(TTowerDefenseApplication* app = nullptr);
 };
 
 #endif //APPLICATION_TASK_H
