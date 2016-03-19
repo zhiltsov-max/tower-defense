@@ -10,10 +10,8 @@ namespace GUI {
 
 
 /*
- * Class represents loading cache for fonts subsystem.
- * Search path for fonts can be specified explicitly.
+Class represents loading cache for fonts subsystem.
 */
-
 class TCustomFontsCache
 {
 public:
@@ -32,8 +30,6 @@ private:
     using Entry = std::unique_ptr<Graphics::TFont>;
 
     std::map<Key, Entry> loadedFonts;
-    string searchPath;
-
 
     TCustomFontsCache();
 

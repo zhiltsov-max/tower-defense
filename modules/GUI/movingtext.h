@@ -17,7 +17,11 @@ class TMovingText : public TSimpleText
 public:
     typedef uint Time;
 
-    static TWidgetRef CreateDefaultMessage(const TextString& message, const TCoordinate& position, const TColor& color = (uint)DefaultMessageColor::information);
+    static TWidgetRef CreateDefaultMessage(
+        const TextString& message,
+        const TCoordinate& position,
+        const TColor& color = (uint)DefaultMessageColor::information
+    );
 
     TMovingText(const TMovingTextSource& source);
     TMovingText(const TMovingText& other) = delete;

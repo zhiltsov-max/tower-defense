@@ -32,7 +32,11 @@ void TMovingText::_update() {
     position += speed;
 }
 
-TWidgetRef TMovingText::CreateDefaultMessage(const TextString& message, const TCoordinate& position, const TColor& color) {
+TWidgetRef TMovingText::CreateDefaultMessage(
+    const TextString& message,
+    const TCoordinate& position,
+    const TColor& color)
+{
     TMovingTextSource src;
     src.lifeTime = (time_t)1.5f * 1000.f;
     src.speed = TCoordinate(0.f, -1.f);
