@@ -39,6 +39,8 @@ private:
     struct Entry {
         Name name;
         SceneObject object;
+
+        Entry(const Name& name, const SceneObject& object);
     };
     using Objects = vector<Entry>;
     using FreeHandles = std::stack<Handle>;

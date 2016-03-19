@@ -2,22 +2,23 @@
 
 
 
-const ComponentHandle TSceneObject::ComponentHandleUndefined =
+const TSceneObject::ComponentHandle
+TSceneObject::ComponentHandleUndefined =
     TSceneObject::ComponentHandle::Undefined;
 
 const TSceneObject::ComponentHandle&
 TSceneObject::operator [](const Name& name) const {
-    return components[GetHandle(name)].object;
+    return components[GetHandle(name)].component;
 }
 
 TSceneObject::ComponentHandle&
 TSceneObject::operator [](const Name& name) {
-    return components[GetHandle(name)].object;
+    return components[GetHandle(name)].component;
 }
 
 const TSceneObject::Handle& TSceneObject::GetHandle(const Name& name) const {
     if (nameMapping.count(name) != 0) {
-        return nameMapping[name];
+        return nameMapping.at(name);
     } else {
         return HandleUndefined;
     }
@@ -25,12 +26,12 @@ const TSceneObject::Handle& TSceneObject::GetHandle(const Name& name) const {
 
 const TSceneObject::ComponentHandle&
 TSceneObject::operator [](const Handle& handle) const {
-    return components[handle].object;
+    return components[handle].component;
 }
 
 TSceneObject::ComponentHandle&
 TSceneObject::operator [](const Handle& handle) {
-    return components[handle].object;
+    return components[handle].component;
 }
 
 TSceneObject::Handle
@@ -45,10 +46,10 @@ TSceneObject::AddComponent(const Name& name,
         handle = freeHandles.top();
         freeHandles.pop();
 
-        components[handle] = component;
+        components[handle] = std::move(Entry(name, component));
     } else {
         handle = components.size();
-        components.push_back(sceneObject);
+        components.emplace_back(name, component);
     }
     return handle;
 }
@@ -64,8 +65,10 @@ void TSceneObject::RemoveComponent(const Handle& handle) {
     ASSERT(components[handle].name.empty() == false,
         "Attempt to remove an unexisting component")
 
-    components[handle].component = ComponentHandleUndefined;
-    nameMapping.erase(name);
+    auto& entry = components[handle];
+    nameMapping.erase(entry.name);
+    entry.name.clear();
+    entry.component = ComponentHandleUndefined;
 
     freeHandles.push(handle);
     checkSize();
@@ -82,36 +85,51 @@ bool TSceneObject::HasComponent(const Handle& handle) const {
 void TSceneObject::checkSize() {
     if (components.size() == freeHandles.size()) {
         components.clear();
-        freeHandles.swap(FreeHandles());
+        freeHandles = FreeHandles();
         nameMapping.clear();
     }
 }
 
 
 
-const ComponentHandle TSceneObject::ComponentHandle::Undefined {
+const TSceneObject::ComponentHandle
+TSceneObject::ComponentHandle::Undefined {
     (size_t)-1,
     ComponentSystem::_undefined
 };
 
-TSceneObject::Handle::ComponentHandle(size_t handle, const ComponentSystem& system) :
+TSceneObject::ComponentHandle::ComponentHandle(
+    size_t handle, const ComponentSystem& system
+) :
     value(handle),
     system(system)
 {}
 
-const ComponentSystem& TSceneObject::ComponentHandle::GetSystem() const {
+const ComponentSystem&
+TSceneObject::ComponentHandle::GetSystem() const {
     return system;
 }
 
-bool TSceneObject::ComponentHandle::operator==(const ComponentHandle& other) const {
+bool TSceneObject::ComponentHandle::operator == (
+    const ComponentHandle& other) const
+{
     return (system == other.system) &&
-            (value == other.value);
+        (value == other.value);
 }
 
-bool TSceneObject::ComponentHandle::operator!=(const ComponentHandle& other) const {
+bool TSceneObject::ComponentHandle::operator != (
+    const ComponentHandle& other) const
+{
     return !operator==(other);
 }
 
 TSceneObject::ComponentHandle::operator size_t() const {
     return value;
 }
+
+TSceneObject::Entry::Entry(
+    const Name& name, const ComponentHandle& handle
+) :
+    name(name),
+    component(handle)
+{}

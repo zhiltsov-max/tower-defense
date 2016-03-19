@@ -27,7 +27,8 @@ public:
     const ComponentHandle& operator [](const Handle& handle) const;
     ComponentHandle& operator [](const Handle& handle);
 
-    const Handle& AddComponent(const Name& name, const ComponentHandle& component);
+    Handle AddComponent(const Name& name,
+        const ComponentHandle& component);
 
     void RemoveComponent(const Name& name);
     void RemoveComponent(const Handle& handle);
@@ -63,17 +64,22 @@ public:
 
     bool operator==(const ComponentHandle& other) const;
     bool operator!=(const ComponentHandle& other) const;
+
 private:
     using Value = TComponentSystem::Handle;
     using System = ComponentSystem;
 
-    const Value value;
-    const System system;
+    Value value;
+    System system;
 };
 
 struct TSceneObject::Entry {
     Name name;
     ComponentHandle component;
+
+    Entry(const Name& name = Name(),
+        const ComponentHandle& handle = ComponentHandle::Undefined
+    );
 };
 
 #endif // SCENE_OBJECT_H

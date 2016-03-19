@@ -11,14 +11,14 @@ class TSceneResource
 {
 public:
     enum class TypeID {
-		_min = 0,
+        _min = 0,
 
         undefined = 0,
         image,
-        /*sound,*/
+        sound,
 
-        _max = 2
-	};
+        _count
+    };
 
     struct Resource {
         union {
@@ -36,7 +36,7 @@ public:
     const TypeID& GetType() const;
 
     const Metadata& GetMetadata() const;
-	
+
     PCData GetData() const;
     PData GetData();
 
@@ -44,11 +44,11 @@ public:
 
 private:
     class Loader;
-	
+
 
     using Data = std::shared_ptr<Resource>;
     TypeID type;
-	Data data;
+    Data data;
     Metadata metadata;
 };
 

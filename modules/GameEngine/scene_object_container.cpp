@@ -15,7 +15,7 @@ TSceneObjectContainer::operator [](const Name& name) {
 TSceneObjectContainer::Handle
 TSceneObjectContainer::GetHandle(const Name& name) const {
     if (nameMapping.count(name) != 0) {
-        return nameMapping[name];
+        return nameMapping.at(name);
     } else {
         return HandleUndefined;
     }
@@ -43,10 +43,10 @@ TSceneObjectContainer::AddSceneObject(const Name& name,
         handle = freeHandles.top();
         freeHandles.pop();
 
-        objects[handle] = sceneObject;
+        objects[handle] = std::move(Entry(name, sceneObject));
     } else {
         handle = objects.size();
-        objects.push_back(sceneObject);
+        objects.emplace_back(name, sceneObject);
     }
     return handle;
 }
@@ -62,8 +62,9 @@ void TSceneObjectContainer::RemoveSceneObject(const Handle& handle) {
     ASSERT(objects[handle].name.empty() == false,
         "Attempt to remove an unexisting object")
 
-    objects[handle].name.clear();
-    nameMapping.erase(name);
+    auto& entry = objects[handle];
+    nameMapping.erase(entry.name);
+    entry.name.clear();
 
     freeHandles.push(handle);
     checkSize();
@@ -79,7 +80,7 @@ bool TSceneObjectContainer::HasObject(const Handle& handle) const {
 
 void TSceneObjectContainer::Clear() {
     objects.clear();
-    freeHandles.swap(FreeHandles());
+    freeHandles = FreeHandles();
     nameMapping.clear();
 }
 
@@ -88,3 +89,11 @@ void TSceneObjectContainer::checkSize() {
         Clear();
     }
 }
+
+
+TSceneObjectContainer::Entry::Entry(const Name& name,
+    const SceneObject& object
+) :
+    name(name),
+    object(object)
+{}
