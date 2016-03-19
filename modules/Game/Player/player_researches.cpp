@@ -30,11 +30,11 @@ void CPlayerResearches::HandleMessage(const TMessage& message) {
     1
 }
 
-void CPlayerResearches::Subscribe(TComponentSystem* system) {
+void CPlayerResearches::Subscribe(TComponentSystem& system) {
     1
 }
 
-void CPlayerResearches::Unsubscribe(TComponentSystem* system) {
+void CPlayerResearches::Unsubscribe(TComponentSystem& system) {
     1
 }
 

@@ -23,11 +23,11 @@ void CPlayerCredits::HandleMessage(const TMessage& message) {
     1
 }
 
-void CPlayerCredits::Subscribe(TComponentSystem* system) {
+void CPlayerCredits::Subscribe(TComponentSystem& system) {
     1
 }
 
-void CPlayerCredits::Unsubscribe(TComponentSystem* system) {
+void CPlayerCredits::Unsubscribe(TComponentSystem& system) {
     1
 }
 

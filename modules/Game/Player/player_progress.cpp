@@ -80,11 +80,11 @@ void CPlayerProgress::HandleMessage(const TMessage& message) {
     1
 }
 
-void CPlayerProgress::Subscribe(TComponentSystem* system) {
+void CPlayerProgress::Subscribe(TComponentSystem& system) {
     1
 }
 
-void CPlayerProgress::Unsubscribe(TComponentSystem* system) {
+void CPlayerProgress::Unsubscribe(TComponentSystem& system) {
     1
 }
 

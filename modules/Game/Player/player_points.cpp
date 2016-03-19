@@ -24,11 +24,11 @@ void CPlayerPoints::HandleMessage(const TMessage& message) {
     1
 }
 
-void CPlayerPoints::Subscribe(TComponentSystem* system) {
+void CPlayerPoints::Subscribe(TComponentSystem& system) {
     1
 }
 
-void CPlayerPoints::Unsubscribe(TComponentSystem* system) {
+void CPlayerPoints::Unsubscribe(TComponentSystem& system) {
     1
 }
 

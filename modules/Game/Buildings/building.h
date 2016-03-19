@@ -16,8 +16,8 @@ class CMouseInput : public CInputComponent
 public:
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem* system) override;
-    virtual void Unsubscribe(TComponentSystem* system) override;
+    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void Unsubscribe(TComponentSystem& system) override;
 };
 
 
@@ -26,8 +26,8 @@ class CPosition : public CMovementComponent
 public:
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem* system) override;
-    virtual void Unsubscribe(TComponentSystem* system) override;
+    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void Unsubscribe(TComponentSystem& system) override;
 
 private:
     Point2f position;
@@ -40,8 +40,8 @@ class CSelection : public CGraphicsComponent
 public:
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem* system) override;
-    virtual void Unsubscribe(TComponentSystem* system) override;
+    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void Unsubscribe(TComponentSystem& system) override;
 
 private:
     bool selected;
@@ -63,8 +63,8 @@ class CBuildingBehaviour : public CLogicsComponent
 public:
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem* system) override;
-    virtual void Unsubscribe(TComponentSystem* system) override;
+    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void Unsubscribe(TComponentSystem& system) override;
 
 private:
     const TBuildingClassId id;
@@ -109,8 +109,8 @@ class CHealth : public CLogicsComponent
 public:
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem* system) override;
-    virtual void Unsubscribe(TComponentSystem* system) override;
+    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void Unsubscribe(TComponentSystem& system) override;
 
 private:
     int health;

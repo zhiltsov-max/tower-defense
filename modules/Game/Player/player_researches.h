@@ -26,8 +26,8 @@ public:
 
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem* system) override;
-    virtual void Unsubscribe(TComponentSystem* system) override;
+    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void Unsubscribe(TComponentSystem& system) override;
 
     const TResearchesTree& GetTree() const;
 
