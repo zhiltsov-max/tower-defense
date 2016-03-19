@@ -7,11 +7,13 @@
 
 
 class TComponentSystem;
+using TComponentID = uint;
+enum class ComponentIDs : TComponentID;
 
 class TComponent /*Abstract*/
 {
 public:
-    using ID = uint;
+    using ID = ComponentIDs;
 
 
     virtual ~TComponent() = default;
@@ -24,18 +26,18 @@ public:
     /*
     Subscribes this component for all needed messages.
     */
-    virtual void Subscribe(TComponentSystem* system) = 0;
+    virtual void Subscribe(TComponentSystem& system) = 0;
 
     /*
     Unsibscribes this component from all messages.
     */
-    virtual void Unsubscribe(TComponentSystem* system) = 0;
+    virtual void Unsubscribe(TComponentSystem& system) = 0;
 
 protected:
-    TComponent(uint id) : id(id) {}
+    TComponent(const ID& id);
 
 private:
-    const ID& id;
+    const ID id;
 };
 
 

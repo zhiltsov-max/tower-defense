@@ -20,14 +20,16 @@ public:
 
     virtual ~TComponentSystem() = default;
 
-    virtual void Update(const TTime& step);
 
-    const Handle& CreateComponent(const TComponent::ID& typeID,
+    const Handle CreateComponent(const TComponent::ID& typeID,
         const TComponentCreateArgs* args = nullptr);
+
     void RemoveComponent(const Handle& componentHandle);
     Component* GetComponent(const Handle& handle);
 
     void SetRegistry(TComponentRegistry* instance);
+
+    virtual void Update(const TTime& step);
 
     virtual void Subscribe(Component* component, const TMessage::ID& id);
     virtual void Unsubscribe(Component* component, const TMessage::ID& id);

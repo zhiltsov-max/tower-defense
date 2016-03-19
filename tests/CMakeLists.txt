@@ -88,11 +88,32 @@ add_test(NAME test_graphics
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
+add_executable(game_engine_test game_engine_test.cpp)
+target_link_libraries(game_engine_test
+    -L"${LIBRARY_PATH}"
+    -L"${PROJECT_SOURCE_DIR}/lib"
+    -lgtest.dll
+    -lglew32
+    -lsfml-system
+    -lsfml-main
+    -lsfml-window
+    -lsfml-graphics
+    -llua52
+
+    td_core_LIB
+    td_gui_LIB
+    td_application_core_LIB
+    td_game_engine_LIB
+)
+add_test(NAME test_game_engine
+    COMMAND game_engine_test
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+)
+
 add_executable(gui_application_test examples/gui_app_test.cpp)
 target_link_libraries(gui_application_test
     -L"${LIBRARY_PATH}"
     -L"${PROJECT_SOURCE_DIR}/lib"
-    -lgtest.dll
     -lglew32
     -lsfml-system
     -lsfml-main

@@ -8,10 +8,13 @@
 
 
 
+using TMessageID = uint;
+enum class MessageID : TMessageID;
+
 class TMessage
 {
 public:
-    typedef uint ID;
+    typedef MessageID ID;
 
 
     virtual ~TMessage() = default;

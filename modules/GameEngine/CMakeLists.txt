@@ -32,6 +32,7 @@ set(game_engine_sources
     scene_resource.cpp
     scene_resources.cpp
     scene_resource_loader.cpp
+    component.cpp
     component_system.cpp
     ComponentSystems/component_system_graphics.cpp
     ComponentSystems/component_system_input.cpp
@@ -42,6 +43,7 @@ set(game_engine_sources
     scene_object.cpp
     scene_object_container.cpp
     engine_message.cpp
+    engine_messages.cpp
     game_engine.cpp
     component_systems.cpp
 )

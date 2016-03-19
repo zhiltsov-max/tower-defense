@@ -11,7 +11,9 @@ struct TComponentCreateArgs
     virtual ~TComponentCreateArgs() = default;
 };
 
-using TComponentCreate = std::unique_ptr<TComponent> (TComponentCreateArgs*);
+using TComponentCreate =
+    std::unique_ptr<TComponent> (*)(const TComponentCreateArgs*);
+
 using TComponentRegistry = TRegistry< TComponentCreate, TComponent::ID >;
 
 

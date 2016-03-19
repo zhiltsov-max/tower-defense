@@ -6,7 +6,8 @@
 
 
 template< class Entry, class ID >
-class TRegistry {
+class TRegistry
+{
 public:
     void Register(const ID& id, const Entry& entry);
     void Unregister(const ID& id);
@@ -21,7 +22,20 @@ public:
     bool IsRegistered(const ID& id) const {
         return data.count(id) != 0;
     }
-private:
+
+    size_t Size() const {
+        return data.size();
+    }
+
+    bool IsEmpty() const {
+        return data.empty();
+    }
+
+    void Clear() {
+        data.clear();
+    }
+
+protected:
     using Data = std::map<ID, Entry>;
     Data data;
 };
@@ -29,13 +43,9 @@ private:
 
 template< class Entry, class ID >
 void TRegistry<Entry, ID>::Register(const ID& id, const Entry& entry) {
-    if (IsRegistered(id) == true) {
-#if defined(_DEBUG)
-        THROW("Class #" + std::to_string(id) + " already registered.");
-#else
-        return;
-#endif
-    }
+    ASSERT(IsRegistered(id) == false,
+        "Class #" + std::to_string(id) + " already registered.");
+
     data[id] = entry;
 }
 
@@ -43,11 +53,7 @@ template< class Entry, class ID >
 void TRegistry<Entry, ID>::Unregister(const ID& id) {
     auto it = data.find(id);
     if (it == data.end()) {
-#if defined(_DEBUG)
         THROW("Class #" + std::to_string(id) + " is not registered.");
-#else
-        return;
-#endif
     }
     data.erase(it);
 }

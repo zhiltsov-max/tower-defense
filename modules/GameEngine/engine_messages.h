@@ -2,43 +2,34 @@
 #define ENGINE_MESSAGES_H
 
 #include "engine_message.h"
+#include "Application/application.h"
 
 
 
-enum class MessageID : uint {
+enum class DefaultMessageID : TMessageID {
     _min = 0,
 
     Undefined = 0,
     SystemEvent,
 
-    _count // keep it last
+    _max,
+    _count = _max - _min
 };
 
-
-class TMessage_Undefined : public TMessage
-{
-public:
-    TMessage_Undefined() :
-        TMessage(MessageID::Undefined)
-    {}
-};
 
 class TMessage_SystemEvent : public TMessage
 {
 public:
-    TMessage_SystemEvent(const sf::Event& event) :
-        TMessage(MessageID::SystemEvent),
-        event(event)
-    {}
+    using Event = TApplication::Event;
 
+
+    TMessage_SystemEvent(const Event& event);
     virtual ~TMessage_SystemEvent() = default;
 
-    const sf::Event& GetEvent() const {
-        return event;
-    }
+    const Event& GetEvent() const;
 
 private:
-    const sf::Event& event;
+    const Event& event;
 };
 
 

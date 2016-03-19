@@ -1,6 +1,7 @@
 #include "component_system_ui.h"
 #include "GameEngine/script_engine.h"
 #include "Application/application_ui.h"
+#include "GUI/uiparent.h"
 
 
 

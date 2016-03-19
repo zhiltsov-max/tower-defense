@@ -44,7 +44,7 @@ struct TComponentSystems
     Systems systems;
 
 
-    TComponentSystems(const TGameEngine* engine);
+    TComponentSystems(TGameEngine* engine);
 };
 
 #endif // COMPONENT_SYSTEMS_H

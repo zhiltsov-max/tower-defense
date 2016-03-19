@@ -3,7 +3,8 @@
 
 
 void CSGraphicsSystem::Draw(Graphics::TRenderTarget& target) {
-    1
+    // TO DO: graphics subsystem
+    THROW("Not implemented yet");
 }
 
 

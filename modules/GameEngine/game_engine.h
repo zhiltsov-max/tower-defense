@@ -6,9 +6,10 @@
 #include "component_registry.h"
 #include "component_systems.h"
 #include "script_engine.h"
-#include "engine_message.h"
 
 
+
+class TMessage;
 
 class TGameEngine
 {

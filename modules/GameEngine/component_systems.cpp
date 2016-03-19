@@ -4,7 +4,7 @@
 
 
 
-TComponentSystems::TComponentSystems(const TGameEngine* engine) :
+TComponentSystems::TComponentSystems(TGameEngine* engine) :
     input(),
     movement(),
     logics(),
