@@ -494,7 +494,7 @@ TEST(pointTest, arihmetics_and_logics_operators) {
 #endif
 }
 
-TEST(pointTest, operatons) {
+TEST(pointTest, operations) {
     using Point = Point2i;
 
     EXPECT_DOUBLE_EQ(5.0, norm(Point(3, 4)));

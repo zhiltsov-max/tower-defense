@@ -13,7 +13,7 @@
 
 #include <windows.h>
 
-#include "Core/core.h"
+#include "Core/devicecontroller.h"
 
 
 //Defines

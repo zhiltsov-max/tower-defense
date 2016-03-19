@@ -223,11 +223,11 @@ TEST_F(TestWidget, modification) {
 class CustomWidget : public TWidget
 {
 public:
-	CustomWidget(const TWidgetSource& source) :
-		TWidget(source)
-	{}
+    CustomWidget(const TWidgetSource& source) :
+        TWidget(source)
+    {}
 private:
-	virtual void _draw(TRenderTarget&) override {}
+    virtual void _draw(TRenderTarget&) override { /*none*/ }
 };
 
 TEST(WidgetTest, tree_operations_addition_as_child) {
