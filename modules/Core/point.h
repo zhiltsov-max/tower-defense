@@ -22,7 +22,9 @@ private:
 
 public:
     Point() { data.fill(T()); }
-    Point(const std::initializer_list<T>& il) : data(il) {}
+    Point(const std::initializer_list<T>& il) :
+        data()
+    { std::copy(il.begin(), il.end(), data.begin()); }
 
     const T& operator[](size_t index) const {
 #if defined(_DEBUG)

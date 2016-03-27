@@ -32,23 +32,32 @@ TEST_F(TestApplication, initialization) {
     EXPECT_EQ(info.windowHeight, getWindowHeight());
 }
 
-TEST_F(TestApplication, title) {
+TEST_F(TestApplication, set_title_wokring) {
     EXPECT_NO_THROW(setTitle(TEXT("title 2")));
 }
 
-TEST_F(TestApplication, subsystems) {
-    EXPECT_NO_THROW(getTime());
-    EXPECT_NO_THROW(getDebugTools());
-    EXPECT_NO_THROW(getDeviceController());
-
-#if !defined(NO_GUI_APPLICATION)
-    EXPECT_NO_THROW(getUI());
-#endif
+TEST_F(TestApplication, get_time_working) {
+    ASSERT_NO_THROW(getTime());
 }
 
-TEST_F(TestApplication, debug_subsystem) {
+TEST_F(TestApplication, get_debug_tools_working) {
+    ASSERT_NO_THROW(getDebugTools());
+}
+
+TEST_F(TestApplication, get_device_controller_working) {
+    ASSERT_NO_THROW(getDeviceController());
+}
+
+#if !defined(NO_GUI_APPLICATION)
+TEST_F(TestApplication, get_ui_working) {
+    ASSERT_NO_THROW(getUI());
+}
+#endif
+
+TEST_F(TestApplication, debug_subsystem_working) {
     auto& debug = getDebugTools();
-    EXPECT_NO_THROW(
+
+    ASSERT_NO_THROW(
         debug.log("Test message", LogMessageImportance::Important));
 }
 
