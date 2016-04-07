@@ -66,7 +66,7 @@ TTowerDefenseApplication::GetSettings() {
 }
 
 void TTowerDefenseApplication::initialize(const TApplicationInfo& info_) {
-    // TO DO: loading application preferences
+    // TODO: loading application preferences
     // e.g. graphics, sound and keybindings
     // info = loadSettings(info);
     auto info = info_;

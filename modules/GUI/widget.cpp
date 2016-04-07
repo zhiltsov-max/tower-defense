@@ -131,7 +131,10 @@ void TWidget::Initialize() {
 
 TWidget::~TWidget() {
     if (parent.expired() == false) {
-        parent.lock()->RemoveChild(name);
+        auto p = parent.lock();
+        if (p->HasChild(shared_from_this())) {
+            p->RemoveChild(name);
+        }
     }
 }
 
@@ -215,10 +218,10 @@ void TWidget::_updateChildren() {
 
 void TWidget::_drawChildren(TRenderTarget& target) {
     /*
-        The use of reverse iterator intended to fix
-        the problem of determining clicked object right.
-        If children is updated in direct order,
-        then the drawing will be in reversed order.
+    The use of reverse iterator intended to fix
+    the problem of determining clicked object right.
+    If children is updated in direct order,
+    then the drawing will be in reversed order.
     */
     for(auto it = children.rbegin(), iend = children.rend(); it != iend; ++it) {
         (*it).second->Draw(target);
@@ -321,21 +324,26 @@ const TWidget::Name& TWidget::GetName() const {
 
 void TWidget::SetParent(const TWidgetWeakRef& value) {
     const auto currentParent = parent.lock();
-    if ((currentParent != nullptr) && (currentParent == value.lock())) {
+    if (currentParent == value.lock()) {
         return;
     }
 
+    Child me = shared_from_this();
+
     if (value.expired() == false) {
-        if (value.lock()->HasChild(name) == false) {
-            Child child = currentParent ?
-                std::move(currentParent->RemoveChild(name)) :
-                shared_from_this();
+        auto newParent = value.lock();
+        ASSERT(newParent->HasChild(name) == false,
+           "Menu object '" + newParent->name + "' already contains "
+           "child with name '" + name + "'.")
 
-            value.lock()->children[name] = std::move(child);
-        }
+        newParent->children[name] = me;
     }
-    parent = value;
 
+    if ((currentParent != nullptr) && (currentParent->HasChild(me) == true)) {
+        currentParent->children.erase(name);
+    }
+
+    parent = value;
     _OnParentChanged();
     GetSignal(DefaultSignalID::ObjectParentChanged).Send();
 }
@@ -345,26 +353,10 @@ TWidgetWeakRef TWidget::GetParent() const {
 }
 
 void TWidget::AddChild(const TWidgetRef& obj) {
-    GUI_ASSERT(obj != nullptr, "Can not add null object as a child to '" + name + "'.")
+    GUI_ASSERT(obj != nullptr,
+        "Can not add null object as a child to '" + name + "'.")
 
-    const auto objCurrentParent = obj->parent.lock();
-
-    GUI_ASSERT( (HasChild(obj->name) == false) &&
-        (objCurrentParent.get() != this),
-        "Menu object '" + name + "' already contains "
-        "child with name '" + obj->name + "'.")
-
-    if (objCurrentParent != nullptr) {
-        if (objCurrentParent->HasChild(obj->name) == true) {
-            objCurrentParent->children.erase(obj->name); //since obj in the same group of shared_ptrs
-        }
-    }
-
-    obj->parent = shared_from_this();
-    children[obj->name] = obj;
-
-    obj->_OnParentChanged();
-    obj->GetSignal(DefaultSignalID::ObjectParentChanged).Send();
+    obj->SetParent(shared_from_this());
 }
 
 TWidget::Child TWidget::RemoveChild(const Name& name) {
@@ -374,7 +366,7 @@ TWidget::Child TWidget::RemoveChild(const Name& name) {
 
     Child child = children[name];
     children.erase(name);
-    child->parent.reset();
+    child->SetParent(TWidgetWeakRef());
     return child;
 }
 
@@ -392,8 +384,8 @@ bool TWidget::HasChild(const Child& child) const {
 }
 
 void TWidget::RemoveChildren() {
-    for(auto& child : children) {
-        RemoveChild(child.first);
+    for (auto& entry : children) {
+        RemoveChild(entry.first);
     }
 }
 
@@ -401,10 +393,6 @@ bool TWidget::HasChildren() const {
     return (children.empty() == false);
 }
 
-/*
-    Returns nullptr if child not found.
-    For recursive search use '<parentName>keySep()<childName>...'.
-*/
 TWidget::ConstChildRef TWidget::FindChild(const Name& key) const {
     const auto parts = std::move(String::split(key, keySep()));
     ConstChild currentObject = shared_from_this();
@@ -424,10 +412,6 @@ TWidget::ConstChildRef TWidget::FindChild(const Name& key) const {
     return currentObject;
 }
 
-/*
-    Returns nullptr if child not found.
-    For recursive search use '<parentName>keySep()<childName>...'.
-*/
 TWidget::ChildRef TWidget::FindChild(const Name& key) {
     const auto parts = std::move(String::split(key, keySep()));
     Child currentObject = shared_from_this();
@@ -447,10 +431,8 @@ TWidget::ChildRef TWidget::FindChild(const Name& key) {
     return currentObject;
 }
 
-/*
-    Returns a list with children of specified name.
-*/
-std::list<TWidget::ConstChildRef> TWidget::FindChildren(const Name& name, bool recursievly) const
+std::list<TWidget::ConstChildRef>
+TWidget::FindChildren(const Name& name, bool recursievly) const
 {
     std::list<ConstChildRef> result;
 
@@ -473,10 +455,9 @@ std::list<TWidget::ConstChildRef> TWidget::FindChildren(const Name& name, bool r
 
     return result;
 }
-/*
-    Returns a list with children of specified name.
-*/
-std::list<TWidget::ChildRef> TWidget::FindChildren(const Name& name, bool recursievly)
+
+std::list<TWidget::ChildRef>
+TWidget::FindChildren(const Name& name, bool recursievly)
 {
     std::list<ChildRef> result;
 
@@ -499,8 +480,6 @@ std::list<TWidget::ChildRef> TWidget::FindChildren(const Name& name, bool recurs
 
     return result;
 }
-
-
 
 const TSize& TWidget::GetOwnSize() const {
     return size;
@@ -636,9 +615,6 @@ void TWidget::RegisterSlot(TWidgetSlot&& slot) {
     eventSystem.AddSlot(std::move(slot));
 }
 
-/*
-    Returns a list of common signals.
-*/
 const list<TWidget::Signal>& TWidget::_basicSignals() {
     static const std::list<TWidget::Signal> _basicSignals_cache = [] {
         std::list<TWidget::Signal> cache;

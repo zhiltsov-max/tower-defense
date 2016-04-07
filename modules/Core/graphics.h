@@ -55,7 +55,7 @@ struct ARGB {
         return TColor(r, g, b, a);
     }
 
-    bool operator==(const ARGB& other) {
+    bool operator == (const ARGB& other) const {
         return operator uint() == other.operator uint();
     }
 	

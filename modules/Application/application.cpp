@@ -99,7 +99,7 @@ void TApplication::exit(int exitCode_) {
 }
 
 #if defined(WINDOWS)
-//TO DO: winapi calls for determining window size
+//TODO: winapi calls for determining window size
 float TApplication::getWindowWidth() const { return windowWidth; }
 float TApplication::getWindowHeight() const { return windowHeight; }
 #endif //WINDOWS

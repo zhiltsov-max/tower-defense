@@ -34,7 +34,7 @@ const Graphics::TFont* TCustomFontsCache::load(const TCustomFont& font_) {
 #if defined(_DEBUG)
         GUI_THROW("Font file '" + fontPath + "' not found");
 #else
-        // TO DO: ...
+        // TODO: ...
 #endif
     }
     return font.get();

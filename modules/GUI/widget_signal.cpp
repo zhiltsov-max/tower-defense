@@ -49,7 +49,7 @@ void TWidgetSignal::AddListener(const Slot& listener) {
 
 void TWidgetSignal::RemoveListener(const Slot& listener) {
     auto it = std::move(find(listener));
-    if (it != listeners.cend()) {
+    if (it == listeners.cend()) {
 #if defined(_DEBUG)
         GUI_WARNING("Signal '" + id + "' does not contain this listener.");
 #endif //DEBUG
