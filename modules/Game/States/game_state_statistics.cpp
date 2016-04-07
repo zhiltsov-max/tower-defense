@@ -16,7 +16,7 @@ void TGameState_Statistics::Update() {
         return;
     }
 
-    1//TO DO: prepare statistics window
+    1//TODO: prepare statistics window
 
 
 }

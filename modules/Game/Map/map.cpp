@@ -25,7 +25,7 @@ void TLevelMap::updateData(const TLevelMapInfo& source) {
     if (source.info.contains(StageInfo::Category_Map_Value[StageInfo::Category_Map_Entry::NodeMap]) == true) {
         m_nodeMap.updateData(source.slice(StageInfo::Category_Map_Value[StageInfo::Category_Map_Entry::NodeMap]));
 	}
-/*  TO DO: fill scene
+/*  TODO: fill scene
 	if (source.contains(StageInfo::Category_Map_Value[StageInfo::Category_Map_Entry::GameObjects]) == true) {
 		gameObjects.updateData(source.slice(
             StageInfo::Category_Map_Value[StageInfo::Category_Map_Entry::GameObjects]

@@ -75,7 +75,7 @@ void TBuilding::sell() {
 void TBuilding::rejectBuilding() {
 	remove();
 }	
-void TBuilding::upgradeTo(uint newClass) { // TO DO:
+void TBuilding::upgradeTo(uint newClass) { // TODO:
 		const TBuildingUpgrades& upgrades = BuildingsController::getUpgrades();
 		const TBuildingUpgrade& upgrade = upgrades.getUpgrade(BuildingsController::getParameter(newClass, "majorUpgrade").asInt);
 		const bool isNewClassUpgrade = (upgrades.getUpgrade(getMajorUpgrade()) = 
@@ -192,7 +192,7 @@ void TBuilding::updateAnimation() {
 	case BuildingAnimationGroup::Explode:
 		{
 			if (animation->isCurrentActionCompleted() == true) {
-				//TO DO: 
+				//TODO: 
 				remove();
 			}
 			break;

@@ -33,7 +33,7 @@ void TGameState_LevelLoading::Update() {
 }
 
 void TGameState_LevelLoading::Draw(Graphics::TRenderTarget& target) {
-    //TO DO: loading screen
+    //TODO: loading screen
 }
 
 void TGameState_LevelLoading::HandleEvent(const TApplication::Event& event) {

@@ -24,7 +24,7 @@ void TLevel::Loader::loadScript(TLevel& level) {
 
 void TLevel::Loader::loadScene(TLevel& level) {
     level.scene.SetGameEngine(level.gameEngine);
-    //TO DO: resources loading?
+    //TODO: resources loading?
 }
 
 void TLevel::Loader::load(TLevel& level,

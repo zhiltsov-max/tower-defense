@@ -26,7 +26,7 @@ void TGameState_StageLoading::Update() {
 }
 
 void TGameState_StageLoading::Draw(Graphics::TRenderTarget& target) {
-    1//TO DO: loading screen
+    1//TODO: loading screen
 }
 
 void TGameState_StageLoading::HandleEvent(const TApplication::Event& event) {

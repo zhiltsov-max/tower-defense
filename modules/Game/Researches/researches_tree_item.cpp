@@ -34,7 +34,7 @@ void TResearchesTreeItemView::Initialize(const TResearchesTreeItemSource& source
     auto imageBox = std::make_shared<TImageBox>(source.imageBox);
     Connect(imageBox, imageBox->GetSignal(DefaultSignalID::MouseClick), shared_from_this(), GetSlot(SLOT_IMAGE_BOX_CLICKED));
 
-    /*TO DO: extract to creation code*/
+    /*TODO: extract to creation code*/
     auto prev = _getPreviousItem();
     Connect(prev, prev->GetSignal(SIGNAL_ITEM_RESEARCHED), shared_from_this(), GetSlot(SLOT_PREV_ITEM_RESEARCHED));
 }
@@ -116,7 +116,7 @@ void TResearchesTreeItemView::_drawConnections(TRenderTarget& target) {
     }
 }
 
-/*TO DO:*/
+/*TODO:*/
 void TResearchesTreeItemView::_OnDisabled() {
     //_getImageBox().lock()->SetColorModifier(COLOR_MODIFIER_DISABLED); //?
     _getButton().lock()->Disable();

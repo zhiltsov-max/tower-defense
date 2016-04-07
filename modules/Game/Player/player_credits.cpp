@@ -38,7 +38,7 @@ const CPlayerCredits::Credits&CPlayerCredits::GetCredits() const {
 void CPlayerCredits::SetCredits(const CPlayerCredits::Credits& value) {
     if (credits != value) {
         credits = value;
-        1 // TO DO: send message "changed"
+        1 // TODO: send message "changed"
     }
 }
 

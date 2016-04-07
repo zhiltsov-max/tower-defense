@@ -39,7 +39,7 @@ const CPlayerPoints::Points& CPlayerPoints::GetPoints() const {
 void CPlayerPoints::SetPoints(const CPlayerPoints::Points& value) {
     if (points != value) {
         points = value;
-        1 // TO DO: send message "changed"
+        1 // TODO: send message "changed"
     }
 }
 

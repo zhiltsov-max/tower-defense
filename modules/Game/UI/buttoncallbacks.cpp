@@ -133,7 +133,7 @@ namespace button_callbacks {
     }
 
     void* PauseWindow_RestartLevel(void** args) {
-        //TO DO:
+        //TODO:
     }
 
 } // button_callbacks

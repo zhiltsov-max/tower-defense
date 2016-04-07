@@ -3,7 +3,7 @@
 
 #include "mob.h"
 
-/*TO DO: delete this shit and create normal class in component model
+/*TODO: delete this shit and create normal class in component model
  *it have to implement mobs' lifecycle control
 */
 
