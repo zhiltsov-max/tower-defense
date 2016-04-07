@@ -6,7 +6,7 @@ void TSceneResource::Loader::Load(
     const string& source,
     TSceneResource& resource)
 {
-    //TO DO: fix format, implement loading, handle SFML
+    //TODO: fix format, implement loading, handle SFML
     THROW("Not implemented yet");
 //    resource.type = recognizeType(source);
 

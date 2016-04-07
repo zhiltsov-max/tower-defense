@@ -2,6 +2,8 @@
 
 
 
+const TComponentSystem::Handle TComponentSystem::HandleUndefined = -1u;
+
 void TComponentSystem::Update(const TTime& step) {
     for (auto& component : components) {
         component->Update();
@@ -19,9 +21,10 @@ const TComponentSystem::Handle TComponentSystem::CreateComponent(
         "Unknown type id.")
 
     auto& create = (*componentRegistry)[typeID];
-    PComponent obj = std::move(create(args));
-    components.emplace_back(std::move(obj));
-    obj->Subscribe(*this);
+    PComponent ptr = std::move(create(args));
+    auto& component = *ptr;
+    components.emplace_back(std::move(ptr));
+    component.Subscribe(*this);
 
     return Handle(components.size() - 1);
 }

@@ -108,10 +108,15 @@ enum class ComponentIDs : TComponentID {
     _min = 0,
 
     TestComponent,
+    CustomComponent,
 
     _max,
     _count = _max - _min
 };
+
+std::ostream& operator << (std::ostream& os, const ComponentIDs& id) {
+    return os << static_cast<TComponentID>(id);
+}
 
 enum class MessageID : TMessageID {
     _min = static_cast<TMessageID>(DefaultMessageID::_max) + 1,
@@ -123,21 +128,9 @@ enum class MessageID : TMessageID {
     _count = _max - _min
 };
 
-class TestComponent;
-
-template<>
-struct ComponentID< TestComponent > {
-    static const TComponent::ID value;
-};
-const TComponent::ID ComponentID< TestComponent >::value =
-    ComponentIDs::TestComponent;
-
-template<>
-struct ComponentClass< TestComponent > {
-    static const ComponentSystem value;
-};
-const ComponentSystem ComponentClass< TestComponent >::value =
-    ComponentSystem::_undefined;
+std::ostream& operator << (std::ostream& os, const MessageID& id) {
+    return os << static_cast<TMessageID>(id);
+}
 
 class TestComponent :
     public ::testing::Test,
@@ -161,9 +154,6 @@ protected:
     virtual void Unsubscribe(TComponentSystem& system) override;
 
     virtual void SetUp() override {
-        handledMessage.clear();
-    }
-    virtual void TearDown() override {
         handledMessage.clear();
     }
 };
@@ -193,6 +183,20 @@ public:
         TMessage(MessageID::CustomUnexpectedMessage)
     {}
 };
+
+template<>
+struct ComponentID< TestComponent > {
+    static const TComponent::ID value;
+};
+const TComponent::ID ComponentID<TestComponent>::value =
+    ComponentIDs::TestComponent;
+
+template<>
+struct ComponentClass< TestComponent > {
+    static const ComponentSystem value;
+};
+const ComponentSystem ComponentClass<TestComponent>::value =
+    ComponentSystem::_undefined;
 
 TestComponent::TestComponent() :
     ::testing::Test(),
@@ -243,8 +247,79 @@ TEST_F(TestComponent, message_handling_unexpected) {
 }
 
 
+// ### COMPONENT SYSTEM TESTS ###
+class CustomComponent :
+    public TComponent
+{
+public:
+    static std::unique_ptr<TComponent> Create(const TComponentCreateArgs*) {
+        return std::unique_ptr<TComponent>(new CustomComponent);
+    }
+
+
+    CustomComponent();
+
+
+    virtual void Update() override {}
+    virtual void HandleMessage(const TMessage& message) override {}
+    virtual void Subscribe(TComponentSystem& system) override {}
+    virtual void Unsubscribe(TComponentSystem& system) override {}
+};
+
+template<>
+struct ComponentID< CustomComponent > {
+    static const ComponentIDs value;
+};
+const ComponentIDs ComponentID<CustomComponent>::value =
+    ComponentIDs::CustomComponent;
+
+template<>
+struct ComponentClass< CustomComponent > {
+    static const ComponentSystem value;
+};
+const ComponentSystem ComponentClass<CustomComponent>::value =
+    ComponentSystem::input;
+
+CustomComponent::CustomComponent() :
+    TComponent(ComponentID<CustomComponent>::value)
+{}
+
+
+class TestComponentSystem :
+    public ::testing::Test,
+    public TComponentSystem
+{
+protected:
+    virtual void SetUp() override {
+        SetRegistry(nullptr);
+
+        testRegistry.Clear();
+
+        testRegistry.Register(ComponentIDs::CustomComponent,
+            &CustomComponent::Create);
+
+        SetRegistry(&testRegistry);
+    }
+private:
+    TComponentRegistry testRegistry;
+};
+
+
+TEST_F(TestComponentSystem, create_component_positive) {
+    auto component = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+
+    EXPECT_NE(HandleUndefined, component);
+}
+
+TEST_F(TestComponentSystem, create_component_negative) {
+    EXPECT_ANY_THROW(CreateComponent(ComponentIDs::_count, nullptr));
+}
+
+
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+

@@ -15,7 +15,7 @@ public:
     using Message = TMessage;
     using Component = TComponent;
     using Handle = size_t;
-    static constexpr Handle HandleUndefined = (Handle) -1;
+    static const Handle HandleUndefined;
 
 
     virtual ~TComponentSystem() = default;

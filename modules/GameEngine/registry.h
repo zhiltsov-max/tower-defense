@@ -2,6 +2,7 @@
 #define REGISTRY_H
 
 #include "Core/core.h"
+#include <sstream>
 
 
 
@@ -43,8 +44,11 @@ protected:
 
 template< class Entry, class ID >
 void TRegistry<Entry, ID>::Register(const ID& id, const Entry& entry) {
-    ASSERT(IsRegistered(id) == false,
-        "Class #" + std::to_string(id) + " already registered.");
+    if (IsRegistered(id) == true) {
+        std::stringstream ss;
+        ss << "Class #" << id << " already registered.";
+        THROW(ss.str())
+    }
 
     data[id] = entry;
 }
@@ -53,7 +57,9 @@ template< class Entry, class ID >
 void TRegistry<Entry, ID>::Unregister(const ID& id) {
     auto it = data.find(id);
     if (it == data.end()) {
-        THROW("Class #" + std::to_string(id) + " is not registered.");
+        std::stringstream ss;
+        ss << "Class #" << id << " is not registered.";
+        THROW(ss.str());
     }
     data.erase(it);
 }
