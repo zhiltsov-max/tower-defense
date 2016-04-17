@@ -38,7 +38,8 @@ void TComponentSystem::RemoveComponent(const Handle& componentHandle) {
     components.erase(it);
 }
 
-TComponentSystem::Component* TComponentSystem::GetComponent(const Handle& handle) {
+TComponentSystem::Component*
+TComponentSystem::GetComponent(const Handle& handle) {
     ASSERT(handle < components.size(), "Wrong component handle.")
 
     return components[handle].get();
@@ -47,7 +48,6 @@ TComponentSystem::Component* TComponentSystem::GetComponent(const Handle& handle
 void TComponentSystem::SetRegistry(TComponentRegistry* instance) {
     componentRegistry = instance;
 }
-
 
 void TComponentSystem::Subscribe(Component* component,
     const Message::ID& id)
