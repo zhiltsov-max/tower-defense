@@ -214,7 +214,9 @@ String::split(const basic_string<CharT>& str, const CharT* separator) {
 
 template< class CharT >
 std::vector<basic_string<CharT>>
-String::split(const basic_string<CharT>& str, const basic_string<CharT>& separator) {
+String::split(const basic_string<CharT>& str,
+    const basic_string<CharT>& separator
+) {
     return String::split(str.c_str(), separator.c_str());
 }
 
@@ -251,9 +253,8 @@ String::join(const std::vector< basic_string<CharT> >& parts, CharT glue) {
 
 template< class CharT >
 basic_string<CharT>
-String::join(
-    const std::vector< basic_string<CharT> >& parts,
-    const basic_string<CharT>& glue = basic_string<CharT>()
+String::join(const std::vector< basic_string<CharT> >& parts,
+    const basic_string<CharT>& glue
 ) {
     basic_string<CharT> res;
     for(auto it = parts.cbegin(); it != parts.cend();) {
@@ -295,13 +296,17 @@ bool String::startsWith(const basic_string<CharT>& str, const CharT* begin) {
 }
 
 template< class CharT >
-bool String::startsWith(const basic_string<CharT>& str, const basic_string<CharT>& begin) {
+bool String::startsWith(const basic_string<CharT>& str,
+    const basic_string<CharT>& begin
+) {
     return String::startsWith(str.c_str(), begin.c_str());
 }
 
 
 template< class CharT >
-bool String::endsWith(const basic_string<CharT>& str, const basic_string<CharT>& end) {
+bool String::endsWith(const basic_string<CharT>& str,
+    const basic_string<CharT>& end
+) {
     if (str.size() < end.size()) {
         return false;
     }
@@ -310,18 +315,24 @@ bool String::endsWith(const basic_string<CharT>& str, const basic_string<CharT>&
 
 
 template< class CharT >
-basic_string<CharT> String::right(const basic_string<CharT>& str, size_t firstPos) {
+basic_string<CharT> String::right(const basic_string<CharT>& str,
+    size_t firstPos
+) {
     return str.substr(std::min(firstPos, str.size()));
 }
 
 template< class CharT >
-basic_string<CharT> String::left(const basic_string<CharT>& str, size_t lastPos) {
+basic_string<CharT> String::left(const basic_string<CharT>& str,
+    size_t lastPos
+) {
     return str.substr(0, std::min(lastPos, str.size()));
 }
 
 
 template< class CharT >
-basic_string<CharT>String::toLower(const basic_string<CharT>& str, const std::locale& locale) {
+basic_string<CharT>String::toLower(const basic_string<CharT>& str,
+    const std::locale& locale
+) {
     basic_string<CharT> res;
     res.reserve(str.size());
 
@@ -338,7 +349,9 @@ basic_string<CharT>String::toLower(const basic_string<CharT>& str, const std::lo
 }
 
 template< class CharT >
-basic_string<CharT> String::toLower(const CharT* str, const std::locale& locale) {
+basic_string<CharT> String::toLower(const CharT* str,
+    const std::locale& locale
+) {
     basic_string<CharT> res;
 
     while (*str != STRING_END<CharT>::value) {
@@ -353,7 +366,9 @@ basic_string<CharT> String::toLower(const CharT* str, const std::locale& locale)
 }
 
 template< class CharT >
-basic_string<CharT> String::toUpper(const basic_string<CharT>& str, const std::locale& locale) {
+basic_string<CharT> String::toUpper(const basic_string<CharT>& str,
+    const std::locale& locale
+) {
     basic_string<CharT> res;
     res.reserve(str.size());
 
@@ -370,7 +385,9 @@ basic_string<CharT> String::toUpper(const basic_string<CharT>& str, const std::l
 }
 
 template< class CharT >
-basic_string<CharT> String::toUpper(const CharT* str, const std::locale& locale) {
+basic_string<CharT> String::toUpper(const CharT* str,
+    const std::locale& locale
+) {
     basic_string<CharT> res;
 
     while (*str != STRING_END<CharT>::value) {
