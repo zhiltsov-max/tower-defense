@@ -14,14 +14,23 @@ set(TESTING_ENABLED 1)
 
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
     add_definitions(-D_DEBUG)
+    add_compile_options(-Og)
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(
+        -Wno-reorder
+        -Wno-pmf-conversions
+    )
+elseif(MSVC)
+    add_compile_options(
+        /Za # disable MS extensions
+    )
 endif()
 
 add_definitions(-DSFML -DUNICODE)
 add_compile_options(
     -std=c++11
-    -Og
-    -Wno-reorder
-    -Wno-pmf-conversions
     -Wall
 )
 
