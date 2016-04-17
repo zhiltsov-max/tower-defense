@@ -2,18 +2,20 @@
 
 
 
-const TSceneObject::ComponentHandle
-TSceneObject::ComponentHandleUndefined =
+const TSceneObject::ComponentHandle TSceneObject::ComponentHandle::Undefined; //keep it before TSceneObject::ComponentHandleUndefined
+
+const TSceneObject::ComponentHandle TSceneObject::ComponentHandleUndefined =
     TSceneObject::ComponentHandle::Undefined;
 
+const TSceneObject::Handle TSceneObject::HandleUndefined = -1u;
+
 const TSceneObject::ComponentHandle&
-TSceneObject::operator [](const Name& name) const {
-    return components[GetHandle(name)].component;
+TSceneObject::operator [] (const Name& name) const {
+    return components.at(GetHandle(name)).component;
 }
 
-TSceneObject::ComponentHandle&
-TSceneObject::operator [](const Name& name) {
-    return components[GetHandle(name)].component;
+TSceneObject::ComponentHandle& TSceneObject::operator [] (const Name& name) {
+    return components.at(GetHandle(name)).component;
 }
 
 const TSceneObject::Handle& TSceneObject::GetHandle(const Name& name) const {
@@ -25,19 +27,22 @@ const TSceneObject::Handle& TSceneObject::GetHandle(const Name& name) const {
 }
 
 const TSceneObject::ComponentHandle&
-TSceneObject::operator [](const Handle& handle) const {
-    return components[handle].component;
+TSceneObject::operator [] (const Handle& handle) const {
+    return components.at(handle).component;
 }
 
 TSceneObject::ComponentHandle&
-TSceneObject::operator [](const Handle& handle) {
-    return components[handle].component;
+TSceneObject::operator [] (const Handle& handle) {
+    return components.at(handle).component;
 }
 
-TSceneObject::Handle
-TSceneObject::AddComponent(const Name& name,
+TSceneObject::Handle TSceneObject::AddComponent(const Name& name,
     const ComponentHandle& component)
 {
+    ASSERT(name.empty() == false,
+        "Attempt to add an unnamed component.");
+    ASSERT(component != ComponentHandleUndefined,
+        "Attempt to add an empty component handle.")
     ASSERT(HasComponent(name) == false,
         "Component with this name already exists.");
 
@@ -51,27 +56,34 @@ TSceneObject::AddComponent(const Name& name,
         handle = components.size();
         components.emplace_back(name, component);
     }
+    nameMapping[name] = handle;
+
     return handle;
 }
 
-void TSceneObject::RemoveComponent(const Name& name) {
+TSceneObject::ComponentHandle TSceneObject::RemoveComponent(const Name& name) {
     Handle handle = GetHandle(name);
-    RemoveComponent(handle);
+    return RemoveComponent(handle);
 }
 
-void TSceneObject::RemoveComponent(const Handle& handle) {
+TSceneObject::ComponentHandle
+TSceneObject::RemoveComponent(const Handle& handle) {
     ASSERT(handle != HandleUndefined,
         "Attempt to remove an unexisting component")
-    ASSERT(components[handle].name.empty() == false,
+    ASSERT(components.at(handle).name.empty() == false,
         "Attempt to remove an unexisting component")
 
-    auto& entry = components[handle];
+    auto& entry = components.at(handle);
     nameMapping.erase(entry.name);
     entry.name.clear();
+
+    auto componentHandle = entry.component;
     entry.component = ComponentHandleUndefined;
 
     freeHandles.push(handle);
     checkSize();
+
+    return componentHandle;
 }
 
 bool TSceneObject::HasComponent(const Name& name) const {
@@ -79,24 +91,24 @@ bool TSceneObject::HasComponent(const Name& name) const {
 }
 
 bool TSceneObject::HasComponent(const Handle& handle) const {
-    return components[handle].component != ComponentHandleUndefined;
+    return (handle < components.size()) &&
+        (components.at(handle).component != ComponentHandleUndefined);
+}
+
+bool TSceneObject::HasComponents() const {
+    return components.empty() == false;
 }
 
 void TSceneObject::checkSize() {
     if (components.size() == freeHandles.size()) {
         components.clear();
-        freeHandles = FreeHandles();
+        components.shrink_to_fit();
+        freeHandles = std::move(FreeHandles());
         nameMapping.clear();
     }
 }
 
 
-
-const TSceneObject::ComponentHandle
-TSceneObject::ComponentHandle::Undefined {
-    (size_t)-1,
-    ComponentSystem::_undefined
-};
 
 TSceneObject::ComponentHandle::ComponentHandle(
     size_t handle, const ComponentSystem& system
@@ -105,9 +117,13 @@ TSceneObject::ComponentHandle::ComponentHandle(
     system(system)
 {}
 
-const ComponentSystem&
-TSceneObject::ComponentHandle::GetSystem() const {
+const ComponentSystem& TSceneObject::ComponentHandle::GetSystem() const {
     return system;
+}
+
+const TComponentSystem::Handle&
+TSceneObject::ComponentHandle::GetValue() const {
+    return value;
 }
 
 bool TSceneObject::ComponentHandle::operator == (

@@ -2,14 +2,17 @@
 
 
 
+const TSceneObjectContainer::Handle
+TSceneObjectContainer::HandleUndefined = -1u;
+
 const TSceneObjectContainer::SceneObject&
-TSceneObjectContainer::operator [](const Name& name) const {
-    return objects[GetHandle(name)].object;
+TSceneObjectContainer::operator [] (const Name& name) const {
+    return objects.at(GetHandle(name)).second;
 }
 
 TSceneObjectContainer::SceneObject&
-TSceneObjectContainer::operator [](const Name& name) {
-    return objects[GetHandle(name)].object;
+TSceneObjectContainer::operator [] (const Name& name) {
+    return objects.at(GetHandle(name)).second;
 }
 
 TSceneObjectContainer::Handle
@@ -23,18 +26,20 @@ TSceneObjectContainer::GetHandle(const Name& name) const {
 
 const TSceneObjectContainer::SceneObject&
 TSceneObjectContainer::operator [](const Handle& handle) const {
-    return objects[handle].object;
+    return objects.at(handle).second;
 }
 
 TSceneObjectContainer::SceneObject&
 TSceneObjectContainer::operator [](const Handle& handle) {
-    return objects[handle].object;
+    return objects.at(handle).second;
 }
 
 TSceneObjectContainer::Handle
 TSceneObjectContainer::AddSceneObject(const Name& name,
     const TSceneObject& sceneObject)
 {
+    ASSERT(name.empty() == false,
+        "Attempt to add an unnamed component.");
     ASSERT(HasObject(name) == false,
         "Object with this name already exists.");
 
@@ -48,26 +53,55 @@ TSceneObjectContainer::AddSceneObject(const Name& name,
         handle = objects.size();
         objects.emplace_back(name, sceneObject);
     }
+    nameMapping[name] = handle;
+
     return handle;
 }
 
-void TSceneObjectContainer::RemoveSceneObject(const Name& name) {
-    Handle handle = GetHandle(name);
-    RemoveSceneObject(handle);
+TSceneObjectContainer::Handle
+TSceneObjectContainer::AddSceneObject(const Name& name,
+    TSceneObject&& sceneObject)
+{
+    ASSERT(name.empty() == false,
+        "Attempt to add an unnamed component.");
+    ASSERT(HasObject(name) == false,
+        "Object with this name already exists.");
+
+    Handle handle = HandleUndefined;
+    if (freeHandles.empty() == false) {
+        handle = freeHandles.top();
+        freeHandles.pop();
+
+        objects[handle] = std::move(Entry(name, std::move(sceneObject)));
+    } else {
+        handle = objects.size();
+        objects.emplace_back(name, std::move(sceneObject));
+    }
+    nameMapping[name] = handle;
+
+    return handle;
 }
 
-void TSceneObjectContainer::RemoveSceneObject(const Handle& handle) {
+TSceneObject TSceneObjectContainer::RemoveSceneObject(const Name& name) {
+    Handle handle = GetHandle(name);
+    return std::move(RemoveSceneObject(handle));
+}
+
+TSceneObject TSceneObjectContainer::RemoveSceneObject(const Handle& handle) {
     ASSERT(handle != HandleUndefined,
         "Attempt to remove an unexisting object")
-    ASSERT(objects[handle].name.empty() == false,
+    ASSERT(objects.at(handle).first.empty() == false,
         "Attempt to remove an unexisting object")
 
-    auto& entry = objects[handle];
-    nameMapping.erase(entry.name);
-    entry.name.clear();
+    auto& entry = objects.at(handle);
+    nameMapping.erase(entry.first);
+    entry.first.clear();
+    auto object = std::move(entry.second);
 
     freeHandles.push(handle);
     checkSize();
+
+    return object;
 }
 
 bool TSceneObjectContainer::HasObject(const Name& name) const {
@@ -75,13 +109,19 @@ bool TSceneObjectContainer::HasObject(const Name& name) const {
 }
 
 bool TSceneObjectContainer::HasObject(const Handle& handle) const {
-    return objects[handle].name.empty() == false;
+    return (handle < objects.size()) &&
+        (objects.at(handle).first.empty() == false);
 }
 
 void TSceneObjectContainer::Clear() {
     objects.clear();
-    freeHandles = FreeHandles();
+    objects.shrink_to_fit();
+    freeHandles = std::move(FreeHandles());
     nameMapping.clear();
+}
+
+bool TSceneObjectContainer::IsEmpty() const {
+    return objects.empty();
 }
 
 void TSceneObjectContainer::checkSize() {
@@ -89,11 +129,3 @@ void TSceneObjectContainer::checkSize() {
         Clear();
     }
 }
-
-
-TSceneObjectContainer::Entry::Entry(const Name& name,
-    const SceneObject& object
-) :
-    name(name),
-    object(object)
-{}

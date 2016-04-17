@@ -11,7 +11,7 @@ class TSceneObject
 {
 public:
     using Handle = size_t;
-    static constexpr Handle HandleUndefined = (Handle)-1;
+    static const Handle HandleUndefined;
 
     class ComponentHandle;
     static const ComponentHandle ComponentHandleUndefined;
@@ -19,22 +19,24 @@ public:
     using Name = string;
 
 
-    const ComponentHandle& operator [](const Name& name) const;
-    ComponentHandle& operator [](const Name& name);
+    const ComponentHandle& operator [] (const Name& name) const;
+    ComponentHandle& operator [] (const Name& name);
+
+    const ComponentHandle& operator [] (const Handle& handle) const;
+    ComponentHandle& operator [](const Handle& handle);
 
     const Handle& GetHandle(const Name& name) const;
-
-    const ComponentHandle& operator [](const Handle& handle) const;
-    ComponentHandle& operator [](const Handle& handle);
 
     Handle AddComponent(const Name& name,
         const ComponentHandle& component);
 
-    void RemoveComponent(const Name& name);
-    void RemoveComponent(const Handle& handle);
+    ComponentHandle RemoveComponent(const Name& name);
+    ComponentHandle RemoveComponent(const Handle& handle);
 
     bool HasComponent(const Name& name) const;
     bool HasComponent(const Handle& handle) const;
+
+    bool HasComponents() const;
 
 private:
     using NameMapping = std::map<Name, Handle>;
@@ -47,7 +49,6 @@ private:
     FreeHandles freeHandles;
 
     void checkSize();
-
 };
 
 class TSceneObject::ComponentHandle
@@ -56,11 +57,12 @@ public:
     static const ComponentHandle Undefined;
 
 
-    ComponentHandle(size_t handle = (size_t)-1,
+    ComponentHandle(size_t handle = -1u,
         const ComponentSystem& system = ComponentSystem::_undefined);
 
     operator size_t() const;
     const ComponentSystem& GetSystem() const;
+    const TComponentSystem::Handle& GetValue() const;
 
     bool operator==(const ComponentHandle& other) const;
     bool operator!=(const ComponentHandle& other) const;
