@@ -1,41 +1,56 @@
 #include "scene_resources.h"
 
 
-	
-TSceneResource& TSceneResources::LoadResource(const ID& id) {
-    if (IsResourceLoaded(id) == true) {
-        return data.at(id);
-	}
-		
-    TSceneResource resource;
-    resource.Load(id);
-    auto it = data.emplace(id, resource).first;
-    return (*it).second;
+
+TSceneResources::Resource& TSceneResources::LoadResource(
+    const TSceneResources::ID& id, const TSceneResource::TypeID& type,
+    const TSceneResourceCreateArgs* args
+) {
+    ASSERT(registry.IsRegistered(type) == true,
+        "Failed to load resource: unknown type.");
+    ASSERT(IsResourceLoaded(id) == false,
+        "Failed to load resource: resource '" + id + "' is already loaded.");
+
+    const auto& loader = registry[type];
+    auto ptr = std::move(loader(args));
+    if (ptr == nullptr) {
+        THROW("Failed to load resource.");
+    }
+
+    return *(*resources.emplace(id, std::move(ptr)).first).second;
 }
-	
-void TSceneResources::UnloadResource(const ID& name) {
-    if (IsResourceLoaded(name) == false) {
-		return;
-	}
-    data.erase(name);
+
+void TSceneResources::UnloadResource(const ID& id) {
+    ASSERT(IsResourceLoaded(id) == true,
+        "Failed to unload resource: resource is not loaded.");
+
+    resources.erase(id);
 }
 
 void TSceneResources::Clear() {
-    data.clear();
+    resources.clear();
 }
 	
-bool TSceneResources::IsResourceLoaded(const ID& name) const {
-    return data.count(name) != 0;
-}
-	
-const TSceneResource& TSceneResources::GetResource(const ID& name) const {
-    return data.at(name);
+bool TSceneResources::IsResourceLoaded(const ID& id) const {
+    return resources.count(id) != 0;
 }
 
-TSceneResource& TSceneResources::GetResource(const ID& name) {
-    return data.at(name);
+const TSceneResourceRegistry& TSceneResources::GetRegistry() const {
+    return registry;
+}
+
+TSceneResourceRegistry& TSceneResources::GetRegistry() {
+    return registry;
+}
+	
+const TSceneResource& TSceneResources::GetResource(const ID& id) const {
+    return *resources.at(id);
+}
+
+TSceneResource& TSceneResources::GetResource(const ID& id) {
+    return *resources.at(id);
 }
 
 bool TSceneResources::Empty() const {
-	return data.empty();
+    return resources.empty();
 }

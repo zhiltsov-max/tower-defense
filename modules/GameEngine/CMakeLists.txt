@@ -9,7 +9,6 @@ set(game_engine_headers
     script_engine.h
     scene_resource.h
     scene_resources.h
-    scene_resource_loader.h
     component_systems.h
     component_system.h
     ComponentSystems/component_system_graphics.h
@@ -31,7 +30,6 @@ set(game_engine_sources
     script_engine.cpp
     scene_resource.cpp
     scene_resources.cpp
-    scene_resource_loader.cpp
     component.cpp
     component_system.cpp
     ComponentSystems/component_system_graphics.cpp

@@ -11,6 +11,8 @@
 using TMessageID = uint;
 enum class MessageID : TMessageID;
 
+std::ostream& operator << (std::ostream& os, const MessageID& id);
+
 class TMessage
 {
 public:

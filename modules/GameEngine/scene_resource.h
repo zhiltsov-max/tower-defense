@@ -4,52 +4,29 @@
 #include "Core/core.h"
 
 
-/*
-Data level for scene resources
-*/
+
+using TSceneResourceTypeID = uint;
+enum class SceneResourceTypeID : TSceneResourceTypeID;
+
+std::ostream& operator << (std::ostream& os, const SceneResourceTypeID& id);
+
 class TSceneResource
 {
 public:
-    enum class TypeID {
-        _min = 0,
-
-        undefined = 0,
-        image,
-        sound,
-
-        _count
-    };
-
-    struct Resource {
-        union {
-            Graphics::TImage image;
-            /*Sound*/
-        };
-    };
-
-    using PCData = std::weak_ptr<const Resource>;
-    using PData = std::weak_ptr<Resource>;
-
-    using Metadata = TNamedData<string>;
-
+    using TypeID = SceneResourceTypeID;
 
     const TypeID& GetType() const;
 
-    const Metadata& GetMetadata() const;
+    virtual ~TSceneResource() = default;
 
-    PCData GetData() const;
-    PData GetData();
-
-    void Load(const string& source);
+protected:
+    TSceneResource(const TypeID& type);
+    TSceneResource(const TSceneResource& other) = default;
+    TSceneResource& operator = (const TSceneResource& other) = default;
 
 private:
-    class Loader;
-
-
-    using Data = std::shared_ptr<Resource>;
     TypeID type;
-    Data data;
-    Metadata metadata;
 };
+
 
 #endif //SCENE_RESOURCE_H

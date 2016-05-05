@@ -10,6 +10,8 @@ class TComponentSystem;
 using TComponentID = uint;
 enum class ComponentIDs : TComponentID;
 
+std::ostream& operator << (std::ostream& os, const ComponentIDs& id);
+
 class TComponent /*Abstract*/
 {
 public:

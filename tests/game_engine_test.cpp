@@ -5,10 +5,12 @@
 #include "GameEngine/engine_messages.h"
 #include "GameEngine/scene_object.h"
 #include "GameEngine/scene_object_container.h"
+#include "GameEngine/scene_resources.h"
 
 
 
 // ### REGISTRY TESTS ###
+
 class TestRegistry :
     public ::testing::Test
 {
@@ -106,6 +108,7 @@ TEST_F(TestRegistry, clear) {
 
 
 // ### COMPONENT SYSTEM TESTS ###
+
 enum class ComponentIDs : TComponentID {
     _min = 0,
 
@@ -115,10 +118,6 @@ enum class ComponentIDs : TComponentID {
     _max,
     _count = _max - _min
 };
-
-std::ostream& operator << (std::ostream& os, const ComponentIDs& id) {
-    return os << static_cast<TComponentID>(id);
-}
 
 enum class MessageID : TMessageID {
     _min = static_cast<TMessageID>(DefaultMessageID::_max) + 1,
@@ -130,10 +129,6 @@ enum class MessageID : TMessageID {
     _max,
     _count = _max - _min
 };
-
-std::ostream& operator << (std::ostream& os, const MessageID& id) {
-    return os << static_cast<TMessageID>(id);
-}
 
 
 // === Message Tests ===
@@ -390,8 +385,8 @@ TEST_F(TestComponentSystem, unsubscribe_component) {
 }
 
 
-//### SCENE TESTS ###
-//=== SceneObject Tests ===
+// ### SCENE TESTS ###
+// === SceneObject Tests ===
 
 TEST(SceneObjectTest, add_component_success) {
     const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
@@ -604,7 +599,7 @@ TEST(SceneObject_ComponentHandleTest, initial_value_is_undefined) {
 }
 
 
-// == SceneObjectContainer Tests ===
+// === SceneObjectContainer Tests ===
 
 TEST(SceneObjectContainerTest, add_object_success) {
     const TSceneObjectContainer::Name name = "object";
@@ -750,6 +745,121 @@ TEST(SceneObjectContainerTest, clear) {
     container.Clear();
 
     EXPECT_TRUE(container.IsEmpty());
+}
+
+
+// ### SCENE RESOURCES TESTS ###
+
+enum class SceneResourceTypeID : TSceneResourceTypeID {
+    Unknown,
+    TestResource,
+
+    _count
+};
+
+class TestSceneResources :
+    public ::testing::Test,
+    public TSceneResources
+{
+protected:
+    class TTestResource : public TSceneResource {
+    public:
+        static const SceneResourceTypeID typeID;
+
+        static std::unique_ptr<TSceneResource> Create(
+            const TSceneResourceCreateArgs*
+        );
+
+
+        TTestResource();
+
+    private:
+        using parent_type = TSceneResource;
+    };
+
+    virtual void SetUp() override;
+};
+
+const SceneResourceTypeID TestSceneResources::TTestResource::typeID =
+    SceneResourceTypeID::TestResource;
+
+std::unique_ptr<TSceneResource>
+TestSceneResources::TTestResource::Create(const TSceneResourceCreateArgs*) {
+    return std::unique_ptr<TSceneResource>(new TTestResource);
+}
+
+TestSceneResources::TTestResource::TTestResource() :
+    parent_type(typeID)
+{}
+
+void TestSceneResources::SetUp() {
+    GetRegistry().Clear();
+    GetRegistry().Register(TTestResource::typeID, TTestResource::Create);
+}
+
+TEST_F(TestSceneResources, empty_empty_collection_is_empty) {
+    ASSERT_TRUE(Empty());
+}
+
+TEST_F(TestSceneResources, empty_not_empty_collection_is_not_empty) {
+    LoadResource("testID", TTestResource::typeID);
+
+    ASSERT_FALSE(Empty());
+}
+
+TEST_F(TestSceneResources, load_resource_success) {
+    static const TSceneResources::ID id = "testID";
+    LoadResource(id, TTestResource::typeID);
+
+    ASSERT_TRUE(IsResourceLoaded(id));
+}
+
+TEST_F(TestSceneResources, load_resource_failure_existing_id) {
+    static const TSceneResources::ID id = "testID";
+    LoadResource(id, TTestResource::typeID);
+    ASSERT_ANY_THROW(LoadResource(id, TTestResource::typeID));
+}
+
+TEST_F(TestSceneResources, load_resource_failure_unexpected_type) {
+    ASSERT_ANY_THROW(LoadResource("testID", SceneResourceTypeID::Unknown));
+}
+
+TEST_F(TestSceneResources, unload_resource_success) {
+    static const TSceneResources::ID id = "testID";
+    LoadResource(id, TTestResource::typeID);
+    UnloadResource(id);
+
+    ASSERT_FALSE(IsResourceLoaded(id));
+}
+
+TEST_F(TestSceneResources, unload_resource_failure_unexisting_resource) {
+    ASSERT_ANY_THROW(UnloadResource("testID"));
+}
+
+TEST_F(TestSceneResources, clear) {
+    static const TSceneResources::ID id = "testID";
+    LoadResource(id, TTestResource::typeID);
+    Clear();
+
+    ASSERT_TRUE(Empty());
+}
+
+TEST_F(TestSceneResources, is_resource_loaded_is_true_success) {
+    static const TSceneResources::ID id = "testID";
+    LoadResource(id, TTestResource::typeID);
+
+    ASSERT_TRUE(IsResourceLoaded(id));
+}
+
+TEST_F(TestSceneResources, is_resource_loaded_is_false_success) {
+    ASSERT_FALSE(IsResourceLoaded("anyID"));
+}
+
+TEST_F(TestSceneResources, get_resource_success) {
+    static const TSceneResources::ID id = "testID";
+    const auto& resource = LoadResource(id, TTestResource::typeID);
+
+    ASSERT_EQ(&resource, &GetResource(id));
 }
 
 

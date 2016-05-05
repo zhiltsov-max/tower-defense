@@ -53,6 +53,8 @@ int main(int argc, char** argv) {
     info.style = sf::Style::Close | sf::Style::Titlebar;
     info.windowWidth = 800;
     info.windowHeight = 600;
+    info.context.majorVersion = 3;
+    info.context.minorVersion = 3;
     auto& app = TTestApplication::Create(info);
     loadInterface();
     return app.run();

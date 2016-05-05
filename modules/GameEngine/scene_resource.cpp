@@ -1,25 +1,15 @@
 #include "scene_resource.h"
-#include "scene_resource_loader.h"
 
 
 
-const TSceneResource::TypeID& TSceneResource::GetType() const {
-	return type;
+std::ostream&operator <<(std::ostream& os, const SceneResourceTypeID& id) {
+    return os << static_cast<TSceneResourceTypeID>(id);
 }
 
-const TSceneResource::Metadata& TSceneResource::GetMetadata() const {
-    return metadata;
+const TSceneResource::TypeID&TSceneResource::GetType() const {
+    return type;
 }
 
-TSceneResource::PCData TSceneResource::GetData() const {
-    return data;
-}
-
-TSceneResource::PData TSceneResource::GetData() {
-    return data;
-}
-
-void TSceneResource::Load(const string& source) {
-    Loader loader;
-    loader.Load(source, *this);
-}
+TSceneResource::TSceneResource(const TypeID& type) :
+    type(type)
+{}
