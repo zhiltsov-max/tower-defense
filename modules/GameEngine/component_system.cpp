@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 const TComponentSystem::Handle TComponentSystem::HandleUndefined = -1u;
 
 void TComponentSystem::Update(const TTime& step) {
@@ -73,3 +76,5 @@ void TComponentSystem::HandleMessage(const Message& message) {
     }
 }
 
+
+} //namespace GE

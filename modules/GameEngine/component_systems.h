@@ -11,6 +11,9 @@
 
 
 
+namespace GE {
+
+
 enum class ComponentSystem : uchar {
     _min = 0,
 
@@ -40,11 +43,16 @@ struct TComponentSystems
     CSSoundSystem sound;
     CSUiSystem ui;
 
-    using Systems = std::array<TComponentSystem*, (uchar) ComponentSystem::_count>;
+    using Systems = std::array<TComponentSystem*,
+        (uchar) ComponentSystem::_count>;
     Systems systems;
 
 
     TComponentSystems(TGameEngine* engine);
 };
+
+
+} //namespace GE
+
 
 #endif // COMPONENT_SYSTEMS_H

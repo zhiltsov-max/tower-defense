@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 const TSceneObjectContainer::Handle
 TSceneObjectContainer::HandleUndefined = -1u;
 
@@ -129,3 +132,6 @@ void TSceneObjectContainer::checkSize() {
         Clear();
     }
 }
+
+
+} //namespace GE

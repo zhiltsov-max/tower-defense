@@ -5,18 +5,23 @@
 
 
 
+namespace GE {
+
+
 class TScriptEngine {
 public:
     TScriptEngine();
 
-    typedef lua::State Raw;
+    using Raw = lua::State;
     const Raw& Get() const;
     Raw& Get();
 private:
     Raw raw;
 
-
     void initialize();
 };
+
+
+} //namespace GE
 
 #endif // SCRIPT_ENGINE_H

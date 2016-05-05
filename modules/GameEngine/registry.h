@@ -1,9 +1,12 @@
 #ifndef REGISTRY_H
 #define REGISTRY_H
 
-#include "Core/core.h"
 #include <sstream>
+#include "Core/core.h"
 
+
+
+namespace GE {
 
 
 template< class Entry, class ID >
@@ -63,5 +66,8 @@ void TRegistry<Entry, ID>::Unregister(const ID& id) {
     }
     data.erase(it);
 }
+
+
+} //namespace GE
 
 #endif // REGISTRY_H

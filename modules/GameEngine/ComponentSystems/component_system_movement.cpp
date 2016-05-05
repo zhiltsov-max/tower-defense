@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 void CSMovementSystem::Update(const TTime& step) {
     for (PComponent& component : components) {
         component->Update();
@@ -12,3 +15,6 @@ void CSMovementSystem::Update(const TTime& step) {
 CMovementComponent::CMovementComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
+
+
+} //namespace GE

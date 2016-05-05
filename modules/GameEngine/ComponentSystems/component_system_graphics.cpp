@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 void CSGraphicsSystem::Draw(Graphics::TRenderTarget& target) {
     // TODO: graphics subsystem
     THROW("Not implemented yet");
@@ -11,3 +14,6 @@ void CSGraphicsSystem::Draw(Graphics::TRenderTarget& target) {
 CGraphicsComponent::CGraphicsComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
+
+
+} // namespace GE

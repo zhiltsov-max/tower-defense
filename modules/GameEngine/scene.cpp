@@ -3,6 +3,9 @@
 
 
 
+namespace GE {
+
+
 const TScene::Resources& TScene::GetResources() const {
     return resources;
 }
@@ -59,3 +62,6 @@ TComponent* TScene::GetComponent(const TScene::Handle& handle) {
     return engine->GetComponentSystems().
         systems[(uchar)handle.GetSystem()]->GetComponent(handle);
 }
+
+
+} //namespace GE

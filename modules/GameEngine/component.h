@@ -6,6 +6,9 @@
 
 
 
+namespace GE {
+
+
 class TComponentSystem;
 using TComponentID = uint;
 enum class ComponentIDs : TComponentID;
@@ -46,5 +49,7 @@ private:
 template< class Component >
 struct ComponentID;
 
+
+} //namespace GE
 
 #endif // COMPONENT_H

@@ -7,6 +7,9 @@
 
 
 
+namespace GE {
+
+
 class TSceneObject
 {
 public:
@@ -83,5 +86,8 @@ struct TSceneObject::Entry {
         const ComponentHandle& handle = ComponentHandle::Undefined
     );
 };
+
+
+} //namespace GE
 
 #endif // SCENE_OBJECT_H

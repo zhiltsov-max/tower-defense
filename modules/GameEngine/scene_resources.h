@@ -6,6 +6,9 @@
 
 
 
+namespace GE {
+
+
 using TSceneResourceID = string;
 
 struct TSceneResourceCreateArgs
@@ -51,5 +54,7 @@ private:
     Registry registry;
 };
 
+
+} //namespace GE
 
 #endif //SCENE_RESOURCES_H

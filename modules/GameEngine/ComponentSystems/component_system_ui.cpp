@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 CSUiSystem::~CSUiSystem() {
     if (ui != nullptr) {
         ui->getUIParent()->RemoveChildren();
@@ -38,3 +41,6 @@ void CSUiSystem::SetApplicationUI(TApplicationUI* instance) {
 CUiComponent::CUiComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
+
+
+} //namespace GE

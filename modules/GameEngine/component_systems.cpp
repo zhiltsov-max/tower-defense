@@ -4,6 +4,9 @@
 
 
 
+namespace GE {
+
+
 TComponentSystems::TComponentSystems(TGameEngine* engine) :
     input(),
     movement(),
@@ -34,3 +37,6 @@ TComponentSystems::TComponentSystems(TGameEngine* engine) :
     ui.SetRegistry(&engine->GetComponentRegistry());
     ui.SetScriptEngine(&engine->GetScriptEngine());
 }
+
+
+} //namespace GE

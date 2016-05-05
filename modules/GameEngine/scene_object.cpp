@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 const TSceneObject::ComponentHandle TSceneObject::ComponentHandle::Undefined; //keep it before TSceneObject::ComponentHandleUndefined
 
 const TSceneObject::ComponentHandle TSceneObject::ComponentHandleUndefined =
@@ -149,3 +152,6 @@ TSceneObject::Entry::Entry(
     name(name),
     component(handle)
 {}
+
+
+} //namespace GE

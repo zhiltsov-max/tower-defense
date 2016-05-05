@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 class CSGraphicsSystem : public TComponentSystem
 {
 public:
@@ -20,5 +23,8 @@ public:
     CGraphicsComponent(const ID& id);
     virtual ~CGraphicsComponent();
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_GRAPHICS_H

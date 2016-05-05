@@ -9,6 +9,9 @@
 
 
 
+namespace GE {
+
+
 class TMessage;
 
 class TGameEngine
@@ -41,5 +44,8 @@ protected:
 
     ScriptEngine scriptEngine;
 };
+
+
+} //namespace GE
 
 #endif // GAME_ENGINE_H

@@ -6,6 +6,9 @@
 
 
 
+namespace GE {
+
+
 enum class DefaultMessageID : TMessageID {
     _min = 0,
 
@@ -32,5 +35,7 @@ private:
     const Event& event;
 };
 
+
+} //namespavce GE
 
 #endif // ENGINE_MESSAGES_H

@@ -4,6 +4,9 @@
 
 
 
+namespace GE {
+
+
 TScriptEngine::TScriptEngine() :
     raw()
 {
@@ -27,3 +30,4 @@ void TScriptEngine::initialize() {
 }
 
 
+} //namespace GE

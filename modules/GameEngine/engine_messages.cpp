@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 TMessage_SystemEvent::TMessage_SystemEvent(const Event& event) :
     TMessage(static_cast<TMessage::ID>(static_cast<TMessageID>(
         DefaultMessageID::SystemEvent))),
@@ -13,3 +16,5 @@ TMessage_SystemEvent::GetEvent() const {
     return event;
 }
 
+
+} //namespace GE

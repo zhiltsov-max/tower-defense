@@ -2,6 +2,12 @@
 
 
 
+namespace GE {
+
+
 CInputComponent::CInputComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
+
+
+} //namespace GE

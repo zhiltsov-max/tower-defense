@@ -3,6 +3,9 @@
 
 
 
+namespace GE {
+
+
 TGameEngine::TGameEngine() :
     componentSystems(this)
 {}
@@ -58,3 +61,6 @@ TGameEngine::ComponentSystems&
 TGameEngine::GetComponentSystems() {
     return componentSystems;
 }
+
+
+} //namespace GE

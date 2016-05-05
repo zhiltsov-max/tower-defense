@@ -9,6 +9,9 @@
 
 
 
+namespace GE {
+
+
 class TComponentSystem
 {
 public:
@@ -46,7 +49,9 @@ protected:
     using Listener = Component*;
     using Listeners = std::map< Message::ID, list<Listener> >;
     Listeners listeners;
-
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_H

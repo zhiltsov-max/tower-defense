@@ -3,6 +3,9 @@
 
 
 
+namespace GE {
+
+
 void CSLogicsSystem::SetScriptEngine(TScriptEngine* instance) {
     scriptEngine = instance;
 }
@@ -11,3 +14,6 @@ void CSLogicsSystem::SetScriptEngine(TScriptEngine* instance) {
 CLogicsComponent::CLogicsComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
+
+
+} //namespace GE

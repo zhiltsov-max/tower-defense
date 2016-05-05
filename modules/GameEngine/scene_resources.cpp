@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 TSceneResources::Resource& TSceneResources::LoadResource(
     const TSceneResources::ID& id, const TSceneResource::TypeID& type,
     const TSceneResourceCreateArgs* args
@@ -54,3 +57,6 @@ TSceneResource& TSceneResources::GetResource(const ID& id) {
 bool TSceneResources::Empty() const {
     return resources.empty();
 }
+
+
+} //namespace GE

@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 using TSceneResourceTypeID = uint;
 enum class SceneResourceTypeID : TSceneResourceTypeID;
 
@@ -28,5 +31,7 @@ private:
     TypeID type;
 };
 
+
+} //namespace GE
 
 #endif //SCENE_RESOURCE_H

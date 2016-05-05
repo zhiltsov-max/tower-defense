@@ -6,6 +6,9 @@
 
 
 
+namespace GE {
+
+
 struct TComponentCreateArgs
 {
     virtual ~TComponentCreateArgs() = default;
@@ -16,5 +19,7 @@ using TComponentCreate =
 
 using TComponentRegistry = TRegistry< TComponentCreate, TComponent::ID >;
 
+
+} //namespace GE
 
 #endif // COMPONENT_REGISTRY_H

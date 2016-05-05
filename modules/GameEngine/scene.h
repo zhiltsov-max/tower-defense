@@ -7,6 +7,9 @@
 
 
 
+namespace GE {
+
+
 class TScene
 {
 public:
@@ -55,5 +58,8 @@ TScene::Handle TScene::CreateComponent(TComponentCreateArgs* args) {
         args
     );
 }
+
+
+} //namespace GE
 
 #endif // SCENE_H

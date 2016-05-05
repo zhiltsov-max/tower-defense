@@ -5,8 +5,12 @@
 
 
 
-class TScriptEngine;
 class TApplicationUI;
+
+namespace GE {
+
+
+class TScriptEngine;
 
 class CSUiSystem : public TComponentSystem
 {
@@ -37,5 +41,8 @@ public:
     CUiComponent(const ID& id);
     virtual ~CUiComponent();
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_UI_H

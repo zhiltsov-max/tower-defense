@@ -2,6 +2,9 @@
 
 
 
+namespace GE {
+
+
 void CSSoundSystem::Update(const TTime& step) {
     for (PComponent& component : components) {
         component->Update();
@@ -14,3 +17,6 @@ void CSSoundSystem::Update(const TTime& step) {
 CSoundComponent::CSoundComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
+
+
+}

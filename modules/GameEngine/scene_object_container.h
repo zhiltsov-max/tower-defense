@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 class TSceneObjectContainer
 {
 public:
@@ -48,5 +51,7 @@ private:
     void checkSize();
 };
 
+
+} //namespace GE
 
 #endif // SCENE_OBJECT_CONTAINER_H

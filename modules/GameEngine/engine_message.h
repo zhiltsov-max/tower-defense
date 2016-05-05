@@ -8,6 +8,9 @@
 
 
 
+namespace GE {
+
+
 using TMessageID = uint;
 enum class MessageID : TMessageID;
 
@@ -30,5 +33,7 @@ private:
     const ID id;
 };
 
+
+} //namespace GE
 
 #endif // ENGINE_MESSAGE_H

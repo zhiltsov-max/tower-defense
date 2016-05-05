@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 class TScriptEngine;
 
 class CSLogicsSystem : public TComponentSystem
@@ -27,5 +30,8 @@ public:
     CLogicsComponent(const ID& id);
     virtual ~CLogicsComponent();
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_LOGICS_H

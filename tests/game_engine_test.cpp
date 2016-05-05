@@ -9,6 +9,8 @@
 
 
 
+using namespace GE;
+
 // ### REGISTRY TESTS ###
 
 class TestRegistry :
@@ -109,7 +111,7 @@ TEST_F(TestRegistry, clear) {
 
 // ### COMPONENT SYSTEM TESTS ###
 
-enum class ComponentIDs : TComponentID {
+enum class GE::ComponentIDs : TComponentID {
     _min = 0,
 
     TestComponent,
@@ -119,7 +121,7 @@ enum class ComponentIDs : TComponentID {
     _count = _max - _min
 };
 
-enum class MessageID : TMessageID {
+enum class GE::MessageID : TMessageID {
     _min = static_cast<TMessageID>(DefaultMessageID::_max) + 1,
 
     CustomMessage,
@@ -202,6 +204,7 @@ public:
     {}
 };
 
+namespace GE {
 template<>
 struct ComponentID< TestComponent > {
     static const TComponent::ID value;
@@ -215,6 +218,7 @@ struct ComponentClass< TestComponent > {
 };
 const ComponentSystem ComponentClass<TestComponent>::value =
     ComponentSystem::_undefined;
+} //namespace GE
 
 TestComponent::TestComponent() :
     ::testing::Test(),
@@ -289,6 +293,7 @@ public:
     }
 };
 
+namespace GE {
 template<>
 struct ComponentID< CustomComponent > {
     static const ComponentIDs value;
@@ -302,6 +307,7 @@ struct ComponentClass< CustomComponent > {
 };
 const ComponentSystem ComponentClass<CustomComponent>::value =
     ComponentSystem::input;
+} //namespace GE
 
 CustomComponent::CustomComponent() :
     TComponent(ComponentID<CustomComponent>::value)
@@ -750,7 +756,7 @@ TEST(SceneObjectContainerTest, clear) {
 
 // ### SCENE RESOURCES TESTS ###
 
-enum class SceneResourceTypeID : TSceneResourceTypeID {
+enum class GE::SceneResourceTypeID : TSceneResourceTypeID {
     Unknown,
     TestResource,
 

@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 class CSInputSystem : public TComponentSystem
 {
 public:
@@ -18,5 +21,8 @@ public:
     CInputComponent(const ID& id);
     virtual ~CInputComponent();
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_INPUT_H

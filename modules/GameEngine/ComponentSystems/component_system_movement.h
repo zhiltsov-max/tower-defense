@@ -5,6 +5,9 @@
 
 
 
+namespace GE {
+
+
 class CSMovementSystem : public TComponentSystem
 {
 public:
@@ -20,5 +23,8 @@ public:
     CMovementComponent(const ID& id);
     virtual ~CMovementComponent();
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_MOVEMENT_H

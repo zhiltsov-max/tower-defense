@@ -6,6 +6,9 @@
 
 
 
+namespace GE {
+
+
 class CSSoundSystem : public TComponentSystem
 {
 public:
@@ -22,5 +25,8 @@ public:
     CSoundComponent(const ID& id);
     virtual ~CSoundComponent();
 };
+
+
+} //namespace GE
 
 #endif // COMPONENT_SYSTEM_SOUND_H
