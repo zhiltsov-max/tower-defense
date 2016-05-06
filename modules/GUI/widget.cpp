@@ -161,54 +161,11 @@ bool TWidget::_isMouseOverChild() const {
     return false;
 }
 
-void TWidget::_updateMouse() {
-    if (IO::IsMouseMoved() == true) {
-        const TCoordinate position = GetScreenPosition();
-        const bool isOver = IsVisible() &&
-            IO::IsCursorInRect(position, position + GetOwnSize());
-
-        if ((isOver == true) && (mouseOver == false)) {
-            _OnHover();
-            GetSignal(DefaultSignalID::MouseEntered).Send();
-        } else if ((isOver == false) && (mouseOver == true)) {
-            _OnMouseLeave();
-            GetSignal(DefaultSignalID::MouseLeave).Send();
-        } else {
-            /*none*/
-        }
-
-        mouseOver = isOver;
-    }
-
-    if ((mouseOver == true) && (_isMouseOverChild() == false)) {
-        if (IO::IsMouseHit(::IO::MouseKey::Left) == true) {
-            clicked = true;
-            _OnClick();
-            GetSignal(DefaultSignalID::MouseClick).Send();
-        }
-    }
-
-    if (clicked == true) {
-        if (IO::IsMouseDown(::IO::MouseKey::Left) == true) {
-            _OnMouseDown();
-            GetSignal(DefaultSignalID::MouseDown).Send();
-        } else {
-            clicked = false;
-            _OnMouseUp();
-            GetSignal(DefaultSignalID::MouseUp).Send();
-        }
-    }
-}
-
 TPadding TWidget::GetInnerBorder() const {
     return TPadding(0, 0, 0, 0);
 }
 
-void TWidget::_update() {
-    if (IsVisible() == true) {
-        _updateMouse();
-    }
-}
+void TWidget::_update() { /*none*/ }
 
 void TWidget::_updateChildren() {
     for(auto& child : children) {
@@ -237,13 +194,106 @@ void TWidget::_checkBorders() {
     if (parent != nullptr) {
         const TPadding parentBorder = std::move(parent->GetInnerBorder());
         left = margin.left;
-        right = std::max(parent->GetOwnSize().x - parentBorder.right - GetWidth(), 0.f);
+        right = std::max(
+            parent->GetOwnSize().x - parentBorder.right - GetWidth(), 0.f);
         top = margin.top;
-        bottom = std::max(parent->GetOwnSize().y - parentBorder.bottom - GetHeight(), 0.f);
+        bottom = std::max(
+            parent->GetOwnSize().y - parentBorder.bottom - GetHeight(), 0.f);
     }
 
     position.x = std::max(left, std::min(right, position.x));
     position.y = std::max(top, std::min(bottom, position.y));
+}
+
+void TWidget::_sendEvent(const TEvent& event, bool& consumed) {
+    if (consumed == false) {
+        _handleEvent(event, consumed);
+    }
+
+    if (consumed == false) {
+        for (auto& child : children) {
+            child.second->_sendEvent(event, consumed);
+        }
+    }
+}
+
+void TWidget::_handleEvent(const TEvent& event, bool& consume) {
+    switch (event.type) {
+    case TEvent::EventType::MouseMoved:
+        _handle_mouseMove(event.mouseMove, consume);
+        break;
+    case TEvent::EventType::MouseButtonPressed:
+        _handle_mouseButtonPressed(event.mouseButton, consume);
+        break;
+    case TEvent::EventType::MouseButtonReleased:
+        _handle_mouseButtonReleased(event.mouseButton, consume);
+        break;
+    default: { /*none*/ }
+    }
+}
+
+void TWidget::_handle_mouseButtonPressed(
+    const TEvent_MouseClick& event, bool& consume
+) {
+    consume = false;
+
+    if (IsVisible() == false) {
+        return;
+    }
+
+    if ((mouseOver == true) && (_isMouseOverChild() == false)) {
+        _OnMouseButtonDown(event);
+        GetSignal(DefaultSignalID::MouseButtonDown).Send(&event);
+
+        consume = true;
+    }
+}
+
+void TWidget::_handle_mouseButtonReleased(
+    const TEvent_MouseClick& event, bool& consume
+) {
+    consume = false;
+
+    if (IsVisible() == false) {
+        return;
+    }
+
+    if (clicked == true) {
+        if ((mouseOver == true) && (_isMouseOverChild() == false)) {
+            _OnClick();
+            GetSignal(DefaultSignalID::MouseClick).Send();
+        }
+
+        _OnMouseButtonUp(event);
+        GetSignal(DefaultSignalID::MouseButtonUp).Send(&event);
+    }
+}
+
+void TWidget::_handle_mouseMove(const TEvent_MouseMoved& event, bool& consume) {
+    consume = false;
+
+    if (IsVisible() == false) {
+        return;
+    }
+
+    const auto& mousePosition = event;
+    const auto position = GetScreenPosition();
+    const auto bounds = position + GetOwnSize();
+    const bool isOver = IsVisible() &&
+        isPointInRect(mousePosition.x, mousePosition.y,
+            position.x, position.y, bounds.x, bounds.y);
+
+    if ((isOver == true) && (mouseOver == false)) {
+        _OnHover();
+        GetSignal(DefaultSignalID::MouseEntered).Send();
+    } else if ((isOver == false) && (mouseOver == true)) {
+        _OnMouseLeave();
+        GetSignal(DefaultSignalID::MouseLeave).Send();
+    } else {
+        /*none*/
+    }
+
+    mouseOver = isOver;
 }
 
 void TWidget::_OnClick() {
@@ -264,11 +314,25 @@ void TWidget::_OnMouseLeave() {
 #endif
     /*none*/
 }
+
+void TWidget::_OnMouseButtonDown(const TEvent_MouseClick& event) {
+    if (event.button == sf::Mouse::Button::Left) {
+        clicked = true;
+    }
+}
+
+void TWidget::_OnMouseButtonUp(const TEvent_MouseClick& event) {
+    if (event.button == sf::Mouse::Button::Left) {
+        clicked = false;
+    }
+}
+
 void TWidget::_OnPositionChanged() { needsRedraw = true; }
+
 void TWidget::_OnShown() { needsRedraw = true; }
+
 void TWidget::_OnHidden() { /*none*/ }
-void TWidget::_OnMouseDown() { /*none*/ }
-void TWidget::_OnMouseUp() { /*none*/ }
+
 void TWidget::_OnResized() {
     needsRedraw = true;
     _checkBorders();

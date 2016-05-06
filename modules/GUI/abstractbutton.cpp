@@ -141,12 +141,37 @@ void TAbstractButton::_OnDisabled() { /*none*/ }
 void TAbstractButton::_OnTextChanged() { needsRedraw = true; }
 void TAbstractButton::_OnImageChanged() { needsRedraw = true; }
 
-void TAbstractButton::_updateMouse() {
+void TAbstractButton::_handle_mouseButtonPressed(
+    const TEvent_MouseClick& event, bool& consume
+) {
     if (IsEnabled() == false) {
+        consume = false;
         return;
     }
-    parent_type::_updateMouse();
+    parent_type::_handle_mouseButtonPressed(event, consume);
 }
+
+void TAbstractButton::_handle_mouseButtonReleased(
+    const TEvent_MouseClick& event, bool& consume
+) {
+    if (IsEnabled() == false) {
+        consume = false;
+        return;
+    }
+    parent_type::_handle_mouseButtonReleased(event, consume);
+}
+
+void TAbstractButton::_handle_mouseMove(
+    const TEvent_MouseMoved& event, bool& consume
+) {
+    if (IsEnabled() == false) {
+        consume = false;
+        return;
+    }
+    parent_type::_handle_mouseMove(event, consume);
+}
+
+
 
 TColor TAbstractButton::_currentColor() const {
     return colorModifier.modify(color);

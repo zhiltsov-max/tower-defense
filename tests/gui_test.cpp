@@ -87,7 +87,7 @@ TEST_F(TestSignal, get_id) {
 }
 
 TEST_F(TestSignal, add_listener) {
-    auto method = [] (TWidget*, void **) {};
+    auto method = [] (TWidget*, const void *) {};
     TWidgetSlot slot(TWidgetWeakRef(), "testSlot", method);
 
     AddListener(slot);
@@ -130,7 +130,7 @@ protected:
 const SlotID TestSlot::testId = "testSlot";
 bool TestSlot::testMethodExecuted = false;
 const TestSlot::Method TestSlot::testMethod =
-    [&] (TWidget*, void**) { TestSlot::testMethodExecuted = true; };
+    [&] (TWidget*, const void*) { TestSlot::testMethodExecuted = true; };
 const TestSlot::Owner TestSlot::testOwner {};
 
 
@@ -241,11 +241,7 @@ TEST_F(TestEventSystem, signals_and_slots_system) {
 	Signal& signal = GetSignal(id);
 
 	bool methodExecuted = false;
-	auto method = [&] (TWidget* object, void** args) {
-		methodExecuted = true;
-		UNUSED(object)
-		UNUSED(args)
-	};
+    auto method = [&] (TWidget*, const void*) { methodExecuted = true; };
 	Slot listener(TWidgetWeakRef(), id, method);
     signal.AddListener(listener);
     AddSlot(listener);
@@ -274,7 +270,7 @@ protected:
 	static const SignalID testSignal;
 	static const SlotID testSlot;
 	static int testSlotUseCount;
-	static void slot_TestSlot(TWidget*, void*) {
+    static void slot_TestSlot(TWidget*, const void*) {
 		++testSlotUseCount;
 	}
 

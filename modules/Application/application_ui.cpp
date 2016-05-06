@@ -25,6 +25,12 @@ std::shared_ptr<GUI::TUIParent> TApplicationUI::getUIParent() {
     return std::dynamic_pointer_cast<GUI::TUIParent>(uiParent);
 }
 
+void TApplicationUI::handleEvent(const TApplication::Event& event) {
+    if (uiParent != nullptr) {
+        uiParent->SendEvent(event);
+    }
+}
+
 void TApplicationUI::update() {
     uiParent->Update();
 }

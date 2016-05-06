@@ -130,9 +130,13 @@ protected:
 
     virtual bool _isMouseOverHeader() const;
 
-    virtual void _OnClick();
-    virtual void _OnMouseDown();
-    virtual void _OnMouseUp();
+    virtual void _handle_mouseButtonPressed(
+        const TEvent_MouseClick& event, bool& consume) override;
+    virtual void _handle_mouseButtonReleased(
+        const TEvent_MouseClick& event, bool& consume) override;
+    virtual void _handle_mouseMove(
+        const TEvent_MouseMoved& event, bool& consume) override;
+
     virtual void _OnMoveabilityChanged();
     virtual void _OnEnabled();
     virtual void _OnDisabled();

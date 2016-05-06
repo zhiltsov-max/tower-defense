@@ -53,7 +53,8 @@ class TDebugTools;
 class TApplication 
 {
 public:
-    static TApplication& Create(const TApplicationInfo& info = TApplicationInfo());
+    static TApplication& Create(
+        const TApplicationInfo& info = TApplicationInfo());
     static TApplication* GetInstance();
 
 

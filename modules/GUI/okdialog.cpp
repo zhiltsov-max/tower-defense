@@ -44,8 +44,7 @@ TOkDialog::Style TOkDialog::GetStyle() const {
     return Style::OkDialog;
 }
 
-void TOkDialog::slot_OkButtonClicked(TWidget* this__, void** args) {
-    UNUSED(args)
+void TOkDialog::slot_OkButtonClicked(TWidget* this__, const void*) {
     TOkDialog* this_ = dynamic_cast<TOkDialog*>(this__);
     ASSERT(this_ != nullptr, "Slot owner is not an instance of TOkDialog.")
 

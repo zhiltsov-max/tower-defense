@@ -35,7 +35,16 @@ bool TUIParent::IsMouseOver() const {
     return _isMouseOverChild();
 }
 
-void TUIParent::_draw(TRenderTarget& target) { /*none*/ UNUSED(target) }
+void TUIParent::SendEvent(const TEvent& event) {
+    bool consumed = false;
+    _sendEvent(event, consumed);
+}
+
+void TUIParent::_draw(TRenderTarget&) { /*none*/ }
 void TUIParent::_update() { /*none*/ }
+
+void GUI::TUIParent::_handleEvent(const TEvent&, bool&) {
+    return;
+}
 
 END_GUI

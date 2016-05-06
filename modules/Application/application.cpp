@@ -90,6 +90,13 @@ void TApplication::handleEvent(const Event& evt) {
 
     auto mouse = dynamic_cast<IO::TSFMLMouse*>(controller->getMouseDevice());
     mouse->handleEvent(evt);
+
+#if !defined(NO_GUI_APPLICATION)
+    if (ui != nullptr) {
+        ui->handleEvent(evt);
+    }
+#endif
+
 #endif //SFML
 }
 

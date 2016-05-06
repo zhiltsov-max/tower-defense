@@ -16,7 +16,7 @@ using SlotID = SignalID;
 class TWidgetSlot
 {
 public:
-    using Args = void**;
+    using Args = const void*;
     using Method = std::function<void (TWidget*, Args)>;
     using Owner = std::weak_ptr<TWidget>;
 

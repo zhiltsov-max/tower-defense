@@ -32,11 +32,17 @@ public:
     void HideChildren();
 
     virtual bool IsMouseOver() const override;
+
+    void SendEvent(const TEvent& event);
+
 private:
     typedef TWidget parent_type;
+
 protected:
     virtual void _draw(TRenderTarget& target) override;
     virtual void _update() override;
+
+    virtual void _handleEvent(const TEvent& event, bool& consume) override;
 };
 
 END_GUI

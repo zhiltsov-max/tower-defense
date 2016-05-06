@@ -26,11 +26,13 @@ void TAbstractTextArea::_checkBorders() {
     float top = 0;
     float bottom = std::numeric_limits<float>::max();
     if (_parentExists() == true) {
-        const TPadding parentBorder = parent->GetInnerBorder();
+        const TPadding parentBorder = std::move(parent->GetInnerBorder());
         left = 0;
-        right = std::max(parent->GetOwnSize().x - parentBorder.right - GetWidth(), 0.f);
+        right = std::max(
+            parent->GetOwnSize().x - parentBorder.right - GetWidth(), 0.f);
         top = 0;
-        bottom = std::max(parent->GetOwnSize().y - parentBorder.bottom - GetHeight(), 0.f);
+        bottom = std::max(
+            parent->GetOwnSize().y - parentBorder.bottom - GetHeight(), 0.f);
     }
 
     position.x = std::max(left, std::min(right, position.x));

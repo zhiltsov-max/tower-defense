@@ -68,7 +68,7 @@ public:
     virtual bool HasChild(const Name& name) const;
 
     /*
-        True if has child with given name and child's parent is this.
+    True if has child with given name and child's parent is this.
     */
     virtual bool HasChild(const Child& child) const;
 
@@ -80,71 +80,71 @@ public:
     }
 
     /*
-        Returns nullptr if child not found.
-        For recursive search use '<parentName>keySep()<childName>...'.
+    Returns nullptr if child not found.
+    For recursive search use '<parentName>keySep()<childName>...'.
     */
     virtual ConstChildRef FindChild(const Name& key) const;
 
     /*
-        Returns nullptr if child not found.
-        For recursive search use '<parentName>keySep()<childName>...'.
+    Returns nullptr if child not found.
+    For recursive search use '<parentName>keySep()<childName>...'.
     */
     virtual ChildRef FindChild(const Name& key);
 
     /*
-        Returns child and casts him to the const given type.
-        Returns nullptr if child not found.
-        For recursive search use '<parentName>keySep()<childName>...'.
+    Returns child and casts him to the const given type.
+    Returns nullptr if child not found.
+    For recursive search use '<parentName>keySep()<childName>...'.
     */
     template< class T >
     std::weak_ptr<const T> FindChild(const Name& key) const;
 
     /*
-        Returns child and casts him to the given type.
-        Returns nullptr if child not found.
-        For recursive search use '<parentName>keySep()<childName>...'.
+    Returns child and casts him to the given type.
+    Returns nullptr if child not found.
+    For recursive search use '<parentName>keySep()<childName>...'.
     */
     template< class T >
     std::weak_ptr<T> FindChild(const Name& key);
 
     /*
-        Returns a list with children of specified name.
+    Returns a list with children of specified name.
     */
     virtual std::list<ConstChildRef> FindChildren(const Name& name,
         bool recursievly = true) const;
 
     /*
-        Returns a list with children of specified name.
+    Returns a list with children of specified name.
     */
     virtual std::list<ChildRef> FindChildren(const Name& name,
         bool recursievly = true);
 
     /*
-        Returns size without margin.
+    Returns size without margin.
     */
     virtual const TSize& GetOwnSize() const;
 
     virtual void SetSize(const TSize& value);
 
     /*
-        Returns full width with margin.
+    Returns full width with margin.
     */
     virtual float GetWidth() const;
 
     /*
-        Returns full height with margin.
+    Returns full height with margin.
     */
     virtual float GetHeight() const;
 
     /*
-        Returns full size with margin.
+    Returns full size with margin.
     */
     virtual TSize GetSize() const;
 
     virtual const TCoordinate& GetPosition() const;
 
     /*
-        Returns position with respect to parent containers
+    Returns position with respect to parent containers
     */
     virtual TCoordinate GetScreenPosition() const;
 
@@ -152,14 +152,14 @@ public:
     virtual void SetPosition(float x, float y);
 
     /*
-        Returns marign size of this object.
+    Returns marign size of this object.
     */
     virtual const TPadding& GetMargin() const;
     virtual void SetMargin(const TPadding& value);
 
     /*
-        Returns inner border size for this object
-        with respect to padding.
+    Returns inner border size for this object
+    with respect to padding.
     */
     virtual TPadding GetInnerBorder() const;
 
@@ -186,29 +186,29 @@ public:
 
 
     /*
-        Connect one widget's signal with other's slot.
-        This form is requires explicitly specified signal and slot owners.
-        Usage example can be found in examples and test.
+    Connect widget's signal with other's widget slot.
+    This form is requires explicitly specified signal and slot owners.
+    Usage example can be found in tests.
     */
     static void Connect(const TWidgetRef& signalOwner,
         Signal& signal, const TWidgetRef& slotOwner, const Slot& slot);
 
     /*
-        Disconnect previously connected widget's signal and slot pair.
+    Disconnect previously connected widget's signal and slot pair.
     */
     static void Disconnect(const TWidgetRef& signalOwner,
         Signal& signal, const TWidgetRef& slotOwner, const Slot& slot);
 
     /*
-        Connect one widget's signal with arbitary "slot" function.
-        This form does not require existance of owner.
-        Usage example can be found in examples and test.
+    Connect widget's signal with an arbitary "slot" function.
+    This form does not require existance of owner.
+    Usage example can be found in tests.
     */
     static void Connect(const TWidgetRef& signalOwner,
         Signal& signal, const Slot& slot);
 
     /*
-        Disconnect previously connected signal and slot pair.
+    Disconnect previously connected signal and slot pair.
     */
     static void Disconnect(const TWidgetRef& signalOwner,
         Signal& signal, const Slot& slot);
@@ -246,7 +246,6 @@ protected:
 
     virtual bool _isMouseOverChild() const;
 
-    virtual void _updateMouse();
     virtual void _update();
     virtual void _updateChildren();
 
@@ -255,29 +254,47 @@ protected:
 
     virtual void _checkBorders();
 
-    virtual void _OnClick();
-    virtual void _OnHover();
-    virtual void _OnMouseLeave();
+    virtual void _sendEvent(const TEvent& event, bool& consumed) final;
+    virtual void _handleEvent(const TEvent& event, bool& consume);
+
+    /*
+    Event handlers.
+    */
+
+    virtual void _handle_mouseButtonPressed(
+        const TEvent_MouseClick& event, bool& consume);
+    virtual void _handle_mouseButtonReleased(
+        const TEvent_MouseClick& event, bool& consume);
+    virtual void _handle_mouseMove(
+        const TEvent_MouseMoved& event, bool& consume);
+
+    /*
+    Event callbacks.
+    */
+
     virtual void _OnPositionChanged();
+    virtual void _OnResized();
     virtual void _OnShown();
     virtual void _OnHidden();
-    virtual void _OnMouseDown();
-    virtual void _OnMouseUp();
-    virtual void _OnResized();
+    virtual void _OnHover();
+    virtual void _OnMouseLeave();
+    virtual void _OnMouseButtonDown(const TEvent_MouseClick& event);
+    virtual void _OnMouseButtonUp(const TEvent_MouseClick& event);
+    virtual void _OnClick();
     virtual void _OnParentChanged();
 
     /*
-        Returns a list of signals that have to be created.
+    Returns a list of signals that have to be created.
     */
     virtual std::list<Signal> _enumSignals() const;
 
     /*
-        Returns a list of common signals.
+    Returns a list of common signals.
     */
     static const std::list<Signal>& _basicSignals();
 
     /*
-        Returns a list of slots that have to be created.
+    Returns a list of slots that have to be created.
     */
     virtual std::list<Slot> _enumSlots() const;
 };

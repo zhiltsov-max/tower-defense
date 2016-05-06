@@ -674,11 +674,11 @@ using namespace lua;
             "ObjectEnabled",        GUI::DefaultSignalID::ObjectEnabled,
             "ObjectDisabled",       GUI::DefaultSignalID::ObjectDisabled,
 
-            "MouseEntered", GUI::DefaultSignalID::MouseEntered,
-            "MouseLeave",   GUI::DefaultSignalID::MouseLeave,
-            "MouseClick",   GUI::DefaultSignalID::MouseClick,
-            "MouseDown",    GUI::DefaultSignalID::MouseDown,
-            "MouseUp",      GUI::DefaultSignalID::MouseUp
+            "MouseEntered",         GUI::DefaultSignalID::MouseEntered,
+            "MouseLeave",           GUI::DefaultSignalID::MouseLeave,
+            "MouseClick",           GUI::DefaultSignalID::MouseClick,
+            "MouseDown",            GUI::DefaultSignalID::MouseButtonDown,
+            "MouseUp",              GUI::DefaultSignalID::MouseButtonUp
         );
         return ctx.ret();
     }

@@ -293,24 +293,39 @@ void TAbstractWindow::_draw(TRenderTarget& target) {
 #endif // _DEBUG
 }
 
-
-void TAbstractWindow::_OnClick() {
+void TAbstractWindow::_handle_mouseButtonPressed(
+    const TEvent_MouseClick& event, bool& consume
+) {
     if ((IsMoveable() == true) && (_isMouseOverHeader() == true)) {
-        clickPosition = IO::MousePos() - GetScreenPosition();
+        clickPosition.x = event.x - GetScreenPosition().x;
+        clickPosition.y = event.y - GetScreenPosition().y;
         state = State::Moving;
     }
+
+    consume = false;
 }
 
-void TAbstractWindow::_OnMouseDown() {
+void TAbstractWindow::_handle_mouseButtonReleased(
+    const TEvent_MouseClick& event, bool& consume
+) {
     if ((IsMoveable() == true) && (state == State::Moving)) {
-        SetPosition(IO::MousePos() - clickPosition);
-    }
-}
-void TAbstractWindow::_OnMouseUp() {
-    if ((IsMoveable() == true) && (state == State::Moving)) {
-        SetPosition(IO::MousePos() - clickPosition);
+        SetPosition(event.x - clickPosition.x,
+                    event.y - clickPosition.y);
         state = State::Normal;
     }
+
+    consume = false;
+}
+
+void TAbstractWindow::_handle_mouseMove(
+    const TEvent_MouseMoved& event, bool& consume
+) {
+    if ((IsMoveable() == true) && (state == State::Moving)) {
+        SetPosition(event.x - clickPosition.x,
+                    event.y - clickPosition.y);
+    }
+
+    consume = false;
 }
 
 void TAbstractWindow::_OnMoveabilityChanged() { /*none*/ }

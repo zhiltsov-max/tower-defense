@@ -17,8 +17,9 @@ const SignalID DefaultSignalID::ObjectDisabled = "dis";
 const SignalID DefaultSignalID::MouseEntered = "men";
 const SignalID DefaultSignalID::MouseLeave = "mou";
 const SignalID DefaultSignalID::MouseClick = "mcl";
-const SignalID DefaultSignalID::MouseDown = "mdn";
-const SignalID DefaultSignalID::MouseUp = "mup";
+const SignalID DefaultSignalID::MouseButtonDown = "mdn";
+const SignalID DefaultSignalID::MouseButtonUp = "mup";
+const SignalID DefaultSignalID::MouseMoved = "mmo";
 
 const std::vector<SignalID>& DefaultSignalID::enumerate() {
     static const std::vector<SignalID> _enumeration {
@@ -34,8 +35,9 @@ const std::vector<SignalID>& DefaultSignalID::enumerate() {
         MouseEntered,
         MouseLeave,
         MouseClick,
-        MouseDown,
-        MouseUp
+        MouseButtonDown,
+        MouseButtonUp,
+        MouseMoved
     };
     return _enumeration;
 }

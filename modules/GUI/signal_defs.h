@@ -26,8 +26,10 @@ public:
     static const SignalID MouseEntered;
     static const SignalID MouseLeave;
     static const SignalID MouseClick;
-    static const SignalID MouseDown;
-    static const SignalID MouseUp;
+    static const SignalID MouseButtonDown;
+    static const SignalID MouseButtonUp;
+    static const SignalID MouseMoved;
+
 
     static const std::vector<SignalID>& enumerate();
 };

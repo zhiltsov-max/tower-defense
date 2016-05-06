@@ -2,14 +2,13 @@
 #define APPLICATION_UI_H
 
 #include <memory>
+#include "application.h"
 
 
 
 namespace GUI {
 class TUIParent;
 }
-
-struct TApplicationInfo;
 
 class TApplicationUI 
 {
@@ -19,6 +18,7 @@ public:
     std::shared_ptr<const GUI::TUIParent> getUIParent() const;
     std::shared_ptr<GUI::TUIParent> getUIParent();
 
+    void handleEvent(const TApplication::Event& event);
     void update();
     void draw();
 

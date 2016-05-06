@@ -15,7 +15,7 @@ class TWidgetSignal
 {
 public:
     using Slot = TWidgetSlot;
-    using Args = void**;
+    using Args = const void*;
 
 
     TWidgetSignal(const SignalID& id = SignalID());

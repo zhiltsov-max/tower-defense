@@ -82,8 +82,14 @@ protected:
     virtual void _OnTextChanged();
     virtual void _OnImageChanged();
 
-    virtual void _updateMouse() override;
     virtual TColor _currentColor() const;
+
+    virtual void _handle_mouseButtonPressed(
+        const TEvent_MouseClick& event, bool& consume) override;
+    virtual void _handle_mouseButtonReleased(
+        const TEvent_MouseClick& event, bool& consume) override;
+    virtual void _handle_mouseMove(
+        const TEvent_MouseMoved& event, bool& consume) override;
 };
 
 

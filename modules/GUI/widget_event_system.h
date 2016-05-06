@@ -45,6 +45,10 @@ private:
     Slots slots;
 };
 
+using TEvent = sf::Event;
+using TEvent_MouseClick = sf::Event::MouseButtonEvent;
+using TEvent_MouseMoved = sf::Event::MouseMoveEvent;
+
 
 END_GUI
 
