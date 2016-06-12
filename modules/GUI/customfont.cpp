@@ -63,11 +63,11 @@ float TCustomFont::GetTextHeight(const TextString& text, const TCustomFont& font
 }
 
 float TCustomFont::GetTextWidth(const TextString& text) const {
-    Graphics::TText textRepr = std::move(CreateText(text));
+    Graphics::TText textRepr = CreateText(text);
     return textRepr.getGlobalBounds().width;
 }
 float TCustomFont::GetTextHeight(const TextString& text) const {
-    Graphics::TText textRepr = std::move(CreateText(text));
+    Graphics::TText textRepr = CreateText(text);
     return textRepr.getGlobalBounds().height;
 }
 
@@ -78,7 +78,7 @@ Graphics::TText TCustomFont::CreateText(const TextString& text) const {
 }
 
 Graphics::TText TCustomFont::CreateText(TextString&& text) const {
-    Graphics::TText result(std::move(text), getFont(), size);
+    Graphics::TText result(std::forward<TextString>(text), getFont(), size);
     result.setStyle(static_cast<uint>(flags));
     return result;
 }

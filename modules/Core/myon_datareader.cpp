@@ -46,15 +46,15 @@ bool TMyON_DataReader::parse() {
                 ++parenthesesSum;
 
 				//add parsed categories too
-                string key = std::move(join(keyStack));
+                string key = join(keyStack);
 				if (keyStack.empty() == false) {
 					key += keySeparator;
 				}
 				key += currentKey;
-                parsedData.emplace(key, "");
+                parsedData.emplace(std::move(key), "");
 					
 				if (currentKey.empty() == false) {
-                    keyStack.emplace_back(currentKey);
+                    keyStack.emplace_back(std::move(currentKey));
 				}
                 currentKey.clear();
                 currentValue.clear();
@@ -104,12 +104,12 @@ bool TMyON_DataReader::parse() {
 					break;
 				}
 				
-                string key = std::move(join(keyStack));
+                string key = join(keyStack);
 				if (keyStack.empty() == false) {
-					key += keySeparator;
+                    key += keySeparator;
 				}
 				key += currentKey;
-                parsedData.emplace(key, currentValue);
+                parsedData.emplace(std::move(key), currentValue);
                 currentKey.clear();
                 currentValue.clear();
                 insideValue = false;

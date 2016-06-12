@@ -458,7 +458,7 @@ bool TWidget::HasChildren() const {
 }
 
 TWidget::ConstChildRef TWidget::FindChild(const Name& key) const {
-    const auto parts = std::move(String::split(key, keySep()));
+    const auto parts = String::split(key, keySep());
     ConstChild currentObject = shared_from_this();
     for(const auto& part : parts) {
         if (currentObject == nullptr) {
@@ -477,7 +477,7 @@ TWidget::ConstChildRef TWidget::FindChild(const Name& key) const {
 }
 
 TWidget::ChildRef TWidget::FindChild(const Name& key) {
-    const auto parts = std::move(String::split(key, keySep()));
+    const auto parts = String::split(key, keySep());
     Child currentObject = shared_from_this();
     for(const auto& part : parts) {
         if (currentObject == nullptr) {
@@ -506,13 +506,12 @@ TWidget::FindChildren(const Name& name, bool recursievly) const
 
     if (recursievly == true) {
         for(const auto& currentObject : children) {
-            auto currentObjectChildren = std::move(
-                currentObject.second->FindChildren(name, true)
-            );
+            auto currentObjectChildren =
+                currentObject.second->FindChildren(name, true);
 
             result.insert(result.end(),
-                currentObjectChildren.cbegin(),
-                currentObjectChildren.cend()
+                currentObjectChildren.begin(),
+                currentObjectChildren.end()
             );
         }
     }
@@ -531,9 +530,8 @@ TWidget::FindChildren(const Name& name, bool recursievly)
 
     if (recursievly == true) {
         for(auto& currentObject : children) {
-            auto currentObjectChildren = std::move(
-                currentObject.second->FindChildren(name, true)
-            );
+            auto currentObjectChildren =
+                currentObject.second->FindChildren(name, true);
 
             result.insert(result.end(),
                 currentObjectChildren.begin(),
@@ -576,7 +574,7 @@ const TCoordinate& TWidget::GetPosition() const {
 TCoordinate TWidget::GetScreenPosition() const {
     const auto currentParent = parent.lock();
     if (currentParent != nullptr) {
-        TPadding innerBorder = std::move(currentParent->GetInnerBorder());
+        TPadding innerBorder = currentParent->GetInnerBorder();
         return position + currentParent->GetScreenPosition() +
                TCoordinate(innerBorder.left, innerBorder.top);
     } else {

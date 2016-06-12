@@ -19,9 +19,8 @@ public:
 	~TMyON_DataReader();
 
 	/*
-    Returns false if no error occured,
-    otherwise returns true.
-    If errors occured, they can be acquired by calling 'error()' function.
+    Returns false if no error occured, otherwise returns true.
+    If an error occured, it can be acquired by calling 'error' function.
 	*/
 	bool parse();
 	

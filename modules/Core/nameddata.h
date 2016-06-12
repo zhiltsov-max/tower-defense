@@ -32,7 +32,7 @@ public:
 	{}
 	TNamedData(TNamedData&& other) :
         parent_type(std::move(other)),
-        keySeparator(other.keySeparator)
+        keySeparator(std::move(other.keySeparator))
 	{}
     TNamedData(std::initializer_list< std::pair<const string, T> > list) :
         parent_type(list),
@@ -50,7 +50,7 @@ public:
         if (this != &prot) {
             clear();
             parent_type::operator=(prot);
-            keySeparator = prot.keySeparator;
+            keySeparator = std::move(prot.keySeparator);
         }
         return *this;
     }

@@ -240,7 +240,7 @@ bool TAbstractWindow::_isMouseOverHeader() const {
         return false;
     }
 
-    const TCoordinate position = std::move(GetScreenPosition());
+    const TCoordinate position = GetScreenPosition();
     return IO::IsCursorInRect(position.x, position.y,
         position.x + size.x, position.y + headerHeight);
 }
@@ -273,7 +273,7 @@ void TAbstractWindow::_draw(TRenderTarget& target) {
         needsRedraw = false;
     }
 
-    const TCoordinate position = std::move(GetScreenPosition());
+    const TCoordinate position = GetScreenPosition();
     renderImage.getDrawingObject().setPosition(position.x, position.y);
     target.draw(renderImage.getDrawingObject());
 

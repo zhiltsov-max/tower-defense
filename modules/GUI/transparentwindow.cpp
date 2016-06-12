@@ -43,8 +43,8 @@ void TTransparentWindow::_update() {
 }
 
 void TTransparentWindow::_updateOpacity() {
-    const TCoordinate position = std::move(GetScreenPosition());
-    bool isOver = IO::IsCursorInRect(position, position + size);
+    const TCoordinate position = GetScreenPosition();
+    const bool isOver = IO::IsCursorInRect(position, position + size);
 
     double currentOpacity = colorModifier.aMod * color.a;
 

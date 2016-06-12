@@ -74,8 +74,8 @@ protected:
     virtual State _getState() const;
     virtual void SetState(State value);
 
-    virtual std::list<Signal> _enumSignals() const override;
-    virtual std::list<Slot> _enumSlots() const override;
+    virtual list<Signal> _enumSignals() const override;
+    virtual list<Slot> _enumSlots() const override;
 
     virtual void _OnEnabled();
     virtual void _OnDisabled();

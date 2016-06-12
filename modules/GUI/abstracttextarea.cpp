@@ -26,7 +26,7 @@ void TAbstractTextArea::_checkBorders() {
     float top = 0;
     float bottom = std::numeric_limits<float>::max();
     if (_parentExists() == true) {
-        const TPadding parentBorder = std::move(parent->GetInnerBorder());
+        const TPadding parentBorder = parent->GetInnerBorder();
         left = 0;
         right = std::max(
             parent->GetOwnSize().x - parentBorder.right - GetWidth(), 0.f);
@@ -52,7 +52,7 @@ const TCoordinate& TAbstractTextArea::GetPosition() const {
 
 TCoordinate TAbstractTextArea::GetScreenPosition() const {
     if (_parentExists() == true) {
-        TPadding innerBorder = std::move(parent->GetInnerBorder());
+        TPadding innerBorder = parent->GetInnerBorder();
         return position + parent->GetScreenPosition() +
             TCoordinate(innerBorder.left, innerBorder.top);
     } else {
@@ -118,7 +118,7 @@ void TAbstractTextArea::Draw(TRenderTarget& target,
     const TCoordinate& offset)
 {
     const auto drawingPosition = offset + position;
-    auto textShape = std::move(font.CreateText(text));
+    auto textShape = font.CreateText(text);
     textShape.setColor(color);
     textShape.setPosition(drawingPosition);
 

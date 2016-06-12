@@ -36,7 +36,7 @@ void TWidgetSignal::Send(const Args& args) {
 
 
 void TWidgetSignal::AddListener(const Slot& listener) {
-    auto it = std::move(find(listener));
+    auto it = find(listener);
     if (it != listeners.cend()) {
 #if defined(_DEBUG)
         GUI_WARNING("Signal '" + id + "' already contains this listener.");
@@ -48,7 +48,7 @@ void TWidgetSignal::AddListener(const Slot& listener) {
 }
 
 void TWidgetSignal::RemoveListener(const Slot& listener) {
-    auto it = std::move(find(listener));
+    auto it = find(listener);
     if (it == listeners.cend()) {
 #if defined(_DEBUG)
         GUI_WARNING("Signal '" + id + "' does not contain this listener.");

@@ -156,7 +156,7 @@ static size_t _determineLineCharacterCount(
 }
 
 void TRichTextArea::_splitTextByLines() {
-    lines = std::move(_splitStringBySeparators(text, separators));
+    lines = _splitStringBySeparators(text, separators);
 
     if (maxSize.x <= 0) { // maximum size is unlimited
         return;
@@ -169,9 +169,9 @@ void TRichTextArea::_splitTextByLines() {
         if (maxChars == 0) {
             it = lines.erase(it);
         } else if (maxChars < (*it).size()) {
-            it = lines.emplace(it, String::left(*it, maxChars));
+            it = lines.emplace(it, std::move(String::left(*it, maxChars)));
             ++it;
-            it = lines.emplace(it, String::right(*it, maxChars));
+            it = lines.emplace(it, std::move(String::right(*it, maxChars)));
             ++it;
             it = lines.erase(it);
         } else {
@@ -195,7 +195,7 @@ void TRichTextArea::Draw(TRenderTarget& target, const TCoordinate& offset) {
              (maxSize.y == 0)
            )
         {
-            textSprite.setString(lines[i]);
+            textSprite.setString(std::move(lines[i]));
             textSprite.setPosition(position.x, position.y + i * lineHeight);
             target.draw(textSprite);
         }

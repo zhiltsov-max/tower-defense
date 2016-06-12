@@ -46,7 +46,7 @@ void TSimpleText::_draw(TRenderTarget& target) {
         needsRedraw = false;
     }
 
-    const TCoordinate position = std::move(GetScreenPosition());
+    const TCoordinate position = GetScreenPosition();
     renderImage.getDrawingObject().setPosition(position.x, position.y);
     target.draw(renderImage.getDrawingObject());
 }

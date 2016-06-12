@@ -28,26 +28,26 @@ BEGIN_GUI_LUA_BINDING
     void bindCore(lua::State& state);
 END_GUI_LUA_BINDING
 
-    LUAPP_ARG_CONVERT(wchar_t, { return (wchar_t)val.cast<uint>(); })
-    LUAPP_RV_CONVERT (wchar_t, { return context.ret((uint)val); })
+    LUAPP_ARG_CONVERT(wchar_t, { return static_cast<wchar_t>(val.cast<uint>()); })
+    LUAPP_RV_CONVERT (wchar_t, { return context.ret(static_cast<uint>(val)); })
     LUAPP_USERDATA(wstring, "wstring")
     LUAPP_RV_CONVERT(std::vector<wstring>, {
         Table t(context);
-        for (auto i = 0u, iend = val.size(); i != iend; ++i) {
+        for (size_t i = 0, iend = val.size(); i != iend; ++i) {
             t[i] = std::move(val[i]);
         }
         return context.ret(t);
     })
 
     LUAPP_ARG_CONVERT(GUI::lua_binding::TImage, { return static_cast<GUI::lua_binding::TImage>(val.cast<LightUserData>()); })
-    LUAPP_RV_CONVERT (GUI::lua_binding::TImage, { return context.ret((LightUserData)val); })
+    LUAPP_RV_CONVERT (GUI::lua_binding::TImage, { return context.ret(static_cast<LightUserData>(val)); })
 
     LUAPP_ARG_CONVERT(GUI::TCustomFont::Style, { return static_cast<GUI::TCustomFont::Style>(val.cast<int>()); })
     LUAPP_RV_CONVERT(GUI::TCustomFont::Style, { return context.ret(static_cast<GUI::lua_binding::TFontStyle>(val)); })
 
     LUAPP_USERDATA(Vec2f, "Vec2f")
-    //LUAPP_USERDATA(GUI::TSize, "Size")
-    //LUAPP_USERDATA(GUI::TCoordinate, "Coordinate")
+    //LUAPP_USERDATA(GUI::TSize, "Size") - is a Vec2f
+    //LUAPP_USERDATA(GUI::TCoordinate, "Coordinate") - is a Vec2f
     LUAPP_USERDATA(GUI::lua_binding::TPadding, "Padding")
     LUAPP_USERDATA(GUI::lua_binding::TColor, "Color")
     LUAPP_USERDATA(GUI::lua_binding::TFont, "Font")

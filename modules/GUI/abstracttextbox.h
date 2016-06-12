@@ -79,7 +79,7 @@ protected:
     /*
         Returns a list of signals that have to be created.
     */
-    virtual std::list<Signal> _enumSignals() const override;
+    virtual list<Signal> _enumSignals() const override;
 
     virtual void _draw(TRenderTarget& target) override;
 

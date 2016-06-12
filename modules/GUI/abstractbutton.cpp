@@ -20,8 +20,8 @@ TAbstractButton::TAbstractButton(const TAbstractButtonSource& source) :
 
 TAbstractButton::TAbstractButton(TAbstractButton&& other) :
     parent_type(std::move(other)),
-    state(other.state),
-    color(other.color),
+    state(std::move(other.state)),
+    color(std::move(other.color)),
     colorModifier(std::move(other.colorModifier)),
     image(std::move(other.image)),
     textArea(std::move(other.textArea))
@@ -121,8 +121,8 @@ void TAbstractButton::SetFontColor(const TColor& value) {
     }
 }
 
-std::list<TAbstractButton::Signal> TAbstractButton::_enumSignals() const {
-    std::list<Signal> signals = std::move(parent_type::_enumSignals());
+list<TAbstractButton::Signal> TAbstractButton::_enumSignals() const {
+    list<Signal> signals = parent_type::_enumSignals();
 
     signals.emplace_back(DefaultSignalID::ObjectEnabled);
     signals.emplace_back(DefaultSignalID::ObjectDisabled);
@@ -131,8 +131,8 @@ std::list<TAbstractButton::Signal> TAbstractButton::_enumSignals() const {
     return signals;
 }
 
-std::list<TAbstractButton::Slot> TAbstractButton::_enumSlots() const {
-    std::list<Slot> slots = std::move(parent_type::_enumSlots());
+list<TAbstractButton::Slot> TAbstractButton::_enumSlots() const {
+    std::list<Slot> slots = parent_type::_enumSlots();
     return slots;
 }
 

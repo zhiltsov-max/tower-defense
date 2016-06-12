@@ -53,7 +53,7 @@ TRenderObject::TRenderObject(const TSize& size) :
 }
 
 void TRenderObject::resize(const TSize& size) {
-    auto currentSize = std::move(renderTexture->getSize());
+    auto currentSize = renderTexture->getSize();
     if (currentSize.x != size.x || currentSize.y != size.y) {
         GUI_ASSERT(renderTexture->create(size.x, size.y) == true,
             "Failed to create a RenderTexture.");

@@ -17,8 +17,8 @@ TAbstractTextBox::TAbstractTextBox(const TAbstractTextBoxSource& source) :
     text()
 {}
 
-std::list<TAbstractTextBox::Signal> TAbstractTextBox::_enumSignals() const {
-    auto signals = std::move(parent_type::_enumSignals());
+list<TAbstractTextBox::Signal> TAbstractTextBox::_enumSignals() const {
+    auto signals = parent_type::_enumSignals();
 
     signals.emplace_back(DefaultSignalID::ObjectTextChanged);
 
@@ -47,7 +47,7 @@ void TAbstractTextBox::_draw(TRenderTarget& target) {
         needsRedraw = false;
     }
 
-    const TCoordinate position = std::move(GetScreenPosition());
+    const TCoordinate position = GetScreenPosition();
     renderImage.getDrawingObject().setPosition(position.x, position.y);
     target.draw(renderImage.getDrawingObject());
 

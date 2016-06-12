@@ -134,8 +134,7 @@ protected:
 
     /*
     Initialize the application data.
-    Called in the constructor to initialize
-    the low-level data structures.
+    Called in the constructor to initialize the low-level data structures.
     Includes I/O subsystems and window initialization.
     */
     virtual void initialize(const TApplicationInfo& info);
@@ -143,8 +142,7 @@ protected:
     /*
     Update current application state.
     Called in every iteration of the main message cycle
-    in the run() method.
-    after handling all the new events.
+    in the run() method after handling of all the new events.
     */
     virtual void update();
 

@@ -36,7 +36,7 @@ void TPushButton::_draw(TRenderTarget& target) {
         needsRedraw = false;
     }
 
-    TCoordinate position = std::move(GetScreenPosition());
+    TCoordinate position = GetScreenPosition();
     if (clicked == true) {
         position += TCoordinate(1.f, 1.f);
     }
