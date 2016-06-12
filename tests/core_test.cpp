@@ -1,4 +1,4 @@
-#include "gtest.h"
+#include "gtest/gtest.h"
 
 #include <array>
 
@@ -425,7 +425,7 @@ TEST(parserTest, parse_and_slice_difficult_correct) {
     std::stringstream ss;
     ss << fileData;
 
-    auto parsed = std::move(ParseData(ss));
+    const auto parsed = ParseData(ss);
 
     const TNamedData<string> expectation {
         {"map:nodes", ""},
@@ -459,9 +459,7 @@ TEST(parserTest, parse_and_slice_difficult_correct) {
         {"map:nodes:pathes:0:exit", "0"},
         {"map:nodes:pathes:count", "1"}
     };
-    auto res = std::move(
-        parsed.slice(string("map") + parsed.keySep() + "nodes")
-    );
+    const auto res = parsed.slice(string("map") + parsed.keySep() + "nodes");
     ASSERT_EQ(expectation, res);
 }
 

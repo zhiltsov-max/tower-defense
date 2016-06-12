@@ -37,10 +37,6 @@ set(core_sources
 add_library(td_core_LIB STATIC
     ${core_headers} ${core_sources})
 target_link_libraries(td_core_LIB
-    -lglew32
-    -lsfml-system
-    -lsfml-main
-    -lsfml-window
-    -lsfml-graphics
-    -llua52
+    ${SFML_LIBRARIES}
+    ${LUA_LIBRARIES}
 )

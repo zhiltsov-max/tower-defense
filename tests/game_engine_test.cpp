@@ -863,11 +863,15 @@ TEST_F(TestSceneResources, is_resource_loaded_is_false_success) {
 
 TEST_F(TestSceneResources, get_resource_success) {
     static const TSceneResources::ID id = "testID";
-    const auto& resource = LoadResource(id, TTestResource::typeID);
+    const auto resource = LoadResource(id, TTestResource::typeID);
 
-    ASSERT_EQ(&resource, &GetResource(id));
+    ASSERT_EQ(resource.lock(), GetResource(id).lock());
+    EXPECT_FALSE(resource.expired());
 }
 
+TEST_F(TestSceneResources, get_registry_success) {
+    ASSERT_NO_THROW(GetRegistry());
+}
 
 
 int main(int argc, char** argv) {

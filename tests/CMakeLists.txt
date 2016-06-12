@@ -1,20 +1,11 @@
 project(Tests)
-
-include_directories(
-    include
-    include/gtest
-)
-
-set(gtest_LIB -lgtest.dll)
+include_directories(include)
 set(PROJECT_BINARY_DIR "${PROJECT_SOURCE_DIR}/bin")
 
 
 add_executable(core_test core_test.cpp)
 target_link_libraries(core_test 
-    -L"${LIBRARY_PATH}"
-    -L"${PROJECT_SOURCE_DIR}/lib"
-    -lgtest.dll
-
+    ${GTEST_LIBRARIES}    
     td_core_LIB
 )
 add_test(NAME test_core
@@ -25,16 +16,7 @@ add_test(NAME test_core
 
 add_executable(gui_test gui_test.cpp)
 target_link_libraries(gui_test
-    -L"${LIBRARY_PATH}"
-    -L"${PROJECT_SOURCE_DIR}/lib"
-    -lgtest.dll
-    -lglew32
-    -lsfml-system
-    -lsfml-main
-    -lsfml-window
-    -lsfml-graphics
-    -llua52
-
+    ${GTEST_LIBRARIES}
     td_core_LIB
     td_gui_LIB
     td_application_core_LIB
@@ -47,16 +29,7 @@ add_test(NAME test_gui
 
 add_executable(application_test app_test.cpp)
 target_link_libraries(application_test
-    -L"${LIBRARY_PATH}"
-    -L"${PROJECT_SOURCE_DIR}/lib"
-    -lgtest.dll
-    -lglew32
-    -lsfml-system
-    -lsfml-main
-    -lsfml-window
-    -lsfml-graphics
-    -llua52
-
+    ${GTEST_LIBRARIES}
     td_core_LIB
     td_gui_LIB
     td_application_core_LIB
@@ -69,16 +42,7 @@ add_test(NAME test_application
 
 add_executable(graphics_test graphics_test.cpp)
 target_link_libraries(graphics_test
-    -L"${LIBRARY_PATH}"
-    -L"${PROJECT_SOURCE_DIR}/lib"
-    -lgtest.dll
-    -lglew32
-    -lsfml-system
-    -lsfml-main
-    -lsfml-window
-    -lsfml-graphics
-    -llua52
-
+    ${GTEST_LIBRARIES}
     td_core_LIB
     td_gui_LIB
     td_application_core_LIB
@@ -90,16 +54,7 @@ add_test(NAME test_graphics
 
 add_executable(game_engine_test game_engine_test.cpp)
 target_link_libraries(game_engine_test
-    -L"${LIBRARY_PATH}"
-    -L"${PROJECT_SOURCE_DIR}/lib"
-    -lgtest.dll
-    -lglew32
-    -lsfml-system
-    -lsfml-main
-    -lsfml-window
-    -lsfml-graphics
-    -llua52
-
+    ${GTEST_LIBRARIES}
     td_core_LIB
     td_gui_LIB
     td_application_core_LIB
@@ -112,15 +67,7 @@ add_test(NAME test_game_engine
 
 add_executable(gui_application_test examples/gui_app_test.cpp)
 target_link_libraries(gui_application_test
-    -L"${LIBRARY_PATH}"
-    -L"${PROJECT_SOURCE_DIR}/lib"
-    -lglew32
-    -lsfml-system
-    -lsfml-main
-    -lsfml-window
-    -lsfml-graphics
-    -llua52
-
+    ${GTEST_LIBRARIES}
     td_core_LIB
     td_gui_LIB
     td_application_core_LIB
