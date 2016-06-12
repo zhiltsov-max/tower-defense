@@ -5,7 +5,7 @@
 namespace GE {
 
 
-TSceneResources::Resource& TSceneResources::LoadResource(
+TSceneResources::PWeakResource TSceneResources::LoadResource(
     const TSceneResources::ID& id, const TSceneResource::TypeID& type,
     const TSceneResourceCreateArgs* args
 ) {
@@ -20,7 +20,8 @@ TSceneResources::Resource& TSceneResources::LoadResource(
         THROW("Failed to load resource.");
     }
 
-    return *(*resources.emplace(id, std::move(ptr)).first).second;
+    PResource resource(ptr.release());
+    return resources.emplace(id, std::move(resource)).first->second;
 }
 
 void TSceneResources::UnloadResource(const ID& id) {
@@ -46,12 +47,13 @@ TSceneResourceRegistry& TSceneResources::GetRegistry() {
     return registry;
 }
 	
-const TSceneResource& TSceneResources::GetResource(const ID& id) const {
-    return *resources.at(id);
+TSceneResources::PConstWeakResource
+TSceneResources::GetResource(const ID& id) const {
+    return resources.at(id);
 }
 
-TSceneResource& TSceneResources::GetResource(const ID& id) {
-    return *resources.at(id);
+TSceneResources::PWeakResource TSceneResources::GetResource(const ID& id) {
+    return resources.at(id);
 }
 
 bool TSceneResources::Empty() const {

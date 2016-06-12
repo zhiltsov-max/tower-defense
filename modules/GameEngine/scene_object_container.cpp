@@ -51,7 +51,7 @@ TSceneObjectContainer::AddSceneObject(const Name& name,
         handle = freeHandles.top();
         freeHandles.pop();
 
-        objects[handle] = std::move(Entry(name, sceneObject));
+        objects[handle] = Entry(name, sceneObject);
     } else {
         handle = objects.size();
         objects.emplace_back(name, sceneObject);
@@ -75,7 +75,7 @@ TSceneObjectContainer::AddSceneObject(const Name& name,
         handle = freeHandles.top();
         freeHandles.pop();
 
-        objects[handle] = std::move(Entry(name, std::move(sceneObject)));
+        objects[handle] = Entry(name, std::move(sceneObject));
     } else {
         handle = objects.size();
         objects.emplace_back(name, std::move(sceneObject));
@@ -87,7 +87,7 @@ TSceneObjectContainer::AddSceneObject(const Name& name,
 
 TSceneObject TSceneObjectContainer::RemoveSceneObject(const Name& name) {
     Handle handle = GetHandle(name);
-    return std::move(RemoveSceneObject(handle));
+    return RemoveSceneObject(handle);
 }
 
 TSceneObject TSceneObjectContainer::RemoveSceneObject(const Handle& handle) {
@@ -119,7 +119,7 @@ bool TSceneObjectContainer::HasObject(const Handle& handle) const {
 void TSceneObjectContainer::Clear() {
     objects.clear();
     objects.shrink_to_fit();
-    freeHandles = std::move(FreeHandles());
+    freeHandles = FreeHandles();
     nameMapping.clear();
 }
 

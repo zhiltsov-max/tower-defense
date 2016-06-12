@@ -48,7 +48,7 @@ protected:
 
 	virtual void seekEnemies();	
     const TMob* selectEnemy(std::list<TMob const*>& accessibleTargets) const;
-    std::list<TMob const*> findEnemiesInRange() const;
+    list<TMob const*> findEnemiesInRange() const;
 
 	virtual void checkRotation() = 0;	
 	virtual void setRotation(int angle = 361);

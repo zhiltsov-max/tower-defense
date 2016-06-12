@@ -15,7 +15,7 @@ class TScene
 public:
     using SceneObjects = TSceneObjectContainer;
     using Resources = TSceneResources;
-    using Handle = TSceneObject::ComponentHandle;
+    using ComponentHandle = TSceneObject::ComponentHandle;
 
 
     virtual ~TScene() = default;
@@ -26,17 +26,19 @@ public:
     const SceneObjects& GetObjects() const;
     SceneObjects& GetObjects();
 
-    Handle CreateComponent(
+    ComponentHandle CreateComponent(
         const TComponent::ID& id,
         const ComponentSystem& componentClass,
         const TComponentCreateArgs* args = nullptr
     );
     template< class Component >
-    Handle CreateComponent(TComponentCreateArgs* args);
+    ComponentHandle CreateComponent(TComponentCreateArgs* args);
 
-    void RemoveComponent(const Handle& handle);
+    void RemoveComponent(const ComponentHandle& handle);
 
-    TComponent* GetComponent(const Handle& handle);
+    TComponent* GetComponent(const ComponentHandle& handle);
+    template <class T>
+    T* GetComponent(const ComponentHandle& handle);
 
     void SetGameEngine(TGameEngine* instance);
 
@@ -51,14 +53,18 @@ private:
 
 
 template< class Component >
-TScene::Handle TScene::CreateComponent(TComponentCreateArgs* args) {
+TScene::ComponentHandle TScene::CreateComponent(TComponentCreateArgs* args) {
     return CreateComponent(
-        (uint)  ComponentID< Component >::value,
-        ComponentClass< Component >::value,
+        static_cast<uint>(ComponentID<Component>::value),
+        ComponentClass<Component>::value,
         args
     );
 }
 
+template< class T >
+TScene::T* TScene::GetComponent(const TScene::ComponentHandle& handle) {
+    return dynamic_cast<T*>(GetComponent(handle));
+}
 
 } //namespace GE
 

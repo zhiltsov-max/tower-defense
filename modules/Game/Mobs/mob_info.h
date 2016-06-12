@@ -1,8 +1,9 @@
 #ifndef MOB_INFO_H
 #define MOB_INFO_H
 
-#include "../gameobjects_info.h"
+#include "Game/Components/game_objects_info.h"
 #include "mob.h"
+
 
 
 using TMobsInfo = TGameObjectsInfo;

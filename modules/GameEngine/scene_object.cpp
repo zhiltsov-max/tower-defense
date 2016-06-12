@@ -54,7 +54,7 @@ TSceneObject::Handle TSceneObject::AddComponent(const Name& name,
         handle = freeHandles.top();
         freeHandles.pop();
 
-        components[handle] = std::move(Entry(name, component));
+        components[handle] = Entry(name, component);
     } else {
         handle = components.size();
         components.emplace_back(name, component);
@@ -106,7 +106,7 @@ void TSceneObject::checkSize() {
     if (components.size() == freeHandles.size()) {
         components.clear();
         components.shrink_to_fit();
-        freeHandles = std::move(FreeHandles());
+        freeHandles = FreeHandles();
         nameMapping.clear();
     }
 }

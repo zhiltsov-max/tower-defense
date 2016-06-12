@@ -26,25 +26,25 @@ void TScene::SetGameEngine(TGameEngine* instance) {
     engine = instance;
 }
 
-TScene::Handle TScene::CreateComponent(const TComponent::ID& id,
+TScene::ComponentHandle TScene::CreateComponent(const TComponent::ID& id,
     const ComponentSystem& componentClass, const TComponentCreateArgs* args)
 {
 #if defined(_DEBUG)
     ASSERT(engine != nullptr, "Game engine must be set.")
 #else
     if (engine == nullptr) {
-        return Handle::Undefined;
+        return ComponentHandle::Undefined;
     }
 #endif // DEBUG
 
     auto* system = engine->GetComponentSystems().
         systems[(uchar)componentClass];
 
-    Handle handle(system->CreateComponent(id, args), componentClass);
+    ComponentHandle handle(system->CreateComponent(id, args), componentClass);
     return handle;
 }
 
-void TScene::RemoveComponent(const Handle& handle) {
+void TScene::RemoveComponent(const ComponentHandle& handle) {
 #if defined(_DEBUG)
     ASSERT(engine != nullptr, "Game engine must be set.")
 #else
@@ -58,7 +58,7 @@ void TScene::RemoveComponent(const Handle& handle) {
     system->RemoveComponent(handle);
 }
 
-TComponent* TScene::GetComponent(const TScene::Handle& handle) {
+TComponent* TScene::GetComponent(const TScene::ComponentHandle& handle) {
     return engine->GetComponentSystems().
         systems[(uchar)handle.GetSystem()]->GetComponent(handle);
 }

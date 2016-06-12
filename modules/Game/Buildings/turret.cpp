@@ -104,7 +104,7 @@ void TTurret::setRotation(int angle = 361) {
 }
 	
 std::list<TMob const*>&& TTurret::findEnemiesInRange() const {
-	std::list<TMob const*> foundMobs;
+    std::list<TMob const*> foundMobs;
 
 	double range = std::pow(range * GameMechanics::TILE_SIZE, 2);
 
@@ -123,7 +123,7 @@ std::list<TMob const*>&& TTurret::findEnemiesInRange() const {
 		}
 	}
 		
-	return std::move(foundMobs);
+    return std::move(foundMobs);
 }
 	
 void TTurret::shot(TMob const* target) {

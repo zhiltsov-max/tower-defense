@@ -1,18 +1,20 @@
 #include "level.h"
+#include "level_lua_binding.h"
 
 
 
 BEGIN_TD
 
 
-TLevel::TLevel(const TLevelInfo& info, TGameEngine* engine) :
+TLevel::TLevel(const TLevelInfo& info, GE::TGameEngine& engine) :
     common(info.common),
-    gameObjects(info.gameObjects),
     stages(info.stages),
-    clock(),
-    scene(info.scene, engine),
-    gameEngine(engine)
-{}
+    clock(Clock::Rate::Pause),
+    scene(info.scene, &engine),
+    gameEngine(&engine)
+{
+    loadScript(info);
+}
 
 const TLevel::Clock& TLevel::GetClock() const {
     return clock;
@@ -37,12 +39,24 @@ void TLevel::Update() {
     }
 }
 
-const TGameEngine* TLevel::GetGameEngine() const {
+const GE::TGameEngine* TLevel::GetGameEngine() const {
     return gameEngine;
 }
 
-TGameEngine* TLevel::GetGameEngine() {
+GE::TGameEngine* TLevel::GetGameEngine() {
     return gameEngine;
+}
+
+void TLevel::loadScript(const TLevelInfo& info) {
+    ASSERT(gameEngine != nullptr, "Game engine must be set");
+
+    auto& scriptEngine = gameEngine->GetScriptEngine();
+    const auto& script = info.common.loadingScript;
+
+    if (script.empty() == false) {
+        scriptEngine.Get().runFile(script);
+        lua_binding::loadLevel(scriptEngine.Get(), &level);
+    }
 }
 
 

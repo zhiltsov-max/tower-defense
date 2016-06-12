@@ -13,7 +13,7 @@
 namespace TD {
 
 
-struct TLevelDataGameObjects
+struct TLevelSceneDataGameObjects
 {
     using Buildings = TBuildingsController;
     Buildings buildings;
@@ -31,7 +31,7 @@ struct TLevelDataGameObjects
     Map map;
 
 
-    TLevelDataGameObjects(const TLevelInfoGameObjects& info);
+    TLevelSceneDataGameObjects(const TLevelInfoGameObjects& info);
 };
 
 

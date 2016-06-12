@@ -1,9 +1,9 @@
 #include "level_info_loader.h"
-
+#include "level_info_loader_impl.h"
+#include "Application/td_application.h"
 
 
 namespace TD {
-
 
 TLevelInfoLoader::TLevelInfoLoader() :
     dataPath(DEFAULT_LEVEL_DATA_PATH)
@@ -29,10 +29,17 @@ TRawLevelInfo TLevelInfoLoader::loadRawInfo(const TLevelCode& code) {
 }
 
 TLevelInfo TLevelInfoLoader::Load(const TLevelCode& code) {
-    auto raw = std::move(loadRawInfo(code));
+    TLevelInfo info;
 
-    TLevelInfo info(raw);
-    info.common.levelCode = code;
+    try {
+        const auto raw = loadRawInfo(code);
+        info = readFromRawLevelInfo<TLevelInfo>(raw);
+        info.common.levelCode = code;
+    } catch (const std::exception& e) {
+        //TODO: error logging
+        std::cerr << "Failed to load level info from file. The message is:"
+                  << e.what() <<std::endl;
+    }
 
     return info;
 }
@@ -40,6 +47,5 @@ TLevelInfo TLevelInfoLoader::Load(const TLevelCode& code) {
 void TLevelInfoLoader::SetDataPath(const string& value) {
     dataPath = value;
 }
-
 
 } // namespace TD

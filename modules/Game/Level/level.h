@@ -8,12 +8,10 @@
 #include "level_clock.h"
 #include "level_scene.h"
 #include "level_data_common.h"
-#include "level_data_game_objects.h"
 #include "level_data_stages.h"
+#include "GameEngine/game_engine.h"
 
 
-
-class TGameEngine;
 
 BEGIN_TD
 
@@ -27,11 +25,11 @@ public:
     using Clock = TLevelClock;
     using Scene = TLevelScene;
     using Common = TLevelDataCommon;
-    using GameObjects = TLevelDataGameObjects;
+    using GameObjects = TLevelSceneDataGameObjects;
     using Stages = TLevelDataStages;
 
 
-    TLevel(const TLevelInfo& info, TGameEngine* engine);
+    TLevel(const TLevelInfo& info, GE::TGameEngine& engine);
 
     const Clock& GetClock() const;
     Clock& GetClock();
@@ -41,21 +39,25 @@ public:
 
     void Update();
 
-    const TGameEngine* GetGameEngine() const;
-    TGameEngine* GetGameEngine();
+    const GE::TGameEngine* GetGameEngine() const;
+    GE::TGameEngine* GetGameEngine();
 
 private:
     Clock clock;
     Scene scene;
     Common common;
-    GameObjects gameObjects;
     Stages stages;
 
 
-    using PGameEngine = TGameEngine *;
+    using PGameEngine = GE::TGameEngine *;
     PGameEngine gameEngine;
 
-    class Loader;
+    /* Level LUA loader.
+    It have to implement all level-specific behaviour of loading process
+    i.e. new game objects/components import, method overrides,
+    scene loading, progress managing, etc.
+    */
+    void loadScript(const TLevelInfo& info);
 };
 
 

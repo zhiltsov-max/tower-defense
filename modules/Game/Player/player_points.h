@@ -4,14 +4,13 @@
 #include "Game/Components/components_list.h"
 
 
-
 namespace TD {
-
 
 class CPlayerPoints : public CLogicsComponent
 {
 public:
-    static std::unique_ptr<TComponent> Create(const TComponentCreateArgs* args = nullptr);
+    static std::unique_ptr<TComponent> Create(
+        const TComponentCreateArgs* args = nullptr);
 
 
     using Points = int;
@@ -42,7 +41,6 @@ template<>
 struct ComponentClass< CPLayerPoints > {
     static constexpr CompponentClass value = ComponentClass::logics;
 };
-
 
 } // namespace TD
 

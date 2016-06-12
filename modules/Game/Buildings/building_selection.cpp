@@ -7,7 +7,7 @@ namespace TD {
 
 
 TBuilding::Selection::Selection(const TBuildingInfo& info) {
-    const auto resources = std::move(String::split(info[owner->getClass()]["resources"].asString, ';'));
+    const auto resources = String::split(info[owner->getClass()]["resources"].asString, ';');
 	for(auto it = resources.cbegin(); it != resources.cend(); ++it) {
         if (String::endsWith(*it, "Sector") == true) {
 			image = Image(BuildingsController::getResources().getResource(*it).getObject<TImage>());

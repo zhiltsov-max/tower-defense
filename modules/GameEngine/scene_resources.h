@@ -27,17 +27,19 @@ class TSceneResources
 public:
     using ID = TSceneResourceID;
     using Resource = TSceneResource;
+    using PConstWeakResource = std::weak_ptr<const Resource>;
+    using PWeakResource = std::weak_ptr<Resource>;
 
 
-    Resource& LoadResource(
+    PWeakResource LoadResource(
         const ID& id,
         const Resource::TypeID& type,
         const TSceneResourceCreateArgs* args = nullptr
     );
     void UnloadResource(const ID& id);
 
-    const Resource& GetResource(const ID& id) const;
-    Resource& GetResource(const ID& id);
+    PConstWeakResource GetResource(const ID& id) const;
+    PWeakResource GetResource(const ID& id);
 
     void Clear();
     bool Empty() const;
@@ -47,7 +49,8 @@ public:
     TSceneResourceRegistry& GetRegistry();
 
 private:
-    using Resources = std::map<ID, std::unique_ptr<Resource>>;
+    using PResource = std::shared_ptr<Resource>;
+    using Resources = std::map<ID, PResource>;
     Resources resources;
 
     using Registry = TSceneResourceRegistry;

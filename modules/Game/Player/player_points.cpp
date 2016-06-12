@@ -1,9 +1,7 @@
 #include "player_points.h"
 
 
-
 namespace TD {
-
 
 std::unique_ptr<TComponent> CPlayerPoints::Create(const TComponentCreateArgs* args) {
     return new CPlayerPoints;
@@ -42,6 +40,5 @@ void CPlayerPoints::SetPoints(const CPlayerPoints::Points& value) {
         1 // TODO: send message "changed"
     }
 }
-
 
 } // namespace TD

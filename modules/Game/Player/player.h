@@ -41,6 +41,8 @@ private:
     using Handle = TLevelScene::Handle;
     Handle progress;
     Handle statistics;
+
+    //TODO: add player object handle
 };
 
 } // namespace TD

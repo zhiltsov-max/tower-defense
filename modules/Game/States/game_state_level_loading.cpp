@@ -15,11 +15,11 @@ TGameState_LevelLoading::TGameState_LevelLoading(TGame* game) :
 void TGameState_LevelLoading::Update() {
     ASSERT(game != nullptr, "Game instance must be set")
 
-    TLevel* level = new TLevel(game, code);
-    if (game->world != nullptr) {
-        level->LoadFromPrevious(*level);
+    if (game->world == nullptr) {
+        game->world.reset(new TLevel(game, code));
+    } else {
+        loadFromPreviousLevel();
     }
-    game->world.reset(level);
 
     TPlayer* player = game->player.get();
     if (player == nullptr) {
@@ -40,9 +40,7 @@ void TGameState_LevelLoading::HandleEvent(const TApplication::Event& event) {
     /*none*/
 }
 
-void TGameState_LevelLoading::loadDataFromPreviousLevel(
-    TLevel& newLevel, TLevel& previous)
-{
+void TGameState_LevelLoading::loadDataFromPreviousLevel() {
     1
 }
 

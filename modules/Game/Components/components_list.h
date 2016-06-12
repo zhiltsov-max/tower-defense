@@ -5,11 +5,7 @@
 #include "GameEngine/component_systems.h"
 
 
-
-namespace TD {
-
-
-enum class ComponentID : uint {
+enum class GE::ComponentIDs : uint {
     PlayerStatistics,
     PlayerProgress,
     PlayerQuests,
@@ -18,10 +14,14 @@ enum class ComponentID : uint {
     PlayerPoints,
 
     ResearchesTreeView,
-    ResearchesTreeItemView
+    ResearchesTreeItemView,
+
+    LevelTileMap,
+    LevelTileMapView,
+    LevelNodeMap,
+    LevelNodeMapView, //TODO: debug only?
+    LevelPassabilityMap,
+    LevelPassabilityMapView, //TODO: debug only?
 };
-
-
-} // namespace TD
 
 #endif // COMPONENTS_LIST_H

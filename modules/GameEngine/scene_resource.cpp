@@ -5,7 +5,7 @@
 namespace GE {
 
 
-std::ostream&operator <<(std::ostream& os, const SceneResourceTypeID& id) {
+std::ostream& operator <<(std::ostream& os, const SceneResourceTypeID& id) {
     return os << static_cast<TSceneResourceTypeID>(id);
 }
 

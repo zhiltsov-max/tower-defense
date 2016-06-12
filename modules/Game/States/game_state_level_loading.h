@@ -20,7 +20,7 @@ public:
 private:
     using parent_type = TGame::State;
 
-    void loadDataFromPreviousLevel(TLevel& newLevel, TLevel& previous);
+    void loadDataFromPreviousLevel();
 };
 
 
