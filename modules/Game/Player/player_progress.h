@@ -9,13 +9,6 @@
 
 namespace TD {
 
-struct TPlayerProgressInfo : GE::TComponentCreateArgs
-{
-    TPlayerCreditsInfo credits;
-    TPlayerResearchesInfo researches;
-    TPLayerQuestsInfo quests;
-};
-
 class CPlayerProgress :
     public GE::CLogicsComponent
 {
@@ -23,11 +16,12 @@ public:
     using Credits = CPlayerCredits;
     using Researches = CPlayerResearches;
     using Quests = CPlayerQuests;
+    struct Parameters;
 
     static std::unique_ptr<GE::TComponent> Create(
-        const GE::TComponentCreateArgs* args = nullptr);
+        const GE::TComponentCreateArgs* args);
 
-    CPlayerProgress(const TPlayerProgressInfo& args);
+    CPlayerProgress(const Parameters& args);
 
     virtual void Update(GE::TScene* scene) override;
     virtual void HandleMessage(const TMessage& message) override;
@@ -52,8 +46,16 @@ private:
 };
 
 template<>
-struct GE::ComponentID< CPlayerProgress > {
+struct GE::ComponentID< CPlayerProgress >
+{
     static constexpr GE::ComponentIDs value = GE::ComponentIDs::PlayerProgress;
+};
+
+struct CPlayerProgress::Parameters : GE::TComponentCreateArgs
+{
+    CPlayerCredits::Parameters credits;
+    CPlayerResearches::Parameters researches;
+    TPLayerQuestsInfo quests;
 };
 
 } // namespace TD

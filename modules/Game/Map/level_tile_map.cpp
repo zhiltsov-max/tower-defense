@@ -5,11 +5,11 @@ namespace TD {
 
 std::unique_ptr<GE::TComponent>
 CLevelTileMap::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<TLevelTileMapInfo*>(args_);
-    return new CLevelTileMap(args);
+    const auto* args = dynamic_cast<CLevelTileMap::Parameters*>(args_);
+    return std::unique_ptr<GE::TComponent>(new CLevelTileMap(args));
 }
 
-CLevelTileMap::CLevelTileMap(const TLevelTileMapInfo* source) :
+CLevelTileMap::CLevelTileMap(const Parameters* source) :
     parent_type(GE::ComponentID<CLevelTileMap>::value),
     size(),
     tilesets(),
@@ -31,7 +31,7 @@ CLevelTileMap::CLevelTileMap(const TLevelTileMapInfo* source) :
     loadTilesets();
 }
 
-void CLevelTileMap::loadTiles(const TLevelTileMapInfo& source) {
+void CLevelTileMap::loadTiles(const Parameters& source) {
     for (uchar i = 0; i < source.layers.size(); ++i) {
         std::copy(source.layers[i].begin(), source.layers[i].end(),
             layers.begin() + getLayerBegin(i));
@@ -88,11 +88,11 @@ void CLevelTileMap::SetSize(const Size& value) {
 
 std::unique_ptr<GE::TComponent>
 CLevelTileMapView::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<TLevelTileMapInfo*>(args_);
-    return new CLevelTileMapView(*args);
+    const auto* args = dynamic_cast<CLevelTileMap::Parameters*>(args_);
+    return std::unique_ptr<GE::TComponent>(new CLevelTileMapView(*args));
 }
 
-CLevelTileMapView::CLevelTileMapView(const TLevelTileMapViewInfo* source) :
+CLevelTileMapView::CLevelTileMapView(const Parameters* source) :
     parent_type(GE::ComponentID<CLevelTileMapView>::value)
 {
     if (source != nullptr) {

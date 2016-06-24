@@ -10,26 +10,19 @@
 
 namespace TD {
 
-struct TLevelPassabilityMapInfo : GE::TComponentCreateArgs
-{
-    using Vec2ui = Size;
-    Size size;
-
-    TLevelScene::ComponentHandle tileMapHandle;
-    TLevelTileMapTilesetRegistry* tilesetRegistry;
-};
-
 class CPassabilityMap :
     public GE::CDataComponent
 {
 public:
+    using Size = Vec2ui;
     using Passability = uchar;
     using PassabilityMap = vector<Passability>;
+    struct Parameters;
 
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
 
-    CPassabilityMap(const TLevelPassabilityMapInfo* source);
+    CPassabilityMap(const Parameters* source);
 	
     const PassabilityMap& GetMap(const Altitude& altitude);
     const Size& GetSize() const;
@@ -54,9 +47,18 @@ private:
 };
 
 template<>
-struct GE::ComponentID<CLevelPassabilityMap> {
+struct GE::ComponentID<CLevelPassabilityMap>
+{
     static constexpr GE::ComponentIDs value =
         GE::ComponentIDs::LevelPassabilityMap;
+};
+
+struct CLevelPassabilityMap::Parameters : GE::TComponentCreateArgs
+{
+    Size size;
+
+    TLevelScene::ComponentHandle tileMapHandle;
+    TLevelTileMapTilesetRegistry* tilesetRegistry;
 };
 
 } // namespace TD

@@ -6,22 +6,17 @@
 
 namespace TD {
 
-struct TPlayerCreditsInfo
-{
-    using Credits = int;
-    Credits startValue;
-};
-
 class CPlayerCredits :
     public GE::CDataComponent
 {
 public:
-    using Credits = TPlayerCreditsInfo::Credits;
+    using Credits = int;
+    struct Parameters;
 
     static std::unique_ptr<GE::TComponent> Create(
-        const GE::TComponentCreateArgs* args = nullptr);
+        const GE::TComponentCreateArgs* args);
 
-    CPlayerCredits(const TPlayerCreditsInfo& info);
+    CPlayerCredits(const Parameters& info);
 
     virtual void HandleMessage(const TMessage& message) override;
     virtual void Subscribe(TComponentSystem& system) override;
@@ -37,8 +32,14 @@ private:
 };
 
 template<>
-struct GE::ComponentID< CPlayerCredits > {
+struct GE::ComponentID< CPlayerCredits >
+{
     static constexpr GE::ComponentIDs value = GE::ComponentIDs::PlayerCredits;
+};
+
+struct Parameters : GE::TComponentCreateArgs
+{
+    Credits startValue;
 };
 
 } // namespace TD

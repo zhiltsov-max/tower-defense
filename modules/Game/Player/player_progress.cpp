@@ -5,12 +5,12 @@ namespace TD {
 
 std::unique_ptr<GE::TComponent>
 CPlayerProgress::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<TPlayerProgressInfo*>(args_);
+    const auto* args = dynamic_cast<CPlayerProgress::Parameters*>(args_);
     ASSERT(args != nullptr, "Wrong constructor parameters.")
     return new CPlayerProgress(*args);
 }
 
-CPlayerProgress::CPlayerProgress(const TPlayerProgressInfo& args) :
+CPlayerProgress::CPlayerProgress(const Parameters& args) :
     parent_type(),
     credits(args.credits),
     researches(args.researches),

@@ -2,26 +2,21 @@
 #define PLAYER_RESEARCHES_H
 
 #include "Game/Components/components_list.h"
-#include "Game/Level/level.h"
 #include "Game/Researches/researches_tree.h"
-
 
 
 namespace TD {
 
-class CResearchesTreeView;
-
-struct TPlayerResearchesInfo : TComponentCreateArgs {
-    TLevel* level;
-};
-
-class CPlayerResearches : public CLogicsComponent
+class CPlayerResearches :
+    public GE::CDataComponent
 {
 public:
-    static std::unique_ptr<TComponent> Create(TComponentCreateArgs* args);
+    struct Parameters;
 
+    static std::unique_ptr<GE::TComponent> Create(
+        const GE::TComponentCreateArgs* args);
 
-    CPlayerResearches(const TPlayerResearchesInfo& args);
+    CPlayerResearches(const Parameters& args);
     virtual ~CPlayerResearches();
 
     virtual void Update() override;
@@ -30,31 +25,22 @@ public:
     virtual void Unsubscribe(TComponentSystem& system) override;
 
     const TResearchesTree& GetTree() const;
-
 private:
-    using parent_type = CLogicsComponent;
-
-    using PLevel = TLevel *;
-    const PLevel level;
-
-    using TreeModel = TResearchesTree;
-    TreeModel model;
-
-    using TreeView = CResearchesTreeView;
-    using Handle = TLevelScene::SceneObjects::Handle;
-    Handle view;
+    using parent_type = CDataComponent;
 };
 
 template<>
-struct ComponentID< CPlayerResearches > {
+struct ComponentID< CPlayerResearches >
+{
     static constexpr ComponentID value = ComponentID::PlayerResearches;
 };
 
-template<>
-struct ComponentClass< CPlayerResearches > {
-    static constexpr ComponentClass value = ComponentClass::logics;
+struct CPlayerResearches::Parameters : GE::TComponentCreateArgs
+{
+    1
 };
 
+//TODO: add researches tree view and controller components
 
 } // namespace TD
 

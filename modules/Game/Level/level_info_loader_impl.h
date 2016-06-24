@@ -280,8 +280,8 @@ static constexpr string Exits = "exits";
 
 template <>
 std::unique_ptr<GE::TComponentCreateArgs>
-readComponentInfo<TLevelNodeMapInfo>(const TRawLevelInfo& source) {
-    std::unique_ptr<TLevelNodeMapInfo> info;
+readComponentInfo<CLevelNodeMap::Parameters>(const TRawLevelInfo& source) {
+    std::unique_ptr<CLevelNodeMap::Parameters> info;
     info->pathes = readArray< vector<Vec2ui> >(source.slice(NodeMapInfo::Pathes),
         readArray<Vec2ui>);
     info->enters = readArray<Vec2ui>(source.slice(NodeMapInfo::Enters),
@@ -296,9 +296,11 @@ static constexpr string Tiles = "tiles";
 } // namespace TileMapLayerInfo
 
 template <>
-TLevelInfoTileMapLayer
-readFromRawLevelInfo<TLevelInfoTileMapLayer>(const TRawLevelInfo& source) {
-    TLevelInfoTileMapLayer info;
+CLevelTileMap::LayerParameters
+readFromRawLevelInfo<CLevelTileMap::LayerParameters>(
+    const TRawLevelInfo& source)
+{
+    CLevelTileMap::LayerParameters info;
     info.tiles = readSequence<int>(source[TileMapLayerInfo::Tiles], std::stoi);
     return info;
 }
@@ -310,10 +312,10 @@ static constexpr string Layers = "layers";
 
 template <>
 std::unique_ptr<GE::TComponentCreateArgs>
-readComponentInfo<TLevelTileMapInfo>(const TRawLevelInfo& source) {
-    std::unique_ptr<TLevelTileMapInfo> info;
+readComponentInfo<CLevelTileMap::Parameters>(const TRawLevelInfo& source) {
+    std::unique_ptr<CLevelTileMap::Parameters> info;
     info->size = readFromString<Vec2ui>(source[TileMapInfo::Size]);
-    info->layers = readArray<TLevelInfoTileMapLayer>(
+    info->layers = readArray<CLevelTileMap::LayerParameters>(
         source.slice(TileMapInfo::Layers));
     return info;
 }
@@ -352,11 +354,11 @@ componentInfoTable = {
 //    {GE::ComponentIDs::ResearchesTreeView,},
 //    {GE::ComponentIDs::ResearchesTreeItemView,},
 
-    {GE::ComponentIDs::LevelTileMap, readComponentInfo<TLevelTileMapInfo>},
-    {GE::ComponentIDs::LevelTileMapView, readComponentInfo<TLevelTileMapViewInfo},
-    {GE::ComponentIDs::LevelNodeMap, readComponentInfo<TLevelNodeMapInfo>},
+    {GE::ComponentIDs::LevelTileMap, readComponentInfo<CLevelTileMap::Parameters>},
+    {GE::ComponentIDs::LevelTileMapView, readComponentInfo<CLevelTileMapView::Parameters},
+    {GE::ComponentIDs::LevelNodeMap, readComponentInfo<CLevelNodeMap::Parameters>},
 //    {GE::ComponentIDs::LevelNodeMapView,}, //TODO: debug only?
-    {GE::ComponentIDs::LevelPassabilityMap, readComponentInfo<TLevelPassabilityMapInfo},
+    {GE::ComponentIDs::LevelPassabilityMap, readComponentInfo<CLevelPassabilityMap::Parameters},
 //    {GE::ComponentIDs::LevelPassabilityMapView,}, //TODO: debug only?
 
     {GE::ComponentIDs::LevelBuildingsController, readComponentInfo<TLevelBuildingsControllerInfo>},

@@ -6,10 +6,10 @@ namespace TD {
 
 std::unique_ptr<GE::TComponent>
 CLevelNodeMap::Create(const GE::TComponentCreateArgs* args_) {
-    return new CLevelNodeMap(args);
+    return std::unique_ptr<GE::TComponent>(new CLevelNodeMap(args));
 }
 
-CLevelNodeMap::CLevelNodeMap(const TLevelNodeMapInfo* source) :
+CLevelNodeMap::CLevelNodeMap(const Parameters* source) :
     parent_type(GE::ComponentID<CLevelNodeMap>::value)
 {
     if (source != nullptr) {
@@ -25,7 +25,7 @@ void CLevelNodeMap::checkNode(const Node& node, const Vec2ui& mapSize) {
         "Node is out of map.");
 }
 
-void CLevelNodeMap::checkData(const TLevelNodeMapInfo& source) {
+void CLevelNodeMap::checkData(const CLevelNodeMap::Parameters& source) {
     for (const auto& enter : source.enters) {
         checkNode(enter, source.size);
     }
@@ -127,11 +127,11 @@ void TD::CLevelNodeMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
 
 std::unique_ptr<GE::TComponent>
 CLevelNodeMapView::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<TLevelNodeMapViewInfo*>(args_);
-    return new CLevelNodeMapView(*args);
+    const auto* args = dynamic_cast<CLevelNodeMapView::Parameters*>(args_);
+    return std::unique_ptr<GE::TComponent>(new CLevelNodeMapView(args));
 }
 
-CLevelNodeMapView::CLevelNodeMapView(const TLevelNodeMapViewInfo* source) :
+CLevelNodeMapView::CLevelNodeMapView(const Parameters* source) :
     parent_type(GE::ComponentID<CLevelNodeMapView>::value)
 {
     if (source != nullptr) {

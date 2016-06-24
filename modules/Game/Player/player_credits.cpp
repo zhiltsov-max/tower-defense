@@ -5,12 +5,12 @@ namespace TD {
 
 std::unique_ptr<GE::TComponent>
 CPlayerCredits::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<TPlayerCreditsInfo*>(args_);
+    const auto* args = dynamic_cast<CPlayerCredits::Parameters*>(args_);
     ASSERT(args != nullptr, "Wrong constructor parameters.")
     return new CPlayerCredits(*args);
 }
 
-CPlayerCredits::CPlayerCredits(const TPlayerCreditsInfo& info) :
+CPlayerCredits::CPlayerCredits(const Parameters& info) :
     parent_type(GE::ComponentID<CPlayerCredits>::value),
     credits(info.startValue)
 {}

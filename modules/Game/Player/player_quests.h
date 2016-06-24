@@ -4,17 +4,16 @@
 #include "Game/Components/components_list.h"
 
 
-
 namespace TD {
-
-struct TPLayerQuestsInfo;
 
 class CPLayerQuests : public CLogicsComponent
 {
 public:
-    static std::unique_ptr<TComponent> Create(const TComponentCreateArgs* args);
+    struct Parameters;
+    static std::unique_ptr<GE::TComponent> Create(
+        const GE::TComponentCreateArgs* args);
 
-
+    CPLayerQuests(const Parameters& parameters);
     virtual ~CPLayerQuests();
 
 private:
@@ -31,9 +30,12 @@ private:
     };
 
 };
+
+struct CPLayerQuests : GE::TComponentCreateArgs
+{
 1
+};
 
 } // namespace TD
-
 
 #endif // PLAYER_QUESTS_H

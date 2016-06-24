@@ -10,41 +10,21 @@
 
 namespace TD {
 
-struct TLevelInfoTileMapLayer
+class CLevelTileMap :
+    public GE::CDataComponent
 {
-    union TileIndex {
+public:
+    using Size = Vec2ui;
+    union Tile {
         struct {
             ushort tileset;
             ushort tile;
         };
         uint index;
     };
-    vector<TileIndex> tiles;
-};
-
-struct TLevelTileMapInfo : GE::TComponentCreateArgs
-{
-    using Size = Vec2ui;
-    Size size;
-    vector<TLevelInfoTileMapLayer> layers;
-};
-
-class CLevelTileMap :
-    public GE::CDataComponent
-{
-public:
-    static std::unique_ptr<GE::TComponent> Create(
-        const GE::TComponentCreateArgs* args = nullptr);
-
-    CLevelTileMap(const TLevelTileMapInfo* source = nullptr);
-		
-    using Size = TLevelTileMapInfo::Size;
-    const Size& GetSize() const;
-    void SetSize(const Size& value);
-
-    using Tilesets = std::set<TLevelTileMapTilesetId>;
-    const Tilesets& GetTilesets() const;
-
+    struct Parameters;
+    using TileParameters = Tile;
+    struct LayerParameters;
     enum class Layer : uchar {
         _min = 0,
 
@@ -55,7 +35,19 @@ public:
 
         _count
     };
-    using Tile = TLevelInfoTileMapLayer::TileIndex;
+
+    static std::unique_ptr<GE::TComponent> Create(
+        const GE::TComponentCreateArgs* args = nullptr);
+
+    CLevelTileMap(const CLevelTileMap::Parameters* source = nullptr);
+		
+    using Size = CLevelTileMap::Parameters::Size;
+    const Size& GetSize() const;
+    void SetSize(const Size& value);
+
+    using Tilesets = std::set<TLevelTileMapTilesetId>;
+    const Tilesets& GetTilesets() const;
+
     std::pair<Layers::const_iterator, Layers::const_iterator> GetLayer(
         const Layer& layer) const;
     std::pair<Layers::iterator, Layers::iterator> GetLayer(const Layer& layer);
@@ -76,21 +68,26 @@ private:
     size_t getLayerEnd(uchar index) const;
 
     void loadTilesets();
-    void loadTiles(const TLevelTileMapInfo& source);
+    void loadTiles(const Parameters& source);
 };
 
 template<>
-struct GE::ComponentID<CLevelTileMap> {
+struct GE::ComponentID<CLevelTileMap>
+{
     static constexpr GE::ComponentIDs value = GE::ComponentIDs::LevelTileMap;
 };
 
-
-struct TLevelTileMapViewInfo : GE::TComponentCreateArgs
+struct CLevelTileMap::LayerParameters
 {
-    TLevelScene* scene;
-    TLevelTileMapTilesetRegistry* tilesetRegistry;
-    TLevelScene::ComponentHandle tileMapHandle;
+    vector<TileParameters> tiles;
 };
+
+struct CLevelTileMap::Parameters : GE::TComponentCreateArgs
+{
+    Size size;
+    vector<LayerParameters> layers;
+};
+
 
 class CLevelTileMapView :
     public GE::CGraphicsComponent
@@ -99,11 +96,12 @@ public:
     using TileFrame = sf::IntRect;
     using ImageInstance = Graphics::TTexture*;
     using TileImage = Graphics::TSprite;
+    struct Parameters;
 
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
 
-    CLevelTileMapView(const TLevelTileMapViewInfo* source = nullptr);
+    CLevelTileMapView(const Parameters* source = nullptr);
 
     virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
@@ -126,9 +124,17 @@ private:
 };
 
 template<>
-struct GE::ComponentID<CLevelTileMapView> {
+struct GE::ComponentID<CLevelTileMapView>
+{
     static constexpr GE::ComponentIDs value =
         GE::ComponentIDs::LevelTileMapView;
+};
+
+struct CLevelTileMapView::Parameters : GE::TComponentCreateArgs
+{
+    TLevelScene* scene;
+    TLevelTileMapTilesetRegistry* tilesetRegistry;
+    TLevelScene::ComponentHandle tileMapHandle;
 };
 
 } // namespace TD
