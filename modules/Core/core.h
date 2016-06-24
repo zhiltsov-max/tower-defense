@@ -6,5 +6,4 @@
 #include "devicecontroller.h"
 #include "graphics.h"
 
-
 #endif //CORE_H

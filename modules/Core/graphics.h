@@ -16,20 +16,20 @@ namespace Graphics {
 using TColor = sf::Color;
 
 struct ARGB {
-    uchar a;
-    uchar r;
-    uchar g;
-    uchar b;
+    uint8_t a;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
 
 
-    constexpr ARGB(uint value = 0xffffffff) :
+    constexpr ARGB(uint32_t value = 0xffffffff) :
         a(value >> 24),
         r(value >> 16),
         g(value >> 8),
         b(value)
     {}
 
-    constexpr ARGB(uchar r, uchar g, uchar b, uchar a = 255) :
+    constexpr ARGB(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) :
         a(a),
         r(r),
         g(g),
@@ -44,11 +44,11 @@ struct ARGB {
     {}
 
 
-    constexpr operator uint() const {
-        return (static_cast<uint>(a) << 24) +
-            (static_cast<uint>(r) << 16) +
-            (static_cast<uint>(g) << 8) +
-            (static_cast<uint>(b));
+    constexpr operator uint32_t() const {
+        return (static_cast<uint32_t>(a) << 24) +
+            (static_cast<uint32_t>(r) << 16) +
+            (static_cast<uint32_t>(g) << 8) +
+            (static_cast<uint32_t>(b));
     }
 
     operator TColor() const {
@@ -56,7 +56,7 @@ struct ARGB {
     }
 
     bool operator == (const ARGB& other) const {
-        return operator uint() == other.operator uint();
+        return operator uint32_t() == other.operator uint32_t();
     }
 	
 };

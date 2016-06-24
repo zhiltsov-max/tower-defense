@@ -7,38 +7,53 @@
 using namespace Graphics;
 
 
-TEST(graphicsTest, argb_test_1) {
-    constexpr ARGB argb(0x55667788u);
+TEST(argbTest, argb_from_uint32) {
+    constexpr uint color = 0x55667788u;
+    constexpr uint colorA = 0x55u;
+    constexpr uint colorR = 0x66u;
+    constexpr uint colorG = 0x77u;
+    constexpr uint colorB = 0x88u;
 
-    EXPECT_EQ(0x55667788u, static_cast<uint>(argb));
-    EXPECT_EQ(0x55u, argb.a);
-    EXPECT_EQ(0x66u, argb.r);
-    EXPECT_EQ(0x77u, argb.g);
-    EXPECT_EQ(0x88u, argb.b);
+    constexpr ARGB argb(color);
+
+    ASSERT_EQ(color, static_cast<uint>(argb));
+    EXPECT_EQ(colorA, argb.a);
+    EXPECT_EQ(colorR, argb.r);
+    EXPECT_EQ(colorG, argb.g);
+    EXPECT_EQ(colorB, argb.b);
 }
 
-TEST(graphicsTest, argb_test_2) {
-    constexpr ARGB argb(0x66u, 0x77u, 0x88u, 0x55u);
+TEST(argbTest, argb_from_RGBA_8_8_8_8) {
+    constexpr uint color = 0x55667788u;
+    constexpr uint colorA = 0x55u;
+    constexpr uint colorR = 0x66u;
+    constexpr uint colorG = 0x77u;
+    constexpr uint colorB = 0x88u;
 
-    EXPECT_EQ(0x55667788u, static_cast<uint>(argb));
-    EXPECT_EQ(0x55u, argb.a);
-    EXPECT_EQ(0x66u, argb.r);
-    EXPECT_EQ(0x77u, argb.g);
-    EXPECT_EQ(0x88u, argb.b);
+    constexpr ARGB argb(colorR, colorG, colorB, colorA);
+
+    ASSERT_EQ(color, static_cast<uint>(argb));
+    EXPECT_EQ(colorA, argb.a);
+    EXPECT_EQ(colorR, argb.r);
+    EXPECT_EQ(colorG, argb.g);
+    EXPECT_EQ(colorB, argb.b);
 }
 
-TEST(graphicsTest, argb_test_3) {
-    const TColor color(0x66u, 0x77u, 0x88u, 0x55u);
-    ARGB argb(color);
+TEST(argbTest, argb_from_sf_color) {
+    constexpr uint color = 0x55667788u;
+    constexpr uint colorA = 0x55u;
+    constexpr uint colorR = 0x66u;
+    constexpr uint colorG = 0x77u;
+    constexpr uint colorB = 0x88u;
 
-    EXPECT_EQ(0x55667788u, static_cast<uint>(argb));
-    EXPECT_EQ(0x55u, argb.a);
-    EXPECT_EQ(0x66u, argb.r);
-    EXPECT_EQ(0x77u, argb.g);
-    EXPECT_EQ(0x88u, argb.b);
+    const ARGB argb(TColor(colorR, colorG, colorB, colorA));
+
+    ASSERT_EQ(color, static_cast<uint>(argb));
+    EXPECT_EQ(colorA, argb.a);
+    EXPECT_EQ(colorR, argb.r);
+    EXPECT_EQ(colorG, argb.g);
+    EXPECT_EQ(colorB, argb.b);
 }
-
-
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
