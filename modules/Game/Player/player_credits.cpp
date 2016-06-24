@@ -1,34 +1,30 @@
 #include "player_credits.h"
 
 
-
 namespace TD {
 
-
-std::unique_ptr<TComponent> CPlayerCredits::Create(const TComponentCreateArgs* args) {
-    return new CPlayerCredits;
-    UNUSED(args)
+std::unique_ptr<GE::TComponent>
+CPlayerCredits::Create(const GE::TComponentCreateArgs* args_) {
+    const auto* args = dynamic_cast<TPlayerCreditsInfo*>(args_);
+    ASSERT(args != nullptr, "Wrong constructor parameters.")
+    return new CPlayerCredits(*args);
 }
 
-CPlayerCredits::CPlayerCredits() :
-    parent_type(),
-    credits(0)
+CPlayerCredits::CPlayerCredits(const TPlayerCreditsInfo& info) :
+    parent_type(GE::ComponentID<CPlayerCredits>::value),
+    credits(info.startValue)
 {}
 
-void CPlayerCredits::Update() {
-    /*none*/
-}
-
 void CPlayerCredits::HandleMessage(const TMessage& message) {
-    1
+    //TODO: ...
 }
 
 void CPlayerCredits::Subscribe(TComponentSystem& system) {
-    1
+    //TODO: ...
 }
 
 void CPlayerCredits::Unsubscribe(TComponentSystem& system) {
-    1
+    //TODO: ...
 }
 
 const CPlayerCredits::Credits&CPlayerCredits::GetCredits() const {
@@ -38,9 +34,8 @@ const CPlayerCredits::Credits&CPlayerCredits::GetCredits() const {
 void CPlayerCredits::SetCredits(const CPlayerCredits::Credits& value) {
     if (credits != value) {
         credits = value;
-        1 // TODO: send message "changed"
+        // TODO: send message "changed"
     }
 }
-
 
 } // namespace TD

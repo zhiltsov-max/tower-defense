@@ -5,9 +5,7 @@
 #include "GameEngine/engine_core.h"
 
 
-
 namespace TD {
-
 
 /*
 Game time controller.
@@ -31,7 +29,6 @@ public:
         _max = 10
     };
 
-
     TLevelClock(const Rate& rate = Rate::_min);
 
     void Update();
@@ -48,4 +45,4 @@ private:
 
 } // namespace TD
 
-#endif // TD_TLEVELCLOCK_H
+#endif // LEVEL_CLOCK_H

@@ -1,9 +1,7 @@
 #include "player_statistics.h"
 
 
-
 namespace TD {
-
 
 TStatistics::TStatistics() :
     m_metrics()
@@ -52,6 +50,5 @@ bool TStatistics::contains(const Key& key) const {
 size_t TStatistics::count() const {
     return m_metrics.size();
 }
-
 
 } // namespace TD

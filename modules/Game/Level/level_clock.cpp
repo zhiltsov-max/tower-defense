@@ -1,7 +1,6 @@
 #include "level_clock.h"
 
 
-
 namespace TD {
 
 
@@ -25,6 +24,5 @@ const TLevelClock::Rate& TLevelClock::GetRate() const {
 const TLevelClock::Time& TLevelClock::Get() const {
     return clock;
 }
-
 
 } // namespace TD

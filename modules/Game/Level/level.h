@@ -1,20 +1,13 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#define BEGIN_TD namespace TD {
-#define END_TD }
-
-#include "level_info.h"
-#include "level_clock.h"
-#include "level_scene.h"
-#include "level_data_common.h"
-#include "level_data_stages.h"
+#include "Game/Level/level_info.h"
+#include "Game/Level/level_clock.h"
+#include "Game/Level/level_scene.h"
 #include "GameEngine/game_engine.h"
 
 
-
-BEGIN_TD
-
+namespace TD {
 
 /*
 See docs for complete information.
@@ -24,10 +17,13 @@ class TLevel
 public:
     using Clock = TLevelClock;
     using Scene = TLevelScene;
-    using Common = TLevelDataCommon;
-    using GameObjects = TLevelSceneDataGameObjects;
-    using Stages = TLevelDataStages;
+    struct CommonData {
+        TLevelCode levelCode;
+        TLevelCode nextLevelCode;
+        LevelType  levelType;
 
+        CommonData(const TLevelInfoCommon& info);
+    };
 
     TLevel(const TLevelInfo& info, GE::TGameEngine& engine);
 
@@ -45,9 +41,7 @@ public:
 private:
     Clock clock;
     Scene scene;
-    Common common;
-    Stages stages;
-
+    CommonData common;
 
     using PGameEngine = GE::TGameEngine *;
     PGameEngine gameEngine;
@@ -60,8 +54,6 @@ private:
     void loadScript(const TLevelInfo& info);
 };
 
-
-END_TD
-
+} // namespace TD
 
 #endif //LEVEL_H

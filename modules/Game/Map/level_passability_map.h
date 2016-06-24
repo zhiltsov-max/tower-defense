@@ -10,18 +10,17 @@
 
 namespace TD {
 
-struct TLevelInfoPassabilityMap : GE::TComponentCreateArgs
+struct TLevelPassabilityMapInfo : GE::TComponentCreateArgs
 {
     using Vec2ui = Size;
     Size size;
 
-    TLevelScene* scene;
     TLevelScene::ComponentHandle tileMapHandle;
     TLevelTileMapTilesetRegistry* tilesetRegistry;
 };
 
 class CPassabilityMap :
-    public GE::CLogicsComponent
+    public GE::CDataComponent
 {
 public:
     using Passability = uchar;
@@ -35,7 +34,6 @@ public:
     const PassabilityMap& GetMap(const Altitude& altitude);
     const Size& GetSize() const;
 
-    virtual void Update() override;
     virtual void HandleMessage(const GE::TMessage& message) override;
     virtual void Subscribe(GE::TComponentSystem& system) override;
     virtual void Unsubscribe(GE::TComponentSystem& system) override;
@@ -45,6 +43,8 @@ public:
     void SetTilesetRegistry(TLevelTileMapTilesetRegistry* instance);
 
 private:
+    using parent_type = GE::CDataComponent;
+
     std::array<PassabilityMap, static_cast<TAltitude>(Altitude::_count)> maps;
     Size size;
 
@@ -55,12 +55,8 @@ private:
 
 template<>
 struct GE::ComponentID<CLevelPassabilityMap> {
-    static constexpr GE::ComponentIDs value = GE::ComponentIDs::LevelPassabilityMap;
-};
-
-template<>
-struct GE::ComponentClass<CLevelPassabilityMap> {
-    static constexpr GE::CompponentClass value = GE::ComponentSystem::logics;
+    static constexpr GE::ComponentIDs value =
+        GE::ComponentIDs::LevelPassabilityMap;
 };
 
 } // namespace TD

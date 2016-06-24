@@ -7,7 +7,7 @@
 
 namespace TD {
 
-struct TPLayerQuestsArgs;
+struct TPLayerQuestsInfo;
 
 class CPLayerQuests : public CLogicsComponent
 {

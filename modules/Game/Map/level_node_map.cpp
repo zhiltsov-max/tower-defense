@@ -9,11 +9,13 @@ CLevelNodeMap::Create(const GE::TComponentCreateArgs* args_) {
     return new CLevelNodeMap(args);
 }
 
-CLevelNodeMap::CLevelNodeMap(const TLevelInfoNodeMap* source) {
+CLevelNodeMap::CLevelNodeMap(const TLevelNodeMapInfo* source) :
+    parent_type(GE::ComponentID<CLevelNodeMap>::value)
+{
     if (source != nullptr) {
         checkDataSource(source);
         pathes = source->pathes;
-        entera = source->enters;
+        enters = source->enters;
         exits = source->exits;
     }
 }
@@ -23,7 +25,7 @@ void CLevelNodeMap::checkNode(const Node& node, const Vec2ui& mapSize) {
         "Node is out of map.");
 }
 
-void CLevelNodeMap::checkData(const TLevelInfoNodeMap& source) {
+void CLevelNodeMap::checkData(const TLevelNodeMapInfo& source) {
     for (const auto& enter : source.enters) {
         checkNode(enter, source.size);
     }
@@ -118,7 +120,6 @@ bool CLevelNodeMap::IsEnter(const CLevelNodeMap::Node& node) const {
     return enters.cend() != std::find(enters.cbegin(), enters.cend(), node);
 }
 
-void TD::CLevelNodeMap::Update() { /*none*/ }
 void TD::CLevelNodeMap::HandleMessage(const GE::TMessage& message) { /*none*/ }
 void TD::CLevelNodeMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
 void TD::CLevelNodeMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
@@ -130,7 +131,9 @@ CLevelNodeMapView::Create(const GE::TComponentCreateArgs* args_) {
     return new CLevelNodeMapView(*args);
 }
 
-CLevelNodeMapView::CLevelNodeMapView(const TLevelNodeMapViewInfo* source) {
+CLevelNodeMapView::CLevelNodeMapView(const TLevelNodeMapViewInfo* source) :
+    parent_type(GE::ComponentID<CLevelNodeMapView>::value)
+{
     if (source != nullptr) {
         scene = source->scene;
         nodeMapHandle = source->nodeMapHandle;

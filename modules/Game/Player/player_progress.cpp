@@ -1,44 +1,21 @@
 #include "player_progress.h"
 
 
-
 namespace TD {
 
-
-std::unique_ptr<TComponent> CPlayerProgress::Create(const TComponentCreateArgs* args_) {
-    ASSERT(args_ != nullptr, "Constructor parameters expected.")
-
-    const auto* args = dynamic_cast<TPlayerProgressArgs*>(args_);
+std::unique_ptr<GE::TComponent>
+CPlayerProgress::Create(const GE::TComponentCreateArgs* args_) {
+    const auto* args = dynamic_cast<TPlayerProgressInfo*>(args_);
     ASSERT(args != nullptr, "Wrong constructor parameters.")
-
     return new CPlayerProgress(*args);
 }
 
-CPlayerProgress::CPlayerProgress(TPlayerProgressArgs& args) :
+CPlayerProgress::CPlayerProgress(const TPlayerProgressInfo& args) :
     parent_type(),
-    state(State::Undefined),
-    points(),
-    credits(),
-    researches(),
-    quests(),
-    level(args.level)
-{
-    ASSERT(args.level != nullptr, "Level must be set.")
-
-    points = args.level->GetScene().CreateComponent<CPlayerPoints>();
-
-    credits = args.level->GetScene().CreateComponent<CPlayerCredits>();
-
-    CPlayerResearchesArgs researchesArgs;
-    researchesArgs.level = args.level;
-    researches = args.level->GetScene().
-        CreateComponent<CPlayerResearches>(researchesArgs);
-
-    CPlayerQuestsArgs questsArgs;
-    questsArgs.level = args.level;
-    quests = args.level->GetScene().
-        CreateComponent<CPlayerQuests>(questsArgs);
-}
+    credits(args.credits),
+    researches(args.researches),
+    quests(args.quests)
+{}
 
 const CPlayerProgress::Credits& CPlayerProgress::GetCredits() const {
     return credits;
@@ -46,14 +23,6 @@ const CPlayerProgress::Credits& CPlayerProgress::GetCredits() const {
 
 CPlayerProgress::Credits& CPlayerProgress::GetCredits() {
     return credits;
-}
-
-const CPlayerProgress::Points& CPlayerProgress::GetPoints() const {
-    return points;
-}
-
-CPlayerProgress::Points& CPlayerProgress::GetPoints() {
-    return points;
 }
 
 const CPlayerProgress::Researches& CPlayerProgress::GetResearches() const {
@@ -72,21 +41,18 @@ CPlayerProgress::Quests& CPlayerProgress::GetQuests() {
     return quests;
 }
 
-void CPlayerProgress::Update() {
-    1
-}
+void CPlayerProgress::Update(GE::TScene* scene) { /*none*/ }
 
 void CPlayerProgress::HandleMessage(const TMessage& message) {
-    1
+    //TODO: ...
 }
 
 void CPlayerProgress::Subscribe(TComponentSystem& system) {
-    1
+    //TODO: ...
 }
 
 void CPlayerProgress::Unsubscribe(TComponentSystem& system) {
-    1
+    //TODO: ...
 }
-
 
 } // namespace TD

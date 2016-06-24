@@ -4,7 +4,6 @@
 #include "Game/Components/components_list.h"
 
 
-
 namespace TD {
 
 enum class Metric : uchar {
@@ -48,6 +47,17 @@ public:
 
 private:
     map<Key, Value> m_metrics;
+};
+
+template<>
+struct ComponentID< CPlayerStatistics > {
+    static constexpr GE::ComponentIDs value = GE::ComponentIDs::PlayerStatistics;
+};
+
+template<>
+struct ComponentClass< CPlayerStatistics > {
+    static constexpr GE::ComponentClass value =
+        GE::ComponentClassForId[GE::ComponentIDs::PlayerStatistics];
 };
 
 } // namespace TD

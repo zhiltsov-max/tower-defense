@@ -19,7 +19,7 @@ class TBuildingsInfoLoader
 public:
     void SetDataPath(const string& value);
 
-    void Load(const TLevelInfoBuildings& source, TBuildingsInfo& info);
+    void Load(const TLevelBuildingsControllerInfo& source, TBuildingsInfo& info);
 
 private:
     static const string DEFAULT_DATA_SOURCE_PATH;

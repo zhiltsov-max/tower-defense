@@ -4,15 +4,12 @@
 #include "GameEngine/registry.h"
 
 
-
 namespace TD {
-
 
 using TGameObjectClassId = uint;
 
 template< class Entry >
 using TGameObjectsRegistry = TRegistry<Entry, TGameObjectClassId>;
-
 
 } // namesoace TD
 

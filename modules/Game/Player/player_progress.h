@@ -1,42 +1,41 @@
 #ifndef PLAYER_PROGRESS_H
 #define PLAYER_PROGRESS_H
 
-#include "Game/Level/level.h"
-#include "player_researches.h"
-#include "player_quests.h"
-
+#include "Game/Components/components_list.h"
+#include "Game/Player/player_credits.h"
+#include "Game/Player/player_researches.h"
+#include "Game/Player/player_quests.h"
 
 
 namespace TD {
 
+struct TPlayerProgressInfo : GE::TComponentCreateArgs
+{
+    TPlayerCreditsInfo credits;
+    TPlayerResearchesInfo researches;
+    TPLayerQuestsInfo quests;
+};
 
-struct TPlayerProgressArgs;
-
-class CPlayerProgress : public CLogicsComponent
+class CPlayerProgress :
+    public GE::CLogicsComponent
 {
 public:
-    static std::unique_ptr<TComponent> Create(const TComponentCreateArgs* args);
-
-
-    using Points = CPlayerPoints;
     using Credits = CPlayerCredits;
     using Researches = CPlayerResearches;
     using Quests = CPlayerQuests;
 
+    static std::unique_ptr<GE::TComponent> Create(
+        const GE::TComponentCreateArgs* args = nullptr);
 
-    CPlayerProgress(TPlayerProgressArgs& args);
-    virtual ~CPlayerProgress();
+    CPlayerProgress(const TPlayerProgressInfo& args);
 
-    virtual void Update() override;
+    virtual void Update(GE::TScene* scene) override;
     virtual void HandleMessage(const TMessage& message) override;
     virtual void Subscribe(TComponentSystem& system) override;
     virtual void Unsubscribe(TComponentSystem& system) override;
 
     const Credits& GetCredits() const;
     Credits& GetCredits();
-
-    const Points& GetPoints() const;
-    Points& GetPoints();
 
     const Researches& GetResearches() const;
     Researches& GetResearches();
@@ -47,31 +46,15 @@ public:
 private:
     using parent_type = CLogicsComponent;
 
-    using Handle = TLevelScene::SceneObjects::Handle;
-    Handle points;
-    Handle credits;
-    Handle quests;
-    Handle researches;
-
-    using PLevel = TLevel *;
-    const PLevel level;
+    Credits credits;
+    Researches quests;
+    Quests researches;
 };
 
 template<>
-struct ComponentID< CPlayerProgress > {
-    static constexpr ComponentID value = ComponentID::PlayerProgress;
+struct GE::ComponentID< CPlayerProgress > {
+    static constexpr GE::ComponentIDs value = GE::ComponentIDs::PlayerProgress;
 };
-
-template<>
-struct ComponentClass< CPLayerProgress > {
-    static constexpr CompponentClass value = ComponentClass::logics;
-};
-
-struct TPlayerProgressArgs : TComponentCreateArgs
-{
-    TLevel* level;
-};
-
 
 } // namespace TD
 

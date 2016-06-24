@@ -6,11 +6,13 @@ namespace TD {
 
 std::unique_ptr<GE::TComponent>
 CPassabilityMap::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<TLevelInfoPassabilityMap*>(args_);
+    const auto* args = dynamic_cast<TLevelPassabilityMapInfo*>(args_);
     return new CPassabilityMap(args);
 }
 
-CPassabilityMap::CPassabilityMap(const TLevelPassabilityMapInfo* source) {
+CPassabilityMap::CPassabilityMap(const TLevelPassabilityMapInfo* source) :
+    parent_type(GE::ComponentID<CPassabilityMap>::value)
+{
     if (source != nullptr) {
         size = source->size;
         for (auto& map : maps) {
@@ -28,7 +30,6 @@ const Size& CPassabilityMap::GetSize() const {
     return size;
 }
 
-void CPassabilityMap::Update() { /*none*/ }
 void CPassabilityMap::HandleMessage(const GE::TMessage& message) { /*none*/ }
 void CPassabilityMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
 void CPassabilityMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }

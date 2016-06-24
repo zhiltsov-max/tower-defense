@@ -4,6 +4,16 @@
 #include "Core/core.h"
 #include "Game/Level/level_info_raw.h"
 #include "Game/Level/level_info.h"
+#include "Game/Components/components_list.h"
+#include "Game/Map/level_node_map.h"
+#include "Game/Map/level_tile_map.h"
+#include "Game/Map/level_passability_map.h"
+#include "Game/Player/player_credits.h"
+#include "Game/Player/player_progress.h"
+#include "Game/Player/player_quests.h"
+#include "Game/Player/player_researches.h"
+#include "Game/Player/player_statistics.h"
+#include <functional>
 
 
 namespace TD {
@@ -13,6 +23,11 @@ T readFromRawLevelInfo(const TRawLevelInfo& source);
 
 template <typename T>
 T readFromString(const string& source);
+
+template <typename Component>
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo(const TRawLevelInfo& source);
+
 
 vector<string>
 readSequence(const string& source, const string& separator = ",") {
@@ -179,14 +194,12 @@ template <>
 TLevelInfoMobSequenceEntry
 readFromString<TLevelInfoMobSequenceEntry>(const string& source) {
     TLevelInfoMobSequenceEntry info;
-
     const auto parts = String::split(*it, MobSequenceEntryInfo::CountSign);
     info.id = 0;
     if (parts[0] != MobSequenceEntryInfo::RandomSign) {
         info.id = std::stoi(parts[0]);
     }
     info.count = std::max(1, std::stoi(parts[1]));
-
     return info;
 }
 
@@ -196,13 +209,13 @@ static constexpr string Sequence = "sequence";
 } // namespace MobsInfo
 
 template <>
-TLevelInfoMobs
-readFromRawLevelInfo<TLevelInfoMobs>(const TRawLevelInfo& source) {
-    TLevelInfoMobs info;
-    info.sequence = readSequence<TLevelInfoMobSequenceEntry>(
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<TLevelMobsControllerInfo>(const TRawLevelInfo& source) {
+    std::unique_ptr<TLevelMobsControllerInfo> info;
+    info->sequence = readSequence<TLevelInfoMobSequenceEntry>(
         source.slice(MobsInfo::Sequence),
         readFromString<TLevelInfoMobSequenceEntry>);
-    info.delay = std::stof(source[MobsInfo::Delay]);
+    info->delay = std::stof(source[MobsInfo::Delay]);
     return info;
 }
 
@@ -214,14 +227,14 @@ static constexpr string MaxCount = "maxCount";
 } // namespace BuildingsInfo
 
 template <>
-TLevelInfoBuildings
-readFromRawLevelInfo<TLevelInfoBuildings>(const TRawLevelInfo& source) {
-    TLevelInfoBuildings info;
-    info.restricted = readSequence<TBuildingClassId>(
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<TLevelBuildingsControllerInfo>(const TRawLevelInfo& source) {
+    std::unique_ptr<TLevelBuildingsControllerInfo> info;
+    info->restricted = readSequence<TBuildingClassId>(
         source[BuildingsInfo::Restricted], std::stoi);
-    info.allowed = readSequence<TBuildingClassId>(
+    info->allowed = readSequence<TBuildingClassId>(
         source[BuildingsInfo::Allowed], std::stoi);
-    info.maxCount = std::max(std::stoi(source[BuildingsInfo::MaxCount]), 0);
+    info->maxCount = std::max(std::stoi(source[BuildingsInfo::MaxCount]), 0);
     return info;
 }
 
@@ -234,14 +247,14 @@ static constexpr string separator = ",";
 } // namespace ResearchesInfo
 
 template <>
-TLevelInfoResearches
-readFromRawLevelInfo<TLevelInfoResearches>(const TRawLevelInfo& source) {
-    TLevelInfoResearches info;
-    info.restricted = readSequence<TResearchClassId>(
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<TLevelResearchesControllerInfo>(const TRawLevelInfo& source) {
+    std::unique_ptr<TLevelResearchesControllerInfo> info;
+    info->restricted = readSequence<TResearchClassId>(
         source[ResearchesInfo::Restricted], std::stoi);
-    info.allowed = readSequence<TResearchClassId>(
+    info->allowed = readSequence<TResearchClassId>(
         source[ResearchesInfo::Allowed], std::stoi);
-    info.maxCount = std::max(std::stoi(source[ResearchesInfo::MaxCount]), 0);
+    info->maxCount = std::max(std::stoi(source[ResearchesInfo::MaxCount]), 0);
     return info;
 }
 
@@ -250,33 +263,33 @@ namespace QuestsInfo {
 } // namespace QuestsInfo
 
 template <>
-TLevelInfoQuests
-readFromRawLevelInfo<TLevelInfoQuests>(const TRawLevelInfo& source) {
-    TLevelInfoQuests info;
-    info.quests = readArray<TNamedData<string>>(source);
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<TLevelQuestsControllerInfo>(const TRawLevelInfo& source) {
+    std::unique_ptr<TLevelQuestsControllerInfo> info;
+    //TODO: ...
     return info;
 }
 
 
 namespace NodeMapInfo {
+static constexpr string Size = "size";
 static constexpr string Pathes = "pathes";
 static constexpr string Enters = "enters";
 static constexpr string Exits = "exits";
 } // namespace NodeMapInfo
 
 template <>
-TLevelInfoNodeMap
-readFromRawLevelInfo<TLevelInfoNodeMap>(const TRawLevelInfo& source) {
-    TLevelInfoNodeMap info;
-    info.pathes = readArray< vector<Vec2ui> >(source.slice(NodeMapInfo::Pathes),
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<TLevelNodeMapInfo>(const TRawLevelInfo& source) {
+    std::unique_ptr<TLevelNodeMapInfo> info;
+    info->pathes = readArray< vector<Vec2ui> >(source.slice(NodeMapInfo::Pathes),
         readArray<Vec2ui>);
-    info.enters = readArray<Vec2ui>(source.slice(NodeMapInfo::Enters),
+    info->enters = readArray<Vec2ui>(source.slice(NodeMapInfo::Enters),
         readFromString<Vec2ui>);
-    info.exits = readArray<Vec2ui>(source.slice(NodeMapInfo::Exits),
+    info->exits = readArray<Vec2ui>(source.slice(NodeMapInfo::Exits),
         readFromString<Vec2ui>);
     return info;
 }
-
 
 namespace TileMapLayerInfo {
 static constexpr string Tiles = "tiles";
@@ -291,36 +304,17 @@ readFromRawLevelInfo<TLevelInfoTileMapLayer>(const TRawLevelInfo& source) {
 }
 
 namespace TileMapInfo {
+static constexpr string Size = "size";
 static constexpr string Layers = "layers";
 } // namespace TileMapInfo
 
 template <>
-TLevelInfoTileMap
-readFromRawLevelInfo<TLevelInfoTileMap>(const TRawLevelInfo& source) {
-    TLevelInfoTileMap info;
-    info.layers = readArray<TLevelInfoTileMapLayer>(
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<TLevelTileMapInfo>(const TRawLevelInfo& source) {
+    std::unique_ptr<TLevelTileMapInfo> info;
+    info->size = readFromString<Vec2ui>(source[TileMapInfo::Size]);
+    info->layers = readArray<TLevelInfoTileMapLayer>(
         source.slice(TileMapInfo::Layers));
-    return info;
-}
-
-
-namespace MapInfo {
-static constexpr string Size = "size";
-static constexpr string NodeMap = "nodeMap";
-static constexpr string TileMap = "tileMap";
-} // namespace MapInfo
-
-template <>
-TLevelInfoMap
-readFromRawLevelInfo<TLevelInfoMap>(const TRawLevelInfo& source) {
-    TLevelInfoMap info;
-    info.size = readFromString<Vec2ui>(source[MapInfo::Size]);
-    info.nodeMap = readFromRawLevelInfo<TLevelInfoNodeMap>(
-        source.slice(MapInfo::NodeMap));
-    info.nodeMap.size = info.size;
-    info.tileMap = readFromRawLevelInfo<TLevelInfoTileMap>(
-        source.slice(MapInfo::TileMap));
-    info.tileMap.size = info.size;
     return info;
 }
 
@@ -338,16 +332,71 @@ template <>
 TLevelInfoStage
 readFromRawLevelInfo<TLevelInfoStage>(const TRawLevelInfo& source) {
     TLevelInfoStage info;
-    info.mobs = readFromRawLevelInfo<TLevelInfoMobs>(
+    info.scene = readFromRawLevelInfo<TLevelInfoScene>(
         source.slice(StageInfo::Mobs));
-    info.buildings = readFromRawLevelInfo<TLevelInfoBuildings>(
-        source.slice(StageInfo::Buildings));
-    info.researches = readFromRawLevelInfo<TLevelInfoResearches>(
-        source.slice(StageInfo::Researches));
-    info.quests = readFromRawLevelInfo<TLevelInfoQuests>(
-        source.slice(StageInfo::Quests));
-    info.map = readFromRawLevelInfo<TLevelInfoMap>(
-        source.slice(StageInfo::Map));
+    return info;
+}
+
+using ComponentInfoReader = std::function<
+    std::unique_ptr<GE::TComponentCreateArgs>(const TRawLevelInfo& source)
+>;
+static constexpr std::map<GE::TComponentIDs, ComponentInfoReader>
+componentInfoTable = {
+    // list of pairs {id, reader}
+//    {GE::ComponentIDs::PlayerStatistics,},
+//    {GE::ComponentIDs::PlayerProgress,},
+//    {GE::ComponentIDs::PlayerQuests,},
+//    {GE::ComponentIDs::PlayerResearches,},
+//    {GE::ComponentIDs::PlayerCredits,},
+
+//    {GE::ComponentIDs::ResearchesTreeView,},
+//    {GE::ComponentIDs::ResearchesTreeItemView,},
+
+    {GE::ComponentIDs::LevelTileMap, readComponentInfo<TLevelTileMapInfo>},
+    {GE::ComponentIDs::LevelTileMapView, readComponentInfo<TLevelTileMapViewInfo},
+    {GE::ComponentIDs::LevelNodeMap, readComponentInfo<TLevelNodeMapInfo>},
+//    {GE::ComponentIDs::LevelNodeMapView,}, //TODO: debug only?
+    {GE::ComponentIDs::LevelPassabilityMap, readComponentInfo<TLevelPassabilityMapInfo},
+//    {GE::ComponentIDs::LevelPassabilityMapView,}, //TODO: debug only?
+
+    {GE::ComponentIDs::LevelBuildingsController, readComponentInfo<TLevelBuildingsControllerInfo>},
+    {GE::ComponentIDs::LevelMobsController, readComponentInfo<TLevelMobsControllerInfo>},
+    {GE::ComponentIDs::LevelQuestsController, readComponentInfo<TLevelQuestsControllerInfo>},
+    {GE::ComponentIDs::LevelResearchesController, readComponentInfo<TLevelResearchesControllerInfo>}
+};
+
+std::unique_ptr<TComponentInfo>
+readComponentInfo(const GE::TComponentIDs& id, const TRawLevelInfo& source) {
+    return componentInfoTable[id](source);
+}
+
+namespace ComponentInfo {
+static constexpr string Name = "name";
+static constexpr string Id = "id";
+static constexpr string Parameters = "parameters";
+} // namespace ComponentInfo
+
+template <>
+readFromRawLevelInfo<TComponentInfo>(const TRawLevelInfo& source) {
+    TComponentInfo info;
+    info.name = source[ComponentInfo::Name];
+    info.id = std::stoul(source[ComponentInfo::Id]);
+    info.parameters = std::move(readComponentInfo(info.id, source));
+    return info;
+}
+
+
+namespace SceneObjectInfo {
+static constexpr string Name = "name";
+static constexpr string Components = "components";
+};
+
+template <>
+readFromRawLevelInfo<TSceneObjectInfo>(const TRawLevelInfo& source) {
+    TSceneObjectInfo info;
+    info.name = source[SceneObjectInfo::Name];
+    info.components = readArray<TComponentInfo>(
+        source.slice(SceneObjectInfo::Components));
     return info;
 }
 
@@ -355,19 +404,16 @@ readFromRawLevelInfo<TLevelInfoStage>(const TRawLevelInfo& source) {
 namespace LevelSceneInfo {
 static constexpr string Resources = "resources";
 static constexpr string Objects = "objects";
-static constexpr string Map = "map";
 } // namespace SceneInfo
 
 template <>
 TLevelInfoScene
-readFromRawLevelInfo<TLevelInfoScene>(const TRawLevelInfo& info) {
+readFromRawLevelInfo<TLevelInfoScene>(const TRawLevelInfo& source) {
     TLevelInfoScene info;
     info.resources = readArray<string>(
-        info.slice(LevelSceneInfo::Resources));
-    info.objects = readArray<TNamedData<string>>(
-        info.slice(LevelSceneInfo::Objects));
-    info.map = readFromRawLevelInfo<TLevelInfoMap>(
-        info.slice(LevelSceneInfo::Map));
+        source.slice(LevelSceneInfo::Resources));
+    info.objects = readArray<TSceneObjectInfo>(
+        source.slice(LevelSceneInfo::Objects));
     return info;
 }
 

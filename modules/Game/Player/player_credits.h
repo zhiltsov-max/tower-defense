@@ -4,22 +4,25 @@
 #include "Game/Components/components_list.h"
 
 
-
 namespace TD {
 
+struct TPlayerCreditsInfo
+{
+    using Credits = int;
+    Credits startValue;
+};
 
-class CPlayerCredits : public CLogicsComponent
+class CPlayerCredits :
+    public GE::CDataComponent
 {
 public:
-    static std::unique_ptr<TComponent> Create(const TComponentCreateArgs* args = nullptr);
+    using Credits = TPlayerCreditsInfo::Credits;
 
+    static std::unique_ptr<GE::TComponent> Create(
+        const GE::TComponentCreateArgs* args = nullptr);
 
-    using Credits = int;
+    CPlayerCredits(const TPlayerCreditsInfo& info);
 
-
-    CPlayerCredits();
-
-    virtual void Update() override;
     virtual void HandleMessage(const TMessage& message) override;
     virtual void Subscribe(TComponentSystem& system) override;
     virtual void Unsubscribe(TComponentSystem& system) override;
@@ -28,21 +31,15 @@ public:
     void SetCredits(const Credits& value);
 
 private:
-    using parent_type = CLogicsComponent;
+    using parent_type = CDataComponent;
 
     Credits credits;
 };
 
 template<>
-struct ComponentID< CPlayerCredits > {
-    static constexpr ComponentID value = ComponentID::PlayerCredits;
+struct GE::ComponentID< CPlayerCredits > {
+    static constexpr GE::ComponentIDs value = GE::ComponentIDs::PlayerCredits;
 };
-
-template<>
-struct ComponentClass< CPLayerCredits > {
-    static constexpr CompponentClass value = ComponentClass::logics;
-};
-
 
 } // namespace TD
 

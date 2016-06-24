@@ -11,7 +11,7 @@ namespace TD {
 
 class CResearchesTreeView;
 
-struct TPlayerResearchesArgs : TComponentCreateArgs {
+struct TPlayerResearchesInfo : TComponentCreateArgs {
     TLevel* level;
 };
 
@@ -21,7 +21,7 @@ public:
     static std::unique_ptr<TComponent> Create(TComponentCreateArgs* args);
 
 
-    CPlayerResearches(const TPlayerResearchesArgs& args);
+    CPlayerResearches(const TPlayerResearchesInfo& args);
     virtual ~CPlayerResearches();
 
     virtual void Update() override;

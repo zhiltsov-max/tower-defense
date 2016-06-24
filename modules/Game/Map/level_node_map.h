@@ -9,7 +9,7 @@
 
 namespace TD {
 
-struct TLevelInfoNodeMap : GE::TComponentCreateArgs
+struct TLevelNodeMapInfo : GE::TComponentCreateArgs
 {
     using Node = Vec2ui;
     using Path = vector<Node>;
@@ -21,16 +21,16 @@ struct TLevelInfoNodeMap : GE::TComponentCreateArgs
 };
 
 class CLevelNodeMap :
-    public GE::CLogicsComponent
+    public GE::CDataComponent
 {
 public:
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
 
-    CLevelNodeMap(const TLevelInfoNodeMap* source = nullptr);
+    CLevelNodeMap(const TLevelNodeMapInfo* source = nullptr);
 
-    using Path = TLevelInfoNodeMap::Path;
-    using Node = TLevelInfoNodeMap::Node;
+    using Path = TLevelNodeMapInfo::Path;
+    using Node = TLevelNodeMapInfo::Node;
     void AddPath(const Path& path);
     void AddEnter(const Node& node);
     void AddExit(const Node& node);
@@ -53,27 +53,23 @@ public:
     bool IsExit(const Node& node) const;
     bool IsEnter(const Node& node) const;
 
-    virtual void Update() override;
     virtual void HandleMessage(const GE::TMessage& message) override;
     virtual void Subscribe(GE::TComponentSystem& system) override;
     virtual void Unsubscribe(GE::TComponentSystem& system) override;
 private:
+    using parent_type = GE::CDataComponent;
+
     vector<Path> pathes;
     vector<Node> enters;
     vector<Node> exits;
 
-    void checkData(const TLevelInfoNodeMap& source);
-    void checkNode(const Node& node, const mapSize& size);
+    void checkData(const TLevelNodeMapInfo& source);
+    void checkNode(const Node& node, const Vec2ui& mapSize);
 };
 
 template<>
 struct GE::ComponentID<CLevelNodeMap> {
     static constexpr GE::ComponentIDs value = GE::ComponentIDs::LevelNodeMap;
-};
-
-template<>
-struct GE::ComponentClass<CLevelNodeMap> {
-    static constexpr GE::CompponentClass value = GE::ComponentSystem::logics;
 };
 
 
@@ -100,18 +96,16 @@ public:
     void SetScene(TLevelScene* instance);
     void SetNodeMap(const TLevelScene::ComponentHandle& handle);
 private:
+    using parent_type = GE::CGraphicsComponent;
+
     TLevelScene* scene;
     TLevelScene::ComponentHandle nodeMapHandle;
 };
 
 template<>
 struct GE::ComponentID<CLevelNodeMapView> {
-    static constexpr GE::ComponentIDs value = GE::ComponentIDs::LevelNodeMapView;
-};
-
-template<>
-struct GE::ComponentClass<CLevelNodeMapView> {
-    static constexpr GE::CompponentClass value = GE::ComponentSystem::graphics;
+    static constexpr GE::ComponentIDs value =
+        GE::ComponentIDs::LevelNodeMapView;
 };
 
 } // namespace TD

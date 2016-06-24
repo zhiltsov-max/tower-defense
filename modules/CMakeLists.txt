@@ -31,15 +31,11 @@ set(td_application_headers
     Game/Components/game_objects_info.h 
     Game/Level/level.h 
     Game/Level/level_clock.h 
-    Game/Level/level_code.h 
-    Game/Level/level_data_common.h
     Game/Level/level_info.h 
     Game/Level/level_info_loader.h 
     Game/Level/level_info_loader_impl.h
     Game/Level/level_lua_binding.h 
     Game/Level/level_scene.h 
-    Game/Level/level_scene_data_game_objects.h
-    Game/Map/level_map.h
     Game/Map/level_node_map.h
     Game/Map/level_passability_map.h
     Game/Map/level_tile_map.h
@@ -55,9 +51,7 @@ set(td_application_headers
     Game/Mobs/mob_path.h 
     Game/Mobs/mob_resources.h 
     Game/Mobs/mob_walker.h 
-    Game/Player/player.h 
     Game/Player/player_credits.h 
-    Game/Player/player_points.h 
     Game/Player/player_progress.h 
     Game/Player/player_progress_lua_binding.h 
     Game/Player/player_quests.h 
@@ -121,12 +115,9 @@ set(td_application_sources
     Game/Components/animation.cpp 
     Game/Level/level.cpp 
     Game/Level/level_clock.cpp 
-    Game/Level/level_data_common.cpp 
     Game/Level/level_info_loader.cpp 
     Game/Level/level_lua_binding.cpp 
     Game/Level/level_scene.cpp
-    Game/Level/level_scene_data_game_objects.cpp
-    Game/Map/level_map.cpp
     Game/Map/level_node_map.cpp
     Game/Map/level_passability_map.cpp
     Game/Map/level_tile_map.cpp
@@ -141,9 +132,7 @@ set(td_application_sources
     Game/Mobs/mob_path.cpp 
     Game/Mobs/mob_resources.cpp 
     Game/Mobs/mob_walker.cpp 
-    Game/Player/player.cpp 
     Game/Player/player_credits.cpp 
-    Game/Player/player_points.cpp 
     Game/Player/player_progress.cpp 
     Game/Player/player_quests.cpp 
     Game/Player/player_researches.cpp 

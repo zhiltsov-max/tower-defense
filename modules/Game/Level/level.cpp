@@ -1,14 +1,17 @@
 #include "level.h"
-#include "level_lua_binding.h"
+#include "Game/Level/level_lua_binding.h"
 
 
+namespace TD {
 
-BEGIN_TD
-
+TLevel::CommonData::CommonData(const TLevelInfoCommon& info) :
+    levelCode(info.levelCode),
+    nextLevelCode(info.nextLevelCode),
+    levelType(info.levelType)
+{}
 
 TLevel::TLevel(const TLevelInfo& info, GE::TGameEngine& engine) :
     common(info.common),
-    stages(info.stages),
     clock(Clock::Rate::Pause),
     scene(info.scene, &engine),
     gameEngine(&engine)
@@ -59,5 +62,4 @@ void TLevel::loadScript(const TLevelInfo& info) {
     }
 }
 
-
-END_TD
+} // namespace TD

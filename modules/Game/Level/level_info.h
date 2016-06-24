@@ -2,16 +2,11 @@
 #define LEVEL_INFO_H
 
 #include "Core/core.h"
-#include "Game/Level/level_code.h"
-#include "Game/Buildings/buildings_info.h"
-#include "Game/Mobs/mob_info.h"
-#include "Game/Quests/quests_info.h"
-#include "Game/Researches/researches_info.h"
-#include "Game/Map/level_map.h"
-#include "Game/Player/player_info.h"
 
 
 namespace TD {
+
+using TLevelCode = string;
 
 enum class LevelType {
     Undefined = 0,
@@ -33,45 +28,53 @@ struct TLevelInfoMobSequenceEntry
     TMobClassId id;
 };
 
-struct TLevelInfoMobs
+struct TLevelMobsControllerInfo : GE::TComponentCreateArgs
 {
     float delay;
     vector<TLevelInfoMobSequence> sequence;
 };
 
-struct TLevelInfoBuildings
+struct TLevelBuildingsControllerInfo : GE::TComponentCreateArgs
 {
     vector<TBuildingClassId> restricted;
     vector<TBuildingClassId> allowed;
     size_t maxCount;
 };
 
-struct TLevelInfoResearches
+struct TLevelResearchesControllerInfo : GE::TComponentCreateArgs
 {
     vector<TResearchClassId> restricted;
     vector<TResearchClassId> allowed;
     size_t maxCount;
 };
 
-struct TLevelInfoQuests
+struct TLevelQuestsControllerInfo : GE::TComponentCreateArgs
 {
     vector<TNamedData<string>> quests;
 };
 
-struct TLevelInfoStage
+struct TComponentInfo
 {
-    TLevelInfoMobs mobs;
-    TLevelInfoBuildings buildings;
-    TLevelInfoResearches researches;
-    TLevelInfoQuests quests;
-    TLevelInfoMap map;
+    TLevelScene::ComponentName name;
+    GE::ComponentIDs id;
+    std::unique_ptr<GE::TComponentCreateArgs> parameters;
+};
+
+struct TSceneObjectInfo
+{
+    TLevelScene::ObjectName name;
+    vector<TComponentInfo> components;
 };
 
 struct TLevelInfoScene
 {
     vector<string> resources;
-    vector<TNamedData<string>> objects;
-    TLevelInfoMap map;
+    vector<TSceneObjectInfo> objects;
+};
+
+struct TLevelInfoStage
+{
+    TLevelInfoScene scene; //TODO: decide if it is needed
 };
 
 struct TLevelInfo
