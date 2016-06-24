@@ -1,18 +1,17 @@
 #ifndef COMPONENT_SYSTEMS_H
 #define COMPONENT_SYSTEMS_H
 
-#include "component_system.h"
-#include "ComponentSystems/component_system_input.h"
-#include "ComponentSystems/component_system_sound.h"
-#include "ComponentSystems/component_system_movement.h"
-#include "ComponentSystems/component_system_logics.h"
-#include "ComponentSystems/component_system_graphics.h"
-#include "ComponentSystems/component_system_ui.h"
-
+#include "GameEngine/component_system.h"
+#include "GameEngine/ComponentSystems/component_system_data.h"
+#include "GameEngine/ComponentSystems/component_system_input.h"
+#include "GameEngine/ComponentSystems/component_system_sound.h"
+#include "GameEngine/ComponentSystems/component_system_movement.h"
+#include "GameEngine/ComponentSystems/component_system_logics.h"
+#include "GameEngine/ComponentSystems/component_system_graphics.h"
+#include "GameEngine/ComponentSystems/component_system_ui.h"
 
 
 namespace GE {
-
 
 enum class ComponentSystem : uchar {
     _min = 0,
@@ -23,6 +22,7 @@ enum class ComponentSystem : uchar {
     graphics = 3,
     sound = 4,
     ui = 5,
+    data = 6,
 
     _count,
     _undefined = _count
@@ -30,7 +30,6 @@ enum class ComponentSystem : uchar {
 
 template< class Component >
 struct ComponentClass;
-
 
 class TGameEngine;
 
@@ -42,17 +41,15 @@ struct TComponentSystems
     CSGraphicsSystem graphics;
     CSSoundSystem sound;
     CSUiSystem ui;
+    CSDataSystem data;
 
     using Systems = std::array<TComponentSystem*,
-        (uchar) ComponentSystem::_count>;
+        static_cast<uchar>(ComponentSystem::_count)>;
     Systems systems;
-
 
     TComponentSystems(TGameEngine* engine);
 };
 
-
 } //namespace GE
-
 
 #endif // COMPONENT_SYSTEMS_H

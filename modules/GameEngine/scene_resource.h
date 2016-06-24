@@ -4,9 +4,7 @@
 #include "Core/core.h"
 
 
-
 namespace GE {
-
 
 using TSceneResourceTypeID = uint;
 enum class SceneResourceTypeID : TSceneResourceTypeID;
@@ -30,7 +28,6 @@ protected:
 private:
     TypeID type;
 };
-
 
 } //namespace GE
 

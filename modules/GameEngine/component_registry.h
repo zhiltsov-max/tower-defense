@@ -5,9 +5,7 @@
 #include "GameEngine/registry.h"
 
 
-
 namespace GE {
-
 
 struct TComponentCreateArgs
 {
@@ -18,7 +16,6 @@ using TComponentCreate =
     std::unique_ptr<TComponent> (*)(const TComponentCreateArgs*);
 
 using TComponentRegistry = TRegistry< TComponentCreate, TComponent::ID >;
-
 
 } //namespace GE
 

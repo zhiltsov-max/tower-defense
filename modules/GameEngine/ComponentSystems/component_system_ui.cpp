@@ -4,9 +4,7 @@
 #include "GUI/uiparent.h"
 
 
-
 namespace GE {
-
 
 CSUiSystem::~CSUiSystem() {
     if (ui != nullptr) {
@@ -41,6 +39,5 @@ void CSUiSystem::SetApplicationUI(TApplicationUI* instance) {
 CUiComponent::CUiComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
-
 
 } //namespace GE

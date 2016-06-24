@@ -2,12 +2,10 @@
 #define COMPONENT_H
 
 #include "Core/core.h"
-#include "engine_message.h"
-
+#include "GameEngine/engine_message.h"
 
 
 namespace GE {
-
 
 class TComponentSystem;
 using TComponentID = uint;
@@ -20,12 +18,10 @@ class TComponent /*Abstract*/
 public:
     using ID = ComponentIDs;
 
-
     virtual ~TComponent() = default;
 
     virtual const ID& GetID() const final;
 
-    virtual void Update() = 0;
     virtual void HandleMessage(const TMessage& message) = 0;
 
     /*
@@ -45,11 +41,9 @@ private:
     const ID id;
 };
 
-
 template< class Component >
 struct ComponentID;
 
-
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_H

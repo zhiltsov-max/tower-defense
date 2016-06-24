@@ -164,11 +164,7 @@ protected:
     class CustomMessage;
     class CustomUnexpectedMessage;
 
-
     string handledMessage;
-
-
-    virtual void Update() override;
 
     virtual void HandleMessage(const TMessage& message) override;
     virtual void Subscribe(TComponentSystem& system) override;
@@ -225,8 +221,6 @@ TestComponent::TestComponent() :
     TComponent(ComponentID<TestComponent>::value)
 {}
 
-void TestComponent::Update() { /*none*/ }
-
 void TestComponent::HandleMessage(const TMessage& message) {
     switch (message.GetID()) {
     case MessageID::CustomMessage:
@@ -279,11 +273,8 @@ public:
         return std::unique_ptr<TComponent>(new CustomComponent);
     }
 
-
     CustomComponent();
 
-
-    virtual void Update() override { /*none*/ }
     virtual void HandleMessage(const TMessage& message) override { /* none */ }
     virtual void Subscribe(TComponentSystem& system) override {
         system.Subscribe(this, MessageID::CustomMessage);
@@ -338,8 +329,11 @@ protected:
                 component) != listeners.at(id).cend());
     }
 
+    virtual void Update(const TTime& step) override { /*none*/ }
+
 private:
     TComponentRegistry testRegistry;
+
 };
 
 
@@ -775,7 +769,6 @@ protected:
         static std::unique_ptr<TSceneResource> Create(
             const TSceneResourceCreateArgs*
         );
-
 
         TTestResource();
 

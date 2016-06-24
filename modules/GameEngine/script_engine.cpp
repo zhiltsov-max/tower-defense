@@ -1,11 +1,9 @@
 #include "script_engine.h"
 #include "Core/core.h"
-#include "engine_lua_binding.h"
-
+#include "GameEngine/engine_lua_binding.h"
 
 
 namespace GE {
-
 
 TScriptEngine::TScriptEngine() :
     raw()
@@ -28,6 +26,5 @@ void TScriptEngine::initialize() {
         THROW(string("Failed to initialize script engine. The error is: ") + e.what());
     }
 }
-
 
 } //namespace GE

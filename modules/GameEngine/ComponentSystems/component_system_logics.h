@@ -4,33 +4,40 @@
 #include "GameEngine/component_system.h"
 
 
-
 namespace GE {
 
-
+class TScene;
 class TScriptEngine;
 
-class CSLogicsSystem : public TComponentSystem
+class CSLogicsSystem :
+    public TComponentSystem
 {
 public:
     virtual ~CSLogicsSystem() = default;
 
-    void SetScriptEngine(TScriptEngine* instance);
+    virtual void Update(const TTime& step) override;
 
+    void SetScriptEngine(TScriptEngine* instance);
+    void SetScene(TScene* instance);
 private:
     using ScriptEngine = TScriptEngine;
-    using PScriptEngine = ScriptEngine *;
+    using PScriptEngine = TScriptEngine*;
     PScriptEngine scriptEngine;
+
+    using Scene = TScene;
+    using PScene = TScene*;
+    PScene scene;
 };
 
-
-class CLogicsComponent : public TComponent /*Abstract*/
+class CLogicsComponent :
+    public TComponent /*Abstract*/
 {
 public:
     CLogicsComponent(const ID& id);
-    virtual ~CLogicsComponent();
-};
+    virtual ~CLogicsComponent() = default;
 
+    virtual void Update(TScene* scene);
+};
 
 } //namespace GE
 

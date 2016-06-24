@@ -4,11 +4,10 @@
 #include "GameEngine/component_system.h"
 
 
-
 namespace GE {
 
-
-class CSMovementSystem : public TComponentSystem
+class CSMovementSystem :
+    public TComponentSystem
 {
 public:
     virtual ~CSMovementSystem() = default;
@@ -17,13 +16,15 @@ public:
 };
 
 
-class CMovementComponent : public TComponent /*Abstract*/
+class CMovementComponent : /*Abstract*/
+    public TComponent
 {
 public:
     CMovementComponent(const ID& id);
-    virtual ~CMovementComponent();
-};
+    virtual ~CMovementComponent() = default;
 
+    virtual void Update() = 0;
+};
 
 } //namespace GE
 

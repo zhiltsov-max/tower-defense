@@ -3,14 +3,12 @@
 
 #include "Core/core.h"
 #include "GameEngine/engine_core.h"
-#include "component_registry.h"
-#include "component_systems.h"
-#include "script_engine.h"
-
+#include "GameEngine/component_registry.h"
+#include "GameEngine/component_systems.h"
+#include "GameEngine/script_engine.h"
 
 
 namespace GE {
-
 
 class TMessage;
 
@@ -21,7 +19,6 @@ public:
     using ComponentSystems = TComponentSystems;
     using ComponentRegistry = TComponentRegistry;
     using Message = TMessage;
-
 
     TGameEngine();
 
@@ -44,7 +41,6 @@ protected:
 
     ScriptEngine scriptEngine;
 };
-
 
 } //namespace GE
 

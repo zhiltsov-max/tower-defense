@@ -1,9 +1,7 @@
 #include "scene_resources.h"
 
 
-
 namespace GE {
-
 
 TSceneResources::PWeakResource TSceneResources::LoadResource(
     const TSceneResources::ID& id, const TSceneResource::TypeID& type,
@@ -59,6 +57,5 @@ TSceneResources::PWeakResource TSceneResources::GetResource(const ID& id) {
 bool TSceneResources::Empty() const {
     return resources.empty();
 }
-
 
 } //namespace GE

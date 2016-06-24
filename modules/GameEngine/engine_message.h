@@ -7,9 +7,7 @@
 #endif // SendMessage
 
 
-
 namespace GE {
-
 
 using TMessageID = uint;
 enum class MessageID : TMessageID;
@@ -21,7 +19,6 @@ class TMessage
 public:
     typedef MessageID ID;
 
-
     virtual ~TMessage() = default;
 
     virtual const ID& GetID() const final;
@@ -32,7 +29,6 @@ protected:
 private:
     const ID id;
 };
-
 
 } //namespace GE
 

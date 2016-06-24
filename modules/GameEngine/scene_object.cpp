@@ -1,9 +1,7 @@
 #include "scene_object.h"
 
 
-
 namespace GE {
-
 
 const TSceneObject::ComponentHandle TSceneObject::ComponentHandle::Undefined; //keep it before TSceneObject::ComponentHandleUndefined
 
@@ -102,6 +100,10 @@ bool TSceneObject::HasComponents() const {
     return components.empty() == false;
 }
 
+const TSceneObject::Components&TSceneObject::GetComponents() const {
+    return components;
+}
+
 void TSceneObject::checkSize() {
     if (components.size() == freeHandles.size()) {
         components.clear();
@@ -152,6 +154,5 @@ TSceneObject::Entry::Entry(
     name(name),
     component(handle)
 {}
-
 
 } //namespace GE

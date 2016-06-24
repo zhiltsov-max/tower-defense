@@ -4,11 +4,9 @@
 #include "GameEngine/component_system.h"
 
 
-
 class TApplicationUI;
 
 namespace GE {
-
 
 class TScriptEngine;
 
@@ -34,14 +32,12 @@ private:
     PUi ui;
 };
 
-
 class CUiComponent : public TComponent /*Abstract*/
 {
 public:
     CUiComponent(const ID& id);
-    virtual ~CUiComponent();
+    virtual ~CUiComponent() = default;
 };
-
 
 } //namespace GE
 

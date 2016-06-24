@@ -2,13 +2,11 @@
 #define SCENE_H
 
 #include "Core/core.h"
-#include "scene_resources.h"
-#include "scene_object_container.h"
-
+#include "GameEngine/scene_resources.h"
+#include "GameEngine/scene_object_container.h"
 
 
 namespace GE {
-
 
 class TScene
 {
@@ -16,7 +14,6 @@ public:
     using SceneObjects = TSceneObjectContainer;
     using Resources = TSceneResources;
     using ComponentHandle = TSceneObject::ComponentHandle;
-
 
     virtual ~TScene() = default;
 
@@ -31,8 +28,6 @@ public:
         const ComponentSystem& componentClass,
         const TComponentCreateArgs* args = nullptr
     );
-    template< class Component >
-    ComponentHandle CreateComponent(TComponentCreateArgs* args);
 
     void RemoveComponent(const ComponentHandle& handle);
 
@@ -48,21 +43,10 @@ private:
 
     using PGameEngine = TGameEngine *;
     PGameEngine engine;
-
 };
 
-
-template< class Component >
-TScene::ComponentHandle TScene::CreateComponent(TComponentCreateArgs* args) {
-    return CreateComponent(
-        static_cast<uint>(ComponentID<Component>::value),
-        ComponentClass<Component>::value,
-        args
-    );
-}
-
 template< class T >
-TScene::T* TScene::GetComponent(const TScene::ComponentHandle& handle) {
+T* TScene::GetComponent(const TScene::ComponentHandle& handle) {
     return dynamic_cast<T*>(GetComponent(handle));
 }
 

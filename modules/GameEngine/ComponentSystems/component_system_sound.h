@@ -5,9 +5,7 @@
 #include "GameEngine/engine_core.h"
 
 
-
 namespace GE {
-
 
 class CSSoundSystem : public TComponentSystem
 {
@@ -15,17 +13,15 @@ public:
     virtual ~CSSoundSystem() = default;
 
     virtual void Update(const TTime& step) override;
-    void Play();
+    virtual void Play(const TTime& step);
 };
-
 
 class CSoundComponent : public TComponent /*Abstract*/
 {
 public:
     CSoundComponent(const ID& id);
-    virtual ~CSoundComponent();
+    virtual ~CSoundComponent() = default;
 };
-
 
 } //namespace GE
 

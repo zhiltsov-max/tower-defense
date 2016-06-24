@@ -1,10 +1,8 @@
 #include "scene.h"
-#include "game_engine.h"
-
+#include "GameEngine/game_engine.h"
 
 
 namespace GE {
-
 
 const TScene::Resources& TScene::GetResources() const {
     return resources;
@@ -62,6 +60,5 @@ TComponent* TScene::GetComponent(const TScene::ComponentHandle& handle) {
     return engine->GetComponentSystems().
         systems[(uchar)handle.GetSystem()]->GetComponent(handle);
 }
-
 
 } //namespace GE

@@ -1,16 +1,14 @@
 #ifndef COMPONENT_SYSTEM_H
 #define COMPONENT_SYSTEM_H
 
-#include "engine_core.h"
-#include "component.h"
-#include "component_registry.h"
-#include "component_system.h"
-#include "engine_message.h"
-
+#include "GameEngine/engine_core.h"
+#include "GameEngine/component.h"
+#include "GameEngine/component_registry.h"
+#include "GameEngine/component_system.h"
+#include "GameEngine/engine_message.h"
 
 
 namespace GE {
-
 
 class TComponentSystem
 {
@@ -20,9 +18,7 @@ public:
     using Handle = size_t;
     static const Handle HandleUndefined;
 
-
     virtual ~TComponentSystem() = default;
-
 
     const Handle CreateComponent(const TComponent::ID& typeID,
         const TComponentCreateArgs* args = nullptr);
@@ -32,7 +28,7 @@ public:
 
     void SetRegistry(TComponentRegistry* instance);
 
-    virtual void Update(const TTime& step);
+    virtual void Update(const TTime& step) = 0;
 
     virtual void Subscribe(Component* component, const TMessage::ID& id);
     virtual void Unsubscribe(Component* component, const TMessage::ID& id);
@@ -50,7 +46,6 @@ protected:
     using Listeners = std::map< Message::ID, list<Listener> >;
     Listeners listeners;
 };
-
 
 } //namespace GE
 

@@ -4,9 +4,7 @@
 #include "Core/luawrapper.h"
 
 
-
 namespace GE {
-
 
 class TScriptEngine {
 public:
@@ -20,7 +18,6 @@ private:
 
     void initialize();
 };
-
 
 } //namespace GE
 

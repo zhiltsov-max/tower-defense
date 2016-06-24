@@ -11,6 +11,7 @@ set(game_engine_headers
     scene_resources.h
     component_systems.h
     component_system.h
+    ComponentSystems/component_system_data.h
     ComponentSystems/component_system_graphics.h
     ComponentSystems/component_system_input.h
     ComponentSystems/component_system_movement.h
@@ -32,6 +33,7 @@ set(game_engine_sources
     scene_resources.cpp
     component.cpp
     component_system.cpp
+    ComponentSystems/component_system_data.cpp
     ComponentSystems/component_system_graphics.cpp
     ComponentSystems/component_system_input.cpp
     ComponentSystems/component_system_movement.cpp

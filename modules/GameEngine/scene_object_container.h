@@ -1,12 +1,10 @@
 #ifndef SCENE_OBJECT_CONTAINER_H
 #define SCENE_OBJECT_CONTAINER_H
 
-#include "scene_object.h"
-
+#include "GameEngine/scene_object.h"
 
 
 namespace GE {
-
 
 class TSceneObjectContainer
 {
@@ -16,7 +14,6 @@ public:
 
     using SceneObject = TSceneObject;
     using Name = string;
-
 
     const SceneObject& operator [] (const Name& name) const;
     SceneObject& operator [] (const Name& name);
@@ -50,7 +47,6 @@ private:
 
     void checkSize();
 };
-
 
 } //namespace GE
 

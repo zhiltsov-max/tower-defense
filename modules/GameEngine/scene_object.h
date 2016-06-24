@@ -2,13 +2,10 @@
 #define SCENE_OBJECT_H
 
 #include <stack>
-
 #include "GameEngine/component_systems.h"
 
 
-
 namespace GE {
-
 
 class TSceneObject
 {
@@ -20,7 +17,8 @@ public:
     static const ComponentHandle ComponentHandleUndefined;
 
     using Name = string;
-
+    struct Entry;
+    using Components = vector<Entry>;
 
     const ComponentHandle& operator [] (const Name& name) const;
     ComponentHandle& operator [] (const Name& name);
@@ -41,11 +39,11 @@ public:
 
     bool HasComponents() const;
 
+    const Components& GetComponents() const;
+
 private:
     using NameMapping = std::map<Name, Handle>;
-    struct Entry;
     using FreeHandles = std::stack<Handle>;
-    using Components = vector<Entry>;
 
     NameMapping nameMapping;
     Components components;
@@ -58,7 +56,6 @@ class TSceneObject::ComponentHandle
 {
 public:
     static const ComponentHandle Undefined;
-
 
     ComponentHandle(size_t handle = -1u,
         const ComponentSystem& system = ComponentSystem::_undefined);
@@ -78,7 +75,8 @@ private:
     System system;
 };
 
-struct TSceneObject::Entry {
+struct TSceneObject::Entry
+{
     Name name;
     ComponentHandle component;
 
@@ -86,7 +84,6 @@ struct TSceneObject::Entry {
         const ComponentHandle& handle = ComponentHandle::Undefined
     );
 };
-
 
 } //namespace GE
 

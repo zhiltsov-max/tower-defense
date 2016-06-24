@@ -5,9 +5,7 @@
 #include "Core/core.h"
 
 
-
 namespace GE {
-
 
 template< class Entry, class ID >
 class TRegistry
@@ -44,7 +42,6 @@ protected:
     Data data;
 };
 
-
 template< class Entry, class ID >
 void TRegistry<Entry, ID>::Register(const ID& id, const Entry& entry) {
     if (IsRegistered(id) == true) {
@@ -66,7 +63,6 @@ void TRegistry<Entry, ID>::Unregister(const ID& id) {
     }
     data.erase(it);
 }
-
 
 } //namespace GE
 

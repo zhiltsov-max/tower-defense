@@ -1,17 +1,9 @@
 #include "component_system.h"
 
 
-
 namespace GE {
 
-
 const TComponentSystem::Handle TComponentSystem::HandleUndefined = -1u;
-
-void TComponentSystem::Update(const TTime& step) {
-    for (auto& component : components) {
-        component->Update();
-    }
-}
 
 const TComponentSystem::Handle TComponentSystem::CreateComponent(
     const TComponent::ID& typeID,
@@ -75,6 +67,5 @@ void TComponentSystem::HandleMessage(const Message& message) {
         listener->HandleMessage(message);
     }
 }
-
 
 } //namespace GE

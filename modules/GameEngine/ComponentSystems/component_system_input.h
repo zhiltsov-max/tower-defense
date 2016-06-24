@@ -4,24 +4,24 @@
 #include "GameEngine/component_system.h"
 
 
-
 namespace GE {
-
 
 class CSInputSystem : public TComponentSystem
 {
 public:
     virtual ~CSInputSystem() = default;
-};
 
+    virtual void Update(const TTime& step) override;
+};
 
 class CInputComponent : public TComponent /*Abstract*/
 {
 public:
     CInputComponent(const ID& id);
-    virtual ~CInputComponent();
-};
+    virtual ~CInputComponent() = default;
 
+    virtual Update() = 0;
+};
 
 } //namespace GE
 

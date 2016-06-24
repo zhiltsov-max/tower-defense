@@ -1,13 +1,11 @@
 #ifndef SCENE_RESOURCES_H
 #define SCENE_RESOURCES_H
 
-#include "registry.h"
-#include "scene_resource.h"
-
+#include "GameEngine/registry.h"
+#include "GameEngine/scene_resource.h"
 
 
 namespace GE {
-
 
 using TSceneResourceID = string;
 
@@ -29,7 +27,6 @@ public:
     using Resource = TSceneResource;
     using PConstWeakResource = std::weak_ptr<const Resource>;
     using PWeakResource = std::weak_ptr<Resource>;
-
 
     PWeakResource LoadResource(
         const ID& id,
@@ -56,7 +53,6 @@ private:
     using Registry = TSceneResourceRegistry;
     Registry registry;
 };
-
 
 } //namespace GE
 

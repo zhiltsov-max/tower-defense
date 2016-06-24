@@ -1,11 +1,8 @@
 #include "component_systems.h"
-#include "game_engine.h"
-#include <initializer_list>
-
+#include "GameEngine/game_engine.h"
 
 
 namespace GE {
-
 
 TComponentSystems::TComponentSystems(TGameEngine* engine) :
     input(),
@@ -14,13 +11,15 @@ TComponentSystems::TComponentSystems(TGameEngine* engine) :
     graphics(),
     sound(),
     ui(),
+    data(),
     systems({
         &input,
         &movement,
         &logics,
         &graphics,
         &sound,
-        &ui
+        &ui,
+        &data
     })
 {
     input.SetRegistry(&engine->GetComponentRegistry());
@@ -36,7 +35,8 @@ TComponentSystems::TComponentSystems(TGameEngine* engine) :
 
     ui.SetRegistry(&engine->GetComponentRegistry());
     ui.SetScriptEngine(&engine->GetScriptEngine());
-}
 
+    data.SetRegistry(&engine->GetComponentRegistry());
+}
 
 } //namespace GE

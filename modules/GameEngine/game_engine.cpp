@@ -1,10 +1,8 @@
 #include "game_engine.h"
-#include "engine_message.h"
-
+#include "GameEngine/engine_message.h"
 
 
 namespace GE {
-
 
 TGameEngine::TGameEngine() :
     componentSystems(this)
@@ -18,7 +16,7 @@ void TGameEngine::Update(const TTime& step) {
     componentSystems.graphics.Update(step);
     componentSystems.sound.Update(step);
 
-    componentSystems.sound.Play();
+    componentSystems.sound.Play(step);
 }
 
 void TGameEngine::Draw(Graphics::TRenderTarget& target) {
@@ -61,6 +59,5 @@ TGameEngine::ComponentSystems&
 TGameEngine::GetComponentSystems() {
     return componentSystems;
 }
-
 
 } //namespace GE
