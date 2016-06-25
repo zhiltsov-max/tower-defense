@@ -10,12 +10,13 @@ namespace GE {
 
 class TScriptEngine;
 
-class CSUiSystem : public TComponentSystem
+class CSUiSystem :
+    public TComponentSystem
 {
 public:
     virtual ~CSUiSystem();
 
-    virtual void Update(const TTime& step) override;
+    virtual void Update(const TTime& step, Context& context) override;
     void Draw(Graphics::TRenderTarget& target);
 
     void SetScriptEngine(TScriptEngine* instance);
@@ -32,7 +33,8 @@ private:
     PUi ui;
 };
 
-class CUiComponent : public TComponent /*Abstract*/
+class CUiComponent : /*Abstract*/
+    public TComponent
 {
 public:
     CUiComponent(const ID& id);

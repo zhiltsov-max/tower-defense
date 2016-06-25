@@ -1,11 +1,9 @@
 #include "game_state_initial.h"
-#include "game_state_level_loading.h"
+#include "Game/States/game_state_level_loading.h"
 #include "Game/Level/level_lua_binding.h"
 
 
-
 namespace TD {
-
 
 TGameState_Initial::TGameState_Initial(TGame* game) :
     parent_type(game)
@@ -29,5 +27,4 @@ void TGameState_Initial::Draw(Graphics::TRenderTarget& target) {/*none*/}
 
 void TGameState_Initial::HandleEvent(const TApplication::Event& event) {/*none*/}
 
-
-}
+} // namespace TD

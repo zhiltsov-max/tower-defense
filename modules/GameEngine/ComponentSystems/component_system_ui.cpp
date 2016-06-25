@@ -12,11 +12,13 @@ CSUiSystem::~CSUiSystem() {
     }
 }
 
-void CSUiSystem::Update(const TTime& step) {
+void CSUiSystem::Update(const TTime& step, Context& context) {
     if (ui != nullptr) {
         ui->update();
     }
-    parent_type::Update(step);
+
+    UNUSED(step);
+    UNUSED(context);
 }
 
 void CSUiSystem::Draw(Graphics::TRenderTarget& target) {
@@ -24,7 +26,7 @@ void CSUiSystem::Draw(Graphics::TRenderTarget& target) {
         ui->draw();
     }
 
-    UNUSED(target)
+    UNUSED(target);
 }
 
 void CSUiSystem::SetScriptEngine(TScriptEngine* instance) {

@@ -1,11 +1,10 @@
 #ifndef APPLICATION_TASK_GAME_H
 #define APPLICATION_TASK_GAME_H
 
-#include "application_task.h"
 #include "Core/core.h"
+#include "Application/application_task.h"
+#include "Application/debug.h"
 #include "GameEngine/game_engine.h"
-#include "debug.h"
-
 
 
 namespace TD {
@@ -31,7 +30,7 @@ private:
     using DebugTools = TDebugTools;
     DebugTools debugTools;
 
-    using GameEngine = TGameEngine;
+    using GameEngine = GE::TGameEngine;
     GameEngine gameEngine;
 
     using GameWorld = TD::TLevel;

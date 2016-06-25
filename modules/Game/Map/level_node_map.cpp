@@ -120,9 +120,10 @@ bool CLevelNodeMap::IsEnter(const CLevelNodeMap::Node& node) const {
     return enters.cend() != std::find(enters.cbegin(), enters.cend(), node);
 }
 
-void TD::CLevelNodeMap::HandleMessage(const GE::TMessage& message) { /*none*/ }
-void TD::CLevelNodeMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
-void TD::CLevelNodeMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
+void CLevelNodeMap::HandleMessage(const GE::TMessage& message,
+    Context& context) { /*none*/ }
+void CLevelNodeMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
+void CLevelNodeMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
 
 
 std::unique_ptr<GE::TComponent>
@@ -136,16 +137,8 @@ CLevelNodeMapView::CLevelNodeMapView(const Parameters* source) :
 {
     if (source != nullptr) {
         scene = source->scene;
-        nodeMapHandle = source->nodeMapHandle;
+        nodeMapComponent = source->nodeMapComponent;
     }
-}
-
-void CLevelNodeMapView::SetScene(TLevelScene* instance) {
-    scene = instance;
-}
-
-void CLevelNodeMapView::SetNodeMap(const TLevelScene::ComponentHandle& handle) {
-    nodeMapHandle = handle;
 }
 
 } // namespace TD

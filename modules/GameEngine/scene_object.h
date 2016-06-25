@@ -16,25 +16,25 @@ public:
     class ComponentHandle;
     static const ComponentHandle ComponentHandleUndefined;
 
-    using Name = string;
+    using ComponentName = string;
     struct Entry;
     using Components = vector<Entry>;
 
-    const ComponentHandle& operator [] (const Name& name) const;
-    ComponentHandle& operator [] (const Name& name);
+    const ComponentHandle& operator [] (const ComponentName& name) const;
+    ComponentHandle& operator [] (const ComponentName& name);
 
     const ComponentHandle& operator [] (const Handle& handle) const;
     ComponentHandle& operator [](const Handle& handle);
 
-    const Handle& GetHandle(const Name& name) const;
+    const Handle& GetHandle(const ComponentName& name) const;
 
-    Handle AddComponent(const Name& name,
+    Handle AddComponent(const ComponentName& name,
         const ComponentHandle& component);
 
-    ComponentHandle RemoveComponent(const Name& name);
+    ComponentHandle RemoveComponent(const ComponentName& name);
     ComponentHandle RemoveComponent(const Handle& handle);
 
-    bool HasComponent(const Name& name) const;
+    bool HasComponent(const ComponentName& name) const;
     bool HasComponent(const Handle& handle) const;
 
     bool HasComponents() const;
@@ -42,7 +42,7 @@ public:
     const Components& GetComponents() const;
 
 private:
-    using NameMapping = std::map<Name, Handle>;
+    using NameMapping = std::map<ComponentName, Handle>;
     using FreeHandles = std::stack<Handle>;
 
     NameMapping nameMapping;
@@ -77,10 +77,10 @@ private:
 
 struct TSceneObject::Entry
 {
-    Name name;
+    ComponentName name;
     ComponentHandle component;
 
-    Entry(const Name& name = Name(),
+    Entry(const ComponentName& name = ComponentName(),
         const ComponentHandle& handle = ComponentHandle::Undefined
     );
 };

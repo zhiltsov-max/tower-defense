@@ -13,7 +13,7 @@ Game time controller.
 class TLevelClock
 {
 public:
-    using Time = TTime;
+    using Time = GE::TTime;
 
     static constexpr const Time& tick() { return Time(0.01); }
 

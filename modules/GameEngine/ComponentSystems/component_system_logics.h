@@ -15,28 +15,17 @@ class CSLogicsSystem :
 public:
     virtual ~CSLogicsSystem() = default;
 
-    virtual void Update(const TTime& step) override;
-
-    void SetScriptEngine(TScriptEngine* instance);
-    void SetScene(TScene* instance);
-private:
-    using ScriptEngine = TScriptEngine;
-    using PScriptEngine = TScriptEngine*;
-    PScriptEngine scriptEngine;
-
-    using Scene = TScene;
-    using PScene = TScene*;
-    PScene scene;
+    virtual void Update(const TTime& step, Context& context) override;
 };
 
-class CLogicsComponent :
-    public TComponent /*Abstract*/
+class CLogicsComponent : /*Abstract*/
+    public TComponent
 {
 public:
     CLogicsComponent(const ID& id);
     virtual ~CLogicsComponent() = default;
 
-    virtual void Update(TScene* scene);
+    virtual void Update(const TTime& step, Context& context) = 0;
 };
 
 } //namespace GE

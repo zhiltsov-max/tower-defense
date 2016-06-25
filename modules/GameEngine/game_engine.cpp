@@ -8,15 +8,16 @@ TGameEngine::TGameEngine() :
     componentSystems(this)
 {}
 
-void TGameEngine::Update(const TTime& step) {
-    componentSystems.input.Update(step);
-    componentSystems.logics.Update(step);
-    componentSystems.movement.Update(step);
-    componentSystems.ui.Update(step);
-    componentSystems.graphics.Update(step);
-    componentSystems.sound.Update(step);
+void TGameEngine::Update(const TTime& step, Context& context) {
+    /*
+    Now the concrete order of system updates is specified by adjusting index
+    in ComponentSystems enumeration.
+    */
+    for (auto& system : componentSystems.systems) {
+        system->Update(step, context);
+    }
 
-    componentSystems.sound.Play(step);
+    componentSystems.sound.Play(step, context);
 }
 
 void TGameEngine::Draw(Graphics::TRenderTarget& target) {
@@ -24,9 +25,9 @@ void TGameEngine::Draw(Graphics::TRenderTarget& target) {
     componentSystems.ui.Draw(target);
 }
 
-void TGameEngine::SendMessage(const Message& message) {
+void TGameEngine::SendMessage(const Message& message, Context& context) {
     for (auto& system : componentSystems.systems) {
-        system->HandleMessage(message);
+        system->HandleMessage(message, context);
     }
 }
 

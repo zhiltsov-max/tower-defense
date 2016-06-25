@@ -1,19 +1,16 @@
 #include "component_system.h"
+#include "GameEngine/game_engine.h"
 
 
 namespace GE {
 
 const TComponentSystem::Handle TComponentSystem::HandleUndefined = -1u;
 
-const TComponentSystem::Handle TComponentSystem::CreateComponent(
-    const TComponent::ID& typeID,
-    const TComponentCreateArgs* args)
+TComponentSystem::Handle TComponentSystem::CreateComponent(
+    const TComponent::ID& typeID, const TComponentCreateArgs* args)
 {
-    ASSERT(componentRegistry != nullptr,
-        "Component registry is not set.")
-
-    ASSERT(componentRegistry->IsRegistered(typeID) == true,
-        "Unknown type id.")
+    ASSERT(componentRegistry != nullptr, "Component registry is not set.");
+    ASSERT(componentRegistry->IsRegistered(typeID) == true, "Unknown type id.");
 
     auto& create = (*componentRegistry)[typeID];
     PComponent ptr = std::move(create(args));
@@ -35,37 +32,34 @@ void TComponentSystem::RemoveComponent(const Handle& componentHandle) {
 
 TComponentSystem::Component*
 TComponentSystem::GetComponent(const Handle& handle) {
-    ASSERT(handle < components.size(), "Wrong component handle.")
+    ASSERT(handle < components.size(), "Wrong component handle.");
 
     return components[handle].get();
 }
 
-void TComponentSystem::SetRegistry(TComponentRegistry* instance) {
-    componentRegistry = instance;
-}
-
-void TComponentSystem::Subscribe(Component* component,
-    const Message::ID& id)
-{
-    ASSERT(component != nullptr, "Unexpected component")
+void TComponentSystem::Subscribe(Component* component, const Message::ID& id) {
+    ASSERT(component != nullptr, "Unexpected component.");
 
     listeners[id].push_back(component);
 }
 
-void TComponentSystem::Unsubscribe(Component* component,
-    const Message::ID& id)
-{
+void
+TComponentSystem::Unsubscribe(Component* component, const Message::ID& id) {
     listeners[id].remove(component);
 }
 
-void TComponentSystem::HandleMessage(const Message& message) {
+void TComponentSystem::HandleMessage(const Message& message, Context& context) {
     if (listeners.count(message.GetID()) == 0) {
         return;
     }
 
-    for (auto& listener : listeners[ message.GetID() ]) {
-        listener->HandleMessage(message);
+    for (auto& listener : listeners[message.GetID()]) {
+        listener->HandleMessage(message, context);
     }
+}
+
+void TComponentSystem::SetComponentRegistry(TComponentRegistry* instance) {
+    componentRegistry = instance;
 }
 
 } //namespace GE

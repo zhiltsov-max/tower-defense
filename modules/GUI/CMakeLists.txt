@@ -7,27 +7,27 @@ set(gui_headers
     abstractwindow.h 
     customfont.h
     customfonts_cache.h
-    widget_event_system.h
     gui_core.h 
     gui_lua_binding.h 
     gui_main.h 
     gui_settings.h
     imagebox.h 
-    widget.h
     messagebox.h 
     movingtext.h 
     okdialog.h 
     pushbutton.h 
     richtextarea.h 
     richtextbox.h 
-    widget_signal.h
     signal_defs.h 
     simpletext.h 
     simpletextbox.h 
-    widget_slot.h
     textarea.h 
     transparentwindow.h 
     uiparent.h 
+    widget.h
+    widget_event_system.h
+    widget_signal.h
+    widget_slot.h
     window.h 
 )
 
@@ -38,24 +38,24 @@ set(gui_sources
     abstractwindow.cpp 
     customfont.cpp 
     customfonts_cache.cpp
-    widget_event_system.cpp
     gui_core.cpp 
     gui_lua_binding.cpp 
     imagebox.cpp 
-    widget.cpp
     messagebox.cpp 
     movingtext.cpp 
     okdialog.cpp 
     pushbutton.cpp 
     richtextarea.cpp 
     richtextbox.cpp 
-    widget_signal.cpp
     signal_defs.cpp 
     simpletext.cpp 
     simpletextbox.cpp 
-    widget_slot.cpp
     transparentwindow.cpp 
     uiparent.cpp 
+    widget.cpp
+    widget_event_system.cpp
+    widget_signal.cpp
+    widget_slot.cpp
 )
 
 add_library(td_gui_LIB STATIC

@@ -1,11 +1,10 @@
 #include "game_state_playing.h"
 #include "Game/Level/level_lua_binding.h"
-#include "game_state_statistics.h"
-
+#include "Game/States/game_state_statistics.h"
+#include "GameEngine/game_engine.h"
 
 
 namespace TD {
-
 
 TGameState_Playing::TGameState_Playing(TGame* game) :
     parent_type(game)
@@ -37,9 +36,9 @@ void TGameState_Playing::HandleEvent(const TApplication::Event& event) {
         return;
     }
 
+    GE::TGameEngine::Context context(game->gameEngine, nullptr);
     const auto message = TMessage_SystemEvent(event);
-    game->gameEngine->SendMessage(message);
+    game->gameEngine.SendMessage(message, context);
 }
-
 
 } // namespace TD

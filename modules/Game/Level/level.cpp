@@ -36,18 +36,15 @@ TLevel::Scene& TLevel::GetScene() {
 }
 
 void TLevel::Update() {
+    GE::TGameEngine::Context context(gameEngine, &scene.GetRaw());
     for(auto i = 0; i < (uint)clock.GetRate(); ++i) {
-        gameEngine->Update(clock.tick());
+        gameEngine->Update(clock.tick(), context);
         clock.Update();
     }
 }
 
-const GE::TGameEngine* TLevel::GetGameEngine() const {
-    return gameEngine;
-}
-
-GE::TGameEngine* TLevel::GetGameEngine() {
-    return gameEngine;
+void TLevel::SetGameEngine(GE::TGameEngine* instance) {
+    gameEngine = instance;
 }
 
 void TLevel::loadScript(const TLevelInfo& info) {

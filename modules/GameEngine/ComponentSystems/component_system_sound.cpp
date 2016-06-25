@@ -3,12 +3,12 @@
 
 namespace GE {
 
-void CSSoundSystem::Update(const TTime& step) {
+void CSSoundSystem::Update(const TTime& step, Context& context) {
     //TODO: implementation
     THROW("Not impleneted yet");
 }
 
-void CSSoundSystem::Play(const TTime& step) {
+void CSSoundSystem::Play(const TTime& step, Context& context) {
     //TODO: implementation
     THROW("Not impleneted yet");
 }

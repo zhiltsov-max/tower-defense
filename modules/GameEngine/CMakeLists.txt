@@ -1,51 +1,54 @@
 project(GameEngine)
 
 set(game_engine_headers
-    engine_core.h
-    registry.h
     component.h
     component_registry.h
-    scene.h
-    script_engine.h
-    scene_resource.h
-    scene_resources.h
-    component_systems.h
     component_system.h
+    component_systems.h
     ComponentSystems/component_system_data.h
     ComponentSystems/component_system_graphics.h
     ComponentSystems/component_system_input.h
-    ComponentSystems/component_system_movement.h
     ComponentSystems/component_system_logics.h
+    ComponentSystems/component_system_movement.h
     ComponentSystems/component_system_sound.h
     ComponentSystems/component_system_ui.h
-    scene_object.h
-    scene_object_container.h
+    engine_core.h
+    engine_lua_binding.h
     engine_message.h
     engine_messages.h
     game_engine.h
-    engine_lua_binding.h
+    game_engine_context.h
+    registry.h
+    scene.h
+    scene_component_manager.h
+    scene_object.h
+    scene_object_container.h
+    scene_resource.h
+    scene_resources.h
+    script_engine.h
 )
 
 set(game_engine_sources
-    scene.cpp
-    script_engine.cpp
-    scene_resource.cpp
-    scene_resources.cpp
     component.cpp
     component_system.cpp
+    component_systems.cpp
     ComponentSystems/component_system_data.cpp
     ComponentSystems/component_system_graphics.cpp
     ComponentSystems/component_system_input.cpp
-    ComponentSystems/component_system_movement.cpp
     ComponentSystems/component_system_logics.cpp
+    ComponentSystems/component_system_movement.cpp
     ComponentSystems/component_system_sound.cpp
     ComponentSystems/component_system_ui.cpp
-    scene_object.cpp
-    scene_object_container.cpp
     engine_message.cpp
     engine_messages.cpp
     game_engine.cpp
-    component_systems.cpp
+    scene.cpp
+    scene_component_manager.cpp
+    scene_object.cpp
+    scene_object_container.cpp
+    scene_resource.cpp
+    scene_resources.cpp
+    script_engine.cpp
 )
 
 add_library(td_game_engine_LIB STATIC

@@ -1,9 +1,11 @@
 #ifndef LEVEL_INFO_LOADER_IMPL_H
 #define LEVEL_INFO_LOADER_IMPL_H
 
+#include <functional>
 #include "Core/core.h"
 #include "Game/Level/level_info_raw.h"
 #include "Game/Level/level_info.h"
+#include "Game/Level/level_scene.h"
 #include "Game/Components/components_list.h"
 #include "Game/Map/level_node_map.h"
 #include "Game/Map/level_tile_map.h"
@@ -13,7 +15,6 @@
 #include "Game/Player/player_quests.h"
 #include "Game/Player/player_researches.h"
 #include "Game/Player/player_statistics.h"
-#include <functional>
 
 
 namespace TD {
@@ -334,7 +335,7 @@ template <>
 TLevelInfoStage
 readFromRawLevelInfo<TLevelInfoStage>(const TRawLevelInfo& source) {
     TLevelInfoStage info;
-    info.scene = readFromRawLevelInfo<TLevelInfoScene>(
+    info.scene = readFromRawLevelInfo<TLevelScene::Parameters>(
         source.slice(StageInfo::Mobs));
     return info;
 }
@@ -409,9 +410,9 @@ static constexpr string Objects = "objects";
 } // namespace SceneInfo
 
 template <>
-TLevelInfoScene
-readFromRawLevelInfo<TLevelInfoScene>(const TRawLevelInfo& source) {
-    TLevelInfoScene info;
+TLevelScene::Parameters
+readFromRawLevelInfo<TLevelScene::Parameters>(const TRawLevelInfo& source) {
+    TLevelScene::Parameters info;
     info.resources = readArray<string>(
         source.slice(LevelSceneInfo::Resources));
     info.objects = readArray<TSceneObjectInfo>(

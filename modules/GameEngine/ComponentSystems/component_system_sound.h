@@ -2,7 +2,6 @@
 #define COMPONENT_SYSTEM_SOUND_H
 
 #include "GameEngine/component_system.h"
-#include "GameEngine/engine_core.h"
 
 
 namespace GE {
@@ -12,11 +11,12 @@ class CSSoundSystem : public TComponentSystem
 public:
     virtual ~CSSoundSystem() = default;
 
-    virtual void Update(const TTime& step) override;
-    virtual void Play(const TTime& step);
+    virtual void Update(const TTime& step, Context& context) override;
+    virtual void Play(const TTime& step, Context& context);
 };
 
-class CSoundComponent : public TComponent /*Abstract*/
+class CSoundComponent : /*Abstract*/
+    public TComponent
 {
 public:
     CSoundComponent(const ID& id);

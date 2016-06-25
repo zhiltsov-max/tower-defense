@@ -3,9 +3,10 @@
 
 namespace GE {
 
-void CSMovementSystem::Update(const TTime& step) {
+void CSMovementSystem::Update(const TTime& step, Context& context) {
     for (auto& component : components) {
-        static_cast<CMovementComponent*>(component.get())->Update();
+        static_cast<CMovementComponent*>(component.get())->Update(step,
+            context);
     }
 }
 

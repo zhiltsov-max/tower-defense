@@ -1,12 +1,10 @@
 #ifndef GAME_STATE_PLAYING_H
 #define GAME_STATE_PLAYING_H
 
-#include "game_state.h"
-
+#include "Game/States/game_state.h"
 
 
 namespace TD {
-
 
 class TGameState_Playing : public TGame::State
 {
@@ -20,7 +18,6 @@ public:
 private:
     using parent_type = TGame::State;
 };
-
 
 } // namespace TD
 

@@ -9,7 +9,7 @@ namespace TD {
 using TGameObjectClassId = uint;
 
 template< class Entry >
-using TGameObjectsRegistry = TRegistry<Entry, TGameObjectClassId>;
+using TGameObjectsRegistry = GE::TRegistry<Entry, TGameObjectClassId>;
 
 } // namesoace TD
 

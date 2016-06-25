@@ -94,7 +94,7 @@ void TTowerDefenseApplication::update() {
 
 void TTowerDefenseApplication::release() {
     parent_type::release();
-    task.release();
+    task.reset();
 }
 
 void TTowerDefenseApplication::handleEvent(const Event& event) {

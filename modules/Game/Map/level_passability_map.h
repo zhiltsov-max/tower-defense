@@ -27,38 +27,28 @@ public:
     const PassabilityMap& GetMap(const Altitude& altitude);
     const Size& GetSize() const;
 
-    virtual void HandleMessage(const GE::TMessage& message) override;
+    virtual void HandleMessage(const GE::TMessage& message,
+        Context& context) override;
     virtual void Subscribe(GE::TComponentSystem& system) override;
     virtual void Unsubscribe(GE::TComponentSystem& system) override;
-
-    void SetScene(TLevelScene* instance);
-    void SetTileMapHandle(const TLevelScene::ComponentHandle& instance);
-    void SetTilesetRegistry(TLevelTileMapTilesetRegistry* instance);
 
 private:
     using parent_type = GE::CDataComponent;
 
     std::array<PassabilityMap, static_cast<TAltitude>(Altitude::_count)> maps;
     Size size;
-
-    TLevelScene* scene;
-    TLevelScene::ComponentHandle tileMapHandle;
-    TLevelTileMapTilesetRegistry* tilesetRegistry;
 };
 
 template<>
-struct GE::ComponentID<CLevelPassabilityMap>
+struct GE::ComponentID<CPassabilityMap>
 {
     static constexpr GE::ComponentIDs value =
         GE::ComponentIDs::LevelPassabilityMap;
 };
 
-struct CLevelPassabilityMap::Parameters : GE::TComponentCreateArgs
+struct CPassabilityMap::Parameters : GE::TComponentCreateArgs
 {
     Size size;
-
-    TLevelScene::ComponentHandle tileMapHandle;
-    TLevelTileMapTilesetRegistry* tilesetRegistry;
 };
 
 } // namespace TD

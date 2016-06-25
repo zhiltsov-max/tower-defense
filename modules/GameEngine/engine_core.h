@@ -4,9 +4,7 @@
 
 namespace GE {
 
-
 using TTime = double;
-
 
 } //namespace GE
 

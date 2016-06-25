@@ -6,21 +6,23 @@
 
 namespace GE {
 
-class CSInputSystem : public TComponentSystem
+class CSInputSystem :
+    public TComponentSystem
 {
 public:
     virtual ~CSInputSystem() = default;
 
-    virtual void Update(const TTime& step) override;
+    virtual void Update(const TTime& step, Context& context) override;
 };
 
-class CInputComponent : public TComponent /*Abstract*/
+class CInputComponent : /*Abstract*/
+    public TComponent
 {
 public:
     CInputComponent(const ID& id);
     virtual ~CInputComponent() = default;
 
-    virtual Update() = 0;
+    virtual Update(Context& context) = 0;
 };
 
 } //namespace GE

@@ -9,37 +9,39 @@ namespace GE {
 class TSceneObjectContainer
 {
 public:
-    using Handle = size_t;
-    static const Handle HandleUndefined;
+    using ObjectHandle = size_t;
+    static const ObjectHandle HandleUndefined;
 
     using SceneObject = TSceneObject;
-    using Name = string;
+    using SceneObjectName = string;
 
-    const SceneObject& operator [] (const Name& name) const;
-    SceneObject& operator [] (const Name& name);
+    const SceneObject& operator [] (const SceneObjectName& name) const;
+    SceneObject& operator [] (const SceneObjectName& name);
 
-    const SceneObject& operator [] (const Handle& handle) const;
-    SceneObject& operator [] (const Handle& handle);
+    const SceneObject& operator [] (const ObjectHandle& handle) const;
+    SceneObject& operator [] (const ObjectHandle& handle);
 
-    Handle GetHandle(const Name& name) const;
+    ObjectHandle GetHandle(const SceneObjectName& name) const;
 
-    Handle AddSceneObject(const Name& name, const TSceneObject& sceneObject);
-    Handle AddSceneObject(const Name& name, TSceneObject&& sceneObject);
+    ObjectHandle AddSceneObject(const SceneObjectName& name,
+        const TSceneObject& sceneObject);
+    ObjectHandle AddSceneObject(const SceneObjectName& name,
+        TSceneObject&& sceneObject);
 
-    TSceneObject RemoveSceneObject(const Name& name);
-    TSceneObject RemoveSceneObject(const Handle& handle);
+    TSceneObject RemoveSceneObject(const SceneObjectName& name);
+    TSceneObject RemoveSceneObject(const ObjectHandle& handle);
 
-    bool HasObject(const Name& name) const;
-    bool HasObject(const Handle& handle) const;
+    bool HasObject(const SceneObjectName& name) const;
+    bool HasObject(const ObjectHandle& handle) const;
 
     void Clear();
     bool IsEmpty() const;
 
 private:
-    using NameMapping = std::map<Name, Handle>;
-    using Entry = std::pair<Name, SceneObject>;
+    using NameMapping = std::map<SceneObjectName, ObjectHandle>;
+    using Entry = std::pair<SceneObjectName, SceneObject>;
     using Objects = vector<Entry>;
-    using FreeHandles = std::stack<Handle>;
+    using FreeHandles = std::stack<ObjectHandle>;
 
     NameMapping nameMapping;
     Objects objects;

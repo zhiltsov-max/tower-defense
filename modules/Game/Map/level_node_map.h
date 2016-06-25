@@ -44,7 +44,8 @@ public:
     bool IsExit(const Node& node) const;
     bool IsEnter(const Node& node) const;
 
-    virtual void HandleMessage(const GE::TMessage& message) override;
+    virtual void HandleMessage(const GE::TMessage& message,
+        Context& context) override;
     virtual void Subscribe(GE::TComponentSystem& system) override;
     virtual void Unsubscribe(GE::TComponentSystem& system) override;
 private:
@@ -83,8 +84,9 @@ public:
 
     CLevelNodeMapView(const Parameters* source = nullptr);
 
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
+    virtual void Update(const GE::TTime& step, Context& context) override;
+    virtual void HandleMessage(const TMessage& message,
+        Context& context) override;
     virtual void Subscribe(TComponentSystem& system) override;
     virtual void Unsubscribe(TComponentSystem& system) override;
 
@@ -94,7 +96,7 @@ private:
     using parent_type = GE::CGraphicsComponent;
 
     TLevelScene* scene;
-    TLevelScene::ComponentHandle nodeMapHandle;
+    TLevelScene::ComponentPath nodeMapComponent;
 };
 
 template<>
@@ -106,59 +108,9 @@ struct GE::ComponentID<CLevelNodeMapView>
 
 struct CLevelNodeMapView::Parameters : GE::TComponentCreateArgs
 {
-    TLevelScene* scene;
-    TLevelScene::ComponentHandle nodeMapHandle;
+    TLevelScene::ComponentPath nodeMapComponent;
 };
 
 } // namespace TD
 
 #endif // LEVEL_NODE_MAP_H
-
-
-/* TODO: ...
-Method TLevelMap::ShowWaypoints()
-    } GetGame().GetType()
-        Case GameType.Normal
-                number:Short = 0
-            for(  path:TNodePath = EachIn nodeMap.pathes
-                for(  node:TNode = EachIn path.path
-                    node.Draw()
-
-                    } (number = 0 Or number = path.GetLength())
-                        Graphics::SetColor($66C8C800)
-                    } else {
-                        Graphics::SetColor($FFFFFFFF)
-                    }
-                    DrawText(number, node.absx() - 2, node.absy() - 2)
-
-                    number:+1
-                Next
-            Next
-
-        Case GameType.Free
-            for(  mob:TMob = EachIn TMobController.GetAllMobs()
-
-                } (mob.path.path = nullptr)
-                    Continue
-                }
-
-                    number:Short = 0
-
-                for(  node:TNode = EachIn mob.path.path.path
-                    Graphics::SetColor($44FF5050)
-                    DrawRect(node.x + 1 - GameMechanics.TILE_SIZE * 0.5, node.y + 1 - GameMechanics.TILE_SIZE * 0.5, GameMechanics.TILE_SIZE - 2, GameMechanics.TILE_SIZE - 2)
-
-                    node.Draw()
-
-                    Graphics::SetColor($FFFFFFFF)
-                    DrawText(number, node.x - 2, node.y - 2)
-
-                    number:+1
-                Next
-            Next
-
-        Default
-            throw_("Wrong game type: " + GetGame().GetType() + ".", "TLevelMap::ShowWaypoints")
-    }
-}
-*/

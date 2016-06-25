@@ -12,7 +12,7 @@ class CSMovementSystem :
 public:
     virtual ~CSMovementSystem() = default;
 
-    virtual void Update(const TTime& step) override;
+    virtual void Update(const TTime& step, Context& context) override;
 };
 
 
@@ -23,7 +23,7 @@ public:
     CMovementComponent(const ID& id);
     virtual ~CMovementComponent() = default;
 
-    virtual void Update() = 0;
+    virtual void Update(const TTime& step, Context& context) = 0;
 };
 
 } //namespace GE

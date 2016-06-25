@@ -164,7 +164,7 @@ void TApplication::initialize(const TApplicationInfo& info) {
 }
 
 void TApplication::release() {
-    controller.release();
+    controller.reset();
 }
 
 void TApplication::renew() {

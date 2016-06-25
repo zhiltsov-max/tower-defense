@@ -1,9 +1,10 @@
 #include "level_scene.h"
+#include "Game/Components/components_list.h"
 
 
 namespace TD {
 
-TLevelScene::TLevelScene(const TLevelInfoScene& info, GE::GameEngine& engine) :
+TLevelScene::TLevelScene(const Parameters& info, GE::GameEngine& engine) :
     scene()
 {
     scene.SetGameEngine(&engine);
@@ -15,86 +16,101 @@ TLevelScene::ComponentHandle
 TLevelScene::CreateComponent(const GE::TComponent::ID& id,
     const GE::TComponentCreateArgs* args)
 {
-    return scene.CreateComponent(id, ComponentSystemForId[id], args);
+    return scene.CreateComponent(id, GetComponentSystemForId(id), args);
 }
 
 void TLevelScene::RemoveComponent(const ComponentHandle& handle) {
     return scene.RemoveComponent(handle);
 }
 
+const TComponent* TLevelScene::FindComponent(const ComponentPath& path) const {
+    return scene.FindComponent(path);
+}
+
+TComponent* TLevelScene::FindComponent(const ComponentPath& path) {
+    return scene.FindComponent(path);
+}
+
 GE::TComponent* TLevelScene::GetComponent(const ComponentHandle& handle) {
     return scene.GetComponent(handle);
 }
 
-const TLevelScene::Object&
-TLevelScene::FindObject(const ObjectName& name) const {
-    return scene.GetObjects()[name];
+const TLevelScene::Object*
+TLevelScene::FindSceneObject(const ObjectName& name) const {
+    return scene.FindSceneObject(name);
 }
 
-TLevelScene::Object&
-TLevelScene::FindObject(const ObjectName& name) {
-    return scene.GetObjects()[name];
+TLevelScene::Object*
+TLevelScene::FindSceneObject(const ObjectName& name) {
+    return scene.FindSceneObject(name);
 }
 
 const TLevelScene::Object&
-TLevelScene::FindObject(const ObjectHandle& handle) const {
-    return scene.GetObjects()[handle];
+TLevelScene::GetSceneObject(const ObjectHandle& handle) const {
+    return scene.GetSceneObject(handle);
 }
 
 TLevelScene::Object& TLevelScene::FindObject(const ObjectHandle& handle) {
-    return scene.GetObjects()[handle];
+    return scene.GetSceneObject(handle);
 }
 
 bool TLevelScene::HasObject(const ObjectName& name) const {
-    return scene.GetObjects().HasObject(name);
+    return scene.HasObject(name);
 }
 
 bool TLevelScene::HasObject(const ObjectHandle& handle) const {
-    return scene.GetObjects().HasObject(handle);
+    return scene.HasObject(handle);
 }
 
 TLevelScene::ObjectHandle TLevelScene::GetHandle(const ObjectName& name) const {
-    return scene.GetObjects().GetHandle(name);
+    return scene.GetHandle(name);
 }
 
 TLevelScene::ObjectHandle
 TLevelScene::AddSceneObject(const ObjectName& name, const Object& sceneObject) {
-    return scene.GetObjects().AddSceneObject(name, sceneObject);
+    return scene.AddSceneObject(name, sceneObject);
 }
 
 TLevelScene::Object TLevelScene::RemoveSceneObject(const ObjectName& name) {
-    return scene.GetObjects().RemoveSceneObject(name);
+    return scene.RemoveSceneObject(name);
 }
 
 TLevelScene::Object TLevelScene::RemoveSceneObject(const ObjectHandle& handle) {
-    return scene.GetObjects().RemoveSceneObject(handle);
+    return scene.RemoveSceneObject(handle);
 }
 
 void TLevelScene::Clear() {
-    scene.GetObjects().Clear();
+    scene.Clear();
 }
 
 bool TLevelScene::IsEmpty() const {
-    return scene.GetObjects().IsEmpty();
+    return scene.IsEmpty();
+}
+
+const TLevelScene::Scene& TLevelScene::GetRaw() const {
+    return scene;
+}
+
+TLevelScene::Scene& TLevelScene::GetRaw() {
+    return scene;
 }
 
 TLevelScene::ObjectHandle
 TLevelScene::AddSceneObject(const ObjectName& name, SceneObject&& sceneObject) {
-    return scene.GetObjects().AddSceneObject(name, std::move(sceneObject));
+    return scene.AddSceneObject(name, std::move(sceneObject));
 }
 
-void TLevelScene::loadResources(const TLevelInfoScene& info) {
+void TLevelScene::loadResources(const Parameters& info) {
     for (const auto& entry : info.resources.data) {
         scene.GetResources().LoadResource(entry);
     }
 }
 
-void TLevelScene::loadObjects(const TLevelInfoScene& info) {
+void TLevelScene::loadObjects(const Parameters& info) {
     for (const auto& objectInfo : info.objects) {
         Object object;
         for (const auto& componentInfo : objectInfo.components) {
             const auto componentHandle = CreateComponent(componentInfo.id,
-                ComponentSystemForId[componentInfo.id],
                 componentInfo.parameters);
             object.AddComponent(componentInfo.name, componentHandle);
         }

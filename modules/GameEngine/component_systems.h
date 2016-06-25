@@ -13,16 +13,17 @@
 
 namespace GE {
 
-enum class ComponentSystem : uchar {
+using TComponentSystemTypeId = uchar;
+enum class ComponentSystem : TComponentSystemTypeId {
     _min = 0,
 
     input = 0,
-    movement = 1,
-    logics = 2,
-    graphics = 3,
-    sound = 4,
-    ui = 5,
-    data = 6,
+    data,
+    movement,
+    logics,
+    ui,
+    graphics,
+    sound,
 
     _count,
     _undefined = _count
@@ -44,10 +45,12 @@ struct TComponentSystems
     CSDataSystem data;
 
     using Systems = std::array<TComponentSystem*,
-        static_cast<uchar>(ComponentSystem::_count)>;
+        static_cast<TComponentSystemTypeId>(ComponentSystem::_count)>;
     Systems systems;
 
     TComponentSystems(TGameEngine* engine);
+
+    void SetGameEngine(TGameEngine* instance);
 };
 
 } //namespace GE

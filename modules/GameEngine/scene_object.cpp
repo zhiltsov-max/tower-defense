@@ -11,15 +11,15 @@ const TSceneObject::ComponentHandle TSceneObject::ComponentHandleUndefined =
 const TSceneObject::Handle TSceneObject::HandleUndefined = -1u;
 
 const TSceneObject::ComponentHandle&
-TSceneObject::operator [] (const Name& name) const {
+TSceneObject::operator [] (const ComponentName& name) const {
     return components.at(GetHandle(name)).component;
 }
 
-TSceneObject::ComponentHandle& TSceneObject::operator [] (const Name& name) {
+TSceneObject::ComponentHandle& TSceneObject::operator [] (const ComponentName& name) {
     return components.at(GetHandle(name)).component;
 }
 
-const TSceneObject::Handle& TSceneObject::GetHandle(const Name& name) const {
+const TSceneObject::Handle& TSceneObject::GetHandle(const ComponentName& name) const {
     if (nameMapping.count(name) != 0) {
         return nameMapping.at(name);
     } else {
@@ -37,7 +37,7 @@ TSceneObject::operator [] (const Handle& handle) {
     return components.at(handle).component;
 }
 
-TSceneObject::Handle TSceneObject::AddComponent(const Name& name,
+TSceneObject::Handle TSceneObject::AddComponent(const ComponentName& name,
     const ComponentHandle& component)
 {
     ASSERT(name.empty() == false,
@@ -62,7 +62,7 @@ TSceneObject::Handle TSceneObject::AddComponent(const Name& name,
     return handle;
 }
 
-TSceneObject::ComponentHandle TSceneObject::RemoveComponent(const Name& name) {
+TSceneObject::ComponentHandle TSceneObject::RemoveComponent(const ComponentName& name) {
     Handle handle = GetHandle(name);
     return RemoveComponent(handle);
 }
@@ -87,7 +87,7 @@ TSceneObject::RemoveComponent(const Handle& handle) {
     return componentHandle;
 }
 
-bool TSceneObject::HasComponent(const Name& name) const {
+bool TSceneObject::HasComponent(const ComponentName& name) const {
     return GetHandle(name) != HandleUndefined;
 }
 
@@ -149,7 +149,7 @@ TSceneObject::ComponentHandle::operator size_t() const {
 }
 
 TSceneObject::Entry::Entry(
-    const Name& name, const ComponentHandle& handle
+    const ComponentName& name, const ComponentHandle& handle
 ) :
     name(name),
     component(handle)

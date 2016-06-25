@@ -35,26 +35,28 @@ public:
 
         _count
     };
+    using Tilesets = std::set<TLevelTileMapTilesetId>;
 
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
 
     CLevelTileMap(const CLevelTileMap::Parameters* source = nullptr);
 		
-    using Size = CLevelTileMap::Parameters::Size;
     const Size& GetSize() const;
     void SetSize(const Size& value);
 
-    using Tilesets = std::set<TLevelTileMapTilesetId>;
     const Tilesets& GetTilesets() const;
 
     std::pair<Layers::const_iterator, Layers::const_iterator> GetLayer(
         const Layer& layer) const;
     std::pair<Layers::iterator, Layers::iterator> GetLayer(const Layer& layer);
 
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    uchar GetLayerCount() const;
+
+    virtual void HandleMessage(const GE::TMessage& message,
+        Context& context) override;
+    virtual void Subscribe(GE::TComponentSystem& system) override;
+    virtual void Unsubscribe(GE::TComponentSystem& system) override;
 
 private:
     using parent_type = CDataComponent;
@@ -103,24 +105,22 @@ public:
 
     CLevelTileMapView(const Parameters* source = nullptr);
 
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    virtual void HandleMessage(const GE::TMessage& message,
+        Context& context) override;
+    virtual void Subscribe(GE::TComponentSystem& system) override;
+    virtual void Unsubscribe(GE::TComponentSystem& system) override;
 
-    void SetScene(TLevelScene* instance);
+    virtual void Update(const GE::TTime& step, Context& context) override;
+    virtual void Draw(Graphics::TRenderTarget& target,
+        GE::TScene* scene) override;
+
     void SetTilesetRegistry(TLevelTileMapTilesetRegistry* instance);
-    void SetTileMap(const TLevelScene::ComponentHandle& handle);
-
-protected:
-    void draw(Graphics::TRenderTarget& target);
 
 private:
     using parent_type = GE::CGraphicsComponent;
 
-    TLevelScene* scene;
     TLevelTileMapTilesetRegistry* tilesetRegistry;
-    TLevelScene::ComponentHandle tileMapHandle;
+    TLevelScene::ComponentPath tileMapComponent;
 };
 
 template<>
@@ -132,9 +132,8 @@ struct GE::ComponentID<CLevelTileMapView>
 
 struct CLevelTileMapView::Parameters : GE::TComponentCreateArgs
 {
-    TLevelScene* scene;
     TLevelTileMapTilesetRegistry* tilesetRegistry;
-    TLevelScene::ComponentHandle tileMapHandle;
+    TLevelScene::ComponentPath tileMapComponent;
 };
 
 } // namespace TD

@@ -12,7 +12,7 @@ class CSDataSystem :
 public:
     virtual ~CSDataSystem() = default;
 
-    virtual void Update(const TTime& step) override;
+    virtual void Update(const TTime& step, Context& context) override;
 };
 
 class CDataComponent : /*Abstract*/

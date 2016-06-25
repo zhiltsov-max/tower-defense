@@ -53,25 +53,6 @@ struct TLevelQuestsControllerInfo : GE::TComponentCreateArgs
     vector<TNamedData<string>> quests;
 };
 
-struct TComponentInfo
-{
-    TLevelScene::ComponentName name;
-    GE::ComponentIDs id;
-    std::unique_ptr<GE::TComponentCreateArgs> parameters;
-};
-
-struct TSceneObjectInfo
-{
-    TLevelScene::ObjectName name;
-    vector<TComponentInfo> components;
-};
-
-struct TLevelInfoScene
-{
-    vector<string> resources;
-    vector<TSceneObjectInfo> objects;
-};
-
 struct TLevelInfoStage
 {
     TLevelInfoScene scene; //TODO: decide if it is needed

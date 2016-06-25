@@ -2,16 +2,16 @@ project(TD_Application)
 
 set(application_core_headers 
     application.h 
+    application_ui.h
     debug.h 
     fpscounter.h 
-    application_ui.h
 )
 
 set(application_core_sources
     application.cpp 
+    application_ui.cpp
     debug.cpp 
     fpscounter.cpp 
-    application_ui.cpp
 )
 
 add_library(td_application_core_LIB STATIC 

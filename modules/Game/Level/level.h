@@ -35,8 +35,7 @@ public:
 
     void Update();
 
-    const GE::TGameEngine* GetGameEngine() const;
-    GE::TGameEngine* GetGameEngine();
+    void SetGameEngine(GE::TGameEngine* instance);
 
 private:
     Clock clock;

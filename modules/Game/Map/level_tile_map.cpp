@@ -64,9 +64,14 @@ CLevelTileMap::GetLayer(const Layer& layer) const {
     };
 }
 
-void CLevelTileMap::HandleMessage(const TMessage& message) { /*none*/ }
-void CLevelTileMap::Subscribe(TComponentSystem& system) { /*none*/ }
-void CLevelTileMap::Unsubscribe(TComponentSystem& system) { /*none*/}
+uchar CLevelTileMap::GetLayerCount() const {
+    return Layer::_count;
+}
+
+void CLevelTileMap::HandleMessage(const GE::TMessage& message,
+    Context& context) { /*TODO:...*/ }
+void CLevelTileMap::Subscribe(GE::TComponentSystem& system) { /*TODO:...*/ }
+void CLevelTileMap::Unsubscribe(GE::TComponentSystem& system) { /*TODO:...*/ }
 
 std::pair<CLevelTileMap::Layers::iterator, CLevelTileMap::Layers::iterator>
 CLevelTileMap::GetLayer(const Layer& layer) const {
@@ -93,23 +98,20 @@ CLevelTileMapView::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CLevelTileMapView::CLevelTileMapView(const Parameters* source) :
-    parent_type(GE::ComponentID<CLevelTileMapView>::value)
+    parent_type(GE::ComponentID<CLevelTileMapView>::value),
+    tileMapComponent(),
+    tilesetRegistry(nullptr)
 {
     if (source != nullptr) {
-        scene = source->scene;
         tilesetRegistry = source->tilesetRegistry;
-        tileMapHandle = source->tileMapHandle;
+        tileMapComponent = source->tileMapComponent;
     }
 }
 
-void CLevelTileMapView::Update() { /*none*/ }
-void CLevelTileMapView::HandleMessage(const TMessage& message) { /*none*/ }
-void CLevelTileMapView::Subscribe(TComponentSystem& system) { /*none*/ }
-void CLevelTileMapView::Unsubscribe(TComponentSystem& system) { /*none*/}
-
-void CLevelTileMapView::SetScene(TLevelScene* instance) {
-    scene = instance;
-}
+void CLevelTileMapView::HandleMessage(const GE::TMessage& message,
+    Context& context) { /*TODO:...*/ }
+void CLevelTileMapView::Subscribe(TComponentSystem& system) { /*TODO:...*/ }
+void CLevelTileMapView::Unsubscribe(TComponentSystem& system) { /*TODO:...*/ }
 
 void CLevelTileMapView::SetTilesetRegistry(
     TLevelTileMapTilesetRegistry* instance)
@@ -117,16 +119,18 @@ void CLevelTileMapView::SetTilesetRegistry(
     tilesetRegistry = instance;
 }
 
-void CLevelTileMapView::SetTileMap(const TLevelScene::ComponentHandle& handle) {
-    tileMapHandle = handle;
-}
-
-void CLevelTileMapView::draw(Graphics::TRenderTarget& target) {
-    if (scene == nullptr) {
+void CLevelTileMapView::Draw(Graphics::TRenderTarget& target,
+    const GE::TScene* scene)
+{
+    if (tileMapComponent.empty() == true) {
         return;
     }
+    ASSERT(scene != nullptr, "Scene must be set.");
+    ASSERT(tileMapHandle != GE::TScene::ComponentHandle::Undefined,
+        "Tile map data component is not found.");
+
     const auto* tileMap =
-            scene->GetRaw().GetComponent<CLevelTileMap>(tileMapHandle);
+        scene->GetComponent<CLevelTileMap>(tileMapHandle);
     if (tileMap == nullptr) {
         tileMapHandle = TLevelScene::ComponentHandle::Undefined;
         return;

@@ -12,31 +12,28 @@ TComponentSystems::TComponentSystems(TGameEngine* engine) :
     sound(),
     ui(),
     data(),
-    systems({
-        &input,
-        &movement,
-        &logics,
-        &graphics,
-        &sound,
-        &ui,
-        &data
-    })
+    systems()
 {
-    input.SetRegistry(&engine->GetComponentRegistry());
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::data)] = &data;
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::graphics)] =
+        &graphics;
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::input)] =
+        &input;
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::logics)] =
+        &logics;
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::movement)] =
+        &movement;
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::sound)] =
+        &sound;
+    systems[static_cast<TComponentSystemTypeId>(ComponentSystem::ui)] = &ui;
 
-    movement.SetRegistry(&engine->GetComponentRegistry());
+    SetGameEngine(engine);
+}
 
-    logics.SetRegistry(&engine->GetComponentRegistry());
-    logics.SetScriptEngine(&engine->GetScriptEngine());
-
-    graphics.SetRegistry(&engine->GetComponentRegistry());
-
-    sound.SetRegistry(&engine->GetComponentRegistry());
-
-    ui.SetRegistry(&engine->GetComponentRegistry());
-    ui.SetScriptEngine(&engine->GetScriptEngine());
-
-    data.SetRegistry(&engine->GetComponentRegistry());
+void TComponentSystems::SetGameEngine(TGameEngine* instance) {
+    for (auto* system : systems) {
+        system->SetComponentRegistry(&instance->GetComponentRegistry());
+    }
 }
 
 } //namespace GE

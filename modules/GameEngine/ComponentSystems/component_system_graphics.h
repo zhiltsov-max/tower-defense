@@ -12,8 +12,15 @@ class CSGraphicsSystem :
 public:
     virtual ~CSGraphicsSystem() = default;
 
-    virtual void Update(const TTime& step) override;
+    virtual void Update(const TTime& step, Context& context) override;
     virtual void Draw(Graphics::TRenderTarget& target);
+
+    void SetScene(TScene* instance);
+
+private:
+    using Scene = TScene;
+    using PScene = TScene*;
+    PScene scene;
 };
 
 class CGraphicsComponent : /*Abstract*/
@@ -22,6 +29,8 @@ class CGraphicsComponent : /*Abstract*/
 public:
     CGraphicsComponent(const ID& id);
     virtual ~CGraphicsComponent() = default;
+
+    virtual void Draw(Graphics::TRenderTarget& target, const TScene* scene) = 0;
 };
 
 } //namespace GE

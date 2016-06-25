@@ -3,6 +3,7 @@
 
 namespace GE {
 
+
 std::ostream& operator <<(std::ostream& os, const ComponentIDs& id) {
     return os << static_cast<TComponentID>(id);
 }

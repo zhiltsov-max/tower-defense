@@ -1,5 +1,4 @@
 #include "level_passability_map.h"
-#include "Game/Map/level_tile_map.h"
 
 
 namespace TD {
@@ -7,7 +6,7 @@ namespace TD {
 std::unique_ptr<GE::TComponent>
 CPassabilityMap::Create(const GE::TComponentCreateArgs* args_) {
     const auto* args = dynamic_cast<CLevelPassabilityMap::Parameters*>(args_);
-    return new CPassabilityMap(args);
+    return std::unique_ptr<GE::TComponent>(new CPassabilityMap(args));
 }
 
 CPassabilityMap::CPassabilityMap(const Parameters* source) :
@@ -30,24 +29,9 @@ const Size& CPassabilityMap::GetSize() const {
     return size;
 }
 
-void CPassabilityMap::HandleMessage(const GE::TMessage& message) { /*none*/ }
+void CPassabilityMap::HandleMessage(const GE::TMessage& message,
+    Context& context) { /*none*/ }
 void CPassabilityMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
 void CPassabilityMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
-
-void CPassabilityMap::SetScene(TLevelScene* instance) {
-    scene = instance;
-}
-
-void CPassabilityMap::SetTileMapHandle(
-    const TLevelScene::ComponentHandle& instance)
-{
-    tileMapHandle = instance;
-}
-
-void CPassabilityMap::SetTilesetRegistry(
-    TLevelTileMapTilesetRegistry* instance)
-{
-    tilesetRegistry = instance;
-}
 
 } // namespace TD
