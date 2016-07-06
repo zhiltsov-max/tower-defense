@@ -13,7 +13,7 @@ public:
     virtual ~CSGraphicsSystem() = default;
 
     virtual void Update(const TTime& step, Context& context) override;
-    virtual void Draw(Graphics::TRenderTarget& target);
+    virtual void Render(Graphics::TRenderTarget& target);
 
     void SetScene(TScene* instance);
 
@@ -30,7 +30,19 @@ public:
     CGraphicsComponent(const ID& id);
     virtual ~CGraphicsComponent() = default;
 
-    virtual void Draw(Graphics::TRenderTarget& target, const TScene* scene) = 0;
+    /*
+    This method should be used to perform all computations needed to render this
+    component. The data used after in rendering should be saved.
+    a) May be used to implement 'presenter' logics in MVP model.
+    b) May be left empty to implement 'passive view' pattern in the case of
+    existence of additional specific 'presenter'.
+    */
+    virtual void Update(const TTime& step, Context& context);
+
+    /*
+    Renders this component data to render target.
+    */
+    virtual void Render(Graphics::TRenderTarget& target) = 0;
 };
 
 } //namespace GE

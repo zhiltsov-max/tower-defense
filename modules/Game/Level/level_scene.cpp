@@ -4,10 +4,10 @@
 
 namespace TD {
 
-TLevelScene::TLevelScene(const Parameters& info, GE::GameEngine& engine) :
+TLevelScene::TLevelScene(const Parameters& info, GE::GameEngine* engine) :
     scene()
 {
-    scene.SetGameEngine(&engine);
+    SetGameEngine(engine);
     loadResources(info);
     loadObjects(info);
 }
@@ -87,12 +87,14 @@ bool TLevelScene::IsEmpty() const {
     return scene.IsEmpty();
 }
 
-const TLevelScene::Scene& TLevelScene::GetRaw() const {
-    return scene;
+void TLevelScene::Update(const GE::TTime& step) {
+    GE::TGameEngine::Context context(gameEngine, this);
+    gameEngine->Update(step, context);
 }
 
-TLevelScene::Scene& TLevelScene::GetRaw() {
-    return scene;
+void TLevelScene::SetGameEngine(GE::TGameEngine* instance) {
+    gameEngine = instance;
+    scene.SetGameEngine(instance);
 }
 
 TLevelScene::ObjectHandle

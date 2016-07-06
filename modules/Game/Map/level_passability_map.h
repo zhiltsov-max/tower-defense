@@ -27,11 +27,6 @@ public:
     const PassabilityMap& GetMap(const Altitude& altitude);
     const Size& GetSize() const;
 
-    virtual void HandleMessage(const GE::TMessage& message,
-        Context& context) override;
-    virtual void Subscribe(GE::TComponentSystem& system) override;
-    virtual void Unsubscribe(GE::TComponentSystem& system) override;
-
 private:
     using parent_type = GE::CDataComponent;
 

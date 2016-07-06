@@ -25,7 +25,7 @@ public:
 
     virtual void Update(GE::TScene* scene) override;
     virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
+    virtual void ListAcceptedMessages(TComponentSystem& system) override;
     virtual void Unsubscribe(TComponentSystem& system) override;
 
     const Credits& GetCredits() const;

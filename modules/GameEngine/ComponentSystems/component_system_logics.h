@@ -2,12 +2,10 @@
 #define COMPONENT_SYSTEM_LOGICS_H
 
 #include "GameEngine/component_system.h"
+#include "GameEngine/game_engine_context.h"
 
 
 namespace GE {
-
-class TScene;
-class TScriptEngine;
 
 class CSLogicsSystem :
     public TComponentSystem

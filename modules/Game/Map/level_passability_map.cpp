@@ -29,9 +29,4 @@ const Size& CPassabilityMap::GetSize() const {
     return size;
 }
 
-void CPassabilityMap::HandleMessage(const GE::TMessage& message,
-    Context& context) { /*none*/ }
-void CPassabilityMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
-void CPassabilityMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
-
 } // namespace TD

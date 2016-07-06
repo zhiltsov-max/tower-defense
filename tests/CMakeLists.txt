@@ -65,6 +65,20 @@ add_test(NAME test_game_engine
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
+#add_executable(td_level_test td_level_test.cpp)
+#target_link_libraries(td_level_test
+#    ${GTEST_LIBRARIES}
+#    td_core_LIB
+#    td_gui_LIB
+#    td_application_core_LIB
+#    td_game_engine_LIB
+#    td_game_LIB
+#)
+#add_test(NAME test_td_level
+#    COMMAND td_level_test
+#    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+#)
+
 add_executable(gui_application_test examples/gui_app_test.cpp)
 target_link_libraries(gui_application_test
     ${GTEST_LIBRARIES}

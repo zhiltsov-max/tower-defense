@@ -2,14 +2,12 @@
 #define COMPONENT_H
 
 #include "Core/core.h"
+#include "GameEngine/engine_message.h"
 #include "GameEngine/game_engine_context.h"
 
 
 namespace GE {
 
-class TMessage;
-
-class TComponentSystem;
 using TComponentID = uint;
 enum class ComponentIDs : TComponentID;
 
@@ -25,17 +23,15 @@ public:
 
     virtual const ID& GetID() const final;
 
+    /*
+    Handles given message.
+    */
     virtual void HandleMessage(const TMessage& message, Context& context) = 0;
 
     /*
-    Subscribes this component for all needed messages.
+    List all needed messages.
     */
-    virtual void Subscribe(TComponentSystem& system) = 0;
-
-    /*
-    Unsibscribes this component from all messages.
-    */
-    virtual void Unsubscribe(TComponentSystem& system) = 0;
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() = 0;
 
 protected:
     TComponent(const ID& id);

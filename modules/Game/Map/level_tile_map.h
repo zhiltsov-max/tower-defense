@@ -53,11 +53,6 @@ public:
 
     uchar GetLayerCount() const;
 
-    virtual void HandleMessage(const GE::TMessage& message,
-        Context& context) override;
-    virtual void Subscribe(GE::TComponentSystem& system) override;
-    virtual void Unsubscribe(GE::TComponentSystem& system) override;
-
 private:
     using parent_type = CDataComponent;
 
@@ -107,11 +102,10 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual void Subscribe(GE::TComponentSystem& system) override;
-    virtual void Unsubscribe(GE::TComponentSystem& system) override;
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() override;
 
     virtual void Update(const GE::TTime& step, Context& context) override;
-    virtual void Draw(Graphics::TRenderTarget& target,
+    virtual void Render(Graphics::TRenderTarget& target,
         GE::TScene* scene) override;
 
     void SetTilesetRegistry(TLevelTileMapTilesetRegistry* instance);

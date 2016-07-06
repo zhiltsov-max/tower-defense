@@ -15,18 +15,6 @@ CPlayerCredits::CPlayerCredits(const Parameters& info) :
     credits(info.startValue)
 {}
 
-void CPlayerCredits::HandleMessage(const TMessage& message) {
-    //TODO: ...
-}
-
-void CPlayerCredits::Subscribe(TComponentSystem& system) {
-    //TODO: ...
-}
-
-void CPlayerCredits::Unsubscribe(TComponentSystem& system) {
-    //TODO: ...
-}
-
 const CPlayerCredits::Credits&CPlayerCredits::GetCredits() const {
     return credits;
 }

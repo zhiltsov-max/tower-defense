@@ -25,7 +25,7 @@ public:
         CommonData(const TLevelInfoCommon& info);
     };
 
-    TLevel(const TLevelInfo& info, GE::TGameEngine& engine);
+    TLevel(const TLevelInfo& info, GE::TGameEngine* engine);
 
     const Clock& GetClock() const;
     Clock& GetClock();
@@ -45,7 +45,8 @@ private:
     using PGameEngine = GE::TGameEngine *;
     PGameEngine gameEngine;
 
-    /* Level LUA loader.
+    /*
+    Level script engine loader.
     It have to implement all level-specific behaviour of loading process
     i.e. new game objects/components import, method overrides,
     scene loading, progress managing, etc.

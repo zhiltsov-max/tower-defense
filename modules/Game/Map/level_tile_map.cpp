@@ -68,11 +68,6 @@ uchar CLevelTileMap::GetLayerCount() const {
     return Layer::_count;
 }
 
-void CLevelTileMap::HandleMessage(const GE::TMessage& message,
-    Context& context) { /*TODO:...*/ }
-void CLevelTileMap::Subscribe(GE::TComponentSystem& system) { /*TODO:...*/ }
-void CLevelTileMap::Unsubscribe(GE::TComponentSystem& system) { /*TODO:...*/ }
-
 std::pair<CLevelTileMap::Layers::iterator, CLevelTileMap::Layers::iterator>
 CLevelTileMap::GetLayer(const Layer& layer) const {
     return {
@@ -110,18 +105,19 @@ CLevelTileMapView::CLevelTileMapView(const Parameters* source) :
 
 void CLevelTileMapView::HandleMessage(const GE::TMessage& message,
     Context& context) { /*TODO:...*/ }
-void CLevelTileMapView::Subscribe(TComponentSystem& system) { /*TODO:...*/ }
-void CLevelTileMapView::Unsubscribe(TComponentSystem& system) { /*TODO:...*/ }
 
-void CLevelTileMapView::SetTilesetRegistry(
-    TLevelTileMapTilesetRegistry* instance)
-{
-    tilesetRegistry = instance;
+void CLevelTileMapView::Update(const GE::TTime& step, Context& context) {
+    //TODO: implementation
 }
 
-void CLevelTileMapView::Draw(Graphics::TRenderTarget& target,
+forward_list<GE::TMessage::ID> TD::CLevelTileMapView::GetAcceptedMessages() {
+    /*TODO:...*/
+}
+
+void CLevelTileMapView::Render(Graphics::TRenderTarget& target,
     const GE::TScene* scene)
 {
+    //TODO: implementation
     if (tileMapComponent.empty() == true) {
         return;
     }
@@ -151,6 +147,12 @@ void CLevelTileMapView::Draw(Graphics::TRenderTarget& target,
             }
         }
     }
+}
+
+void CLevelTileMapView::SetTilesetRegistry(
+    TLevelTileMapTilesetRegistry* instance)
+{
+    tilesetRegistry = instance;
 }
 
 } // namespace TD

@@ -19,7 +19,7 @@ public:
     using ComponentPath = Scene::ComponentPath;
     struct Parameters;
 
-    TLevelScene(const Parameters& info, GE::GameEngine& engine);
+    TLevelScene(const Parameters& info, GE::GameEngine* engine);
 
     template<class Component>
     ComponentHandle CreateComponent(TComponentCreateArgs* args);
@@ -55,11 +55,15 @@ public:
     void Clear();
     bool IsEmpty() const;
 
-    const Scene& GetRaw() const;
-    Scene& GetRaw();
+    void Update(const GE::TTime& step);
+
+    void SetGameEngine(GE::TGameEngine* instance);
 
 private:
     Scene scene;
+
+    using PGameEngine = GE::TGameEngine *;
+    PGameEngine gameEngine;
 
     void loadResources(const Parameters& info);
     void loadObjects(const Parameters& info);

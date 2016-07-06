@@ -62,37 +62,37 @@ const CLevelNodeMap::Node& CLevelNodeMap::GetEnter(size_t index) const {
 }
 
 CLevelNodeMap::Node& CLevelNodeMap::GetEnter(size_t index) {
-	return enters[index];
+    return enters[index];
 }
 
 const CLevelNodeMap::Node& CLevelNodeMap::GetExit(size_t index) const {
-	return exits[index];
+    return exits[index];
 }
 
 CLevelNodeMap::Node& CLevelNodeMap::GetExit(size_t index) {
-	return exits[index];
+    return exits[index];
 }
-	
+
 const CLevelNodeMap::Path& CLevelNodeMap::GetPath(size_t index) const {
-	return pathes[index];
+    return pathes[index];
 }
 
 CLevelNodeMap::Path& CLevelNodeMap::GetPath(size_t index) {
-	return pathes[index];
+    return pathes[index];
 }
 
 size_t CLevelNodeMap::GetPathCount() const {
-	return pathes.size();
-}	
+    return pathes.size();
+}
 
 size_t CLevelNodeMap::GetEnterCount() const {
-	return enters.size();
+    return enters.size();
 }
 
 size_t CLevelNodeMap::GetExitCount() const {
-	return exits.size();
-}	
-	
+    return exits.size();
+}
+
 size_t CLevelNodeMap::FindNearestExit(uint x, uint y) const {
     if (exits.empty() == true) {
         return static_cast<size_t>(-1);
@@ -107,23 +107,18 @@ size_t CLevelNodeMap::FindNearestExit(uint x, uint y) const {
                                std::pow<double>(y - node.y, 2);
         if (curDist < minDist) {
             minNode = &node;
-			minSq = curDist;
-		}
-	}
+            minSq = curDist;
+        }
+    }
     return minNode - exits.front();
 }
-		
+
 bool CLevelNodeMap::IsExit(const CLevelNodeMap::Node& node) const {
     return exits.cend() != std::find(exits.cbegin(), exits.cend(), node);
 }
 bool CLevelNodeMap::IsEnter(const CLevelNodeMap::Node& node) const {
     return enters.cend() != std::find(enters.cbegin(), enters.cend(), node);
 }
-
-void CLevelNodeMap::HandleMessage(const GE::TMessage& message,
-    Context& context) { /*none*/ }
-void CLevelNodeMap::Subscribe(GE::TComponentSystem& system) { /*none*/ }
-void CLevelNodeMap::Unsubscribe(GE::TComponentSystem& system) { /*none*/ }
 
 
 std::unique_ptr<GE::TComponent>
@@ -137,8 +132,23 @@ CLevelNodeMapView::CLevelNodeMapView(const Parameters* source) :
 {
     if (source != nullptr) {
         scene = source->scene;
-        nodeMapComponent = source->nodeMapComponent;
+        nodeMapComponentPath = source->nodeMapComponent;
     }
+}
+
+void CLevelNodeMapView::Update(const GE::TTime& step, Context& context) {
+    //TODO: implementation
+}
+
+void CLevelNodeMapView::Render(Graphics::TRenderTarget& target) {
+    //TODO: implementation
+}
+
+void CLevelNodeMapView::HandleMessage(const GE::TMessage& message,
+    Context& context) { /*TODO:...*/ }
+
+forward_list<GE::TMessage::ID> TD::CLevelNodeMapView::GetAcceptedMessages() {
+    /*TODO:...*/
 }
 
 } // namespace TD

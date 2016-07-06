@@ -47,7 +47,7 @@ void CPlayerProgress::HandleMessage(const TMessage& message) {
     //TODO: ...
 }
 
-void CPlayerProgress::Subscribe(TComponentSystem& system) {
+void CPlayerProgress::ListAcceptedMessages(TComponentSystem& system) {
     //TODO: ...
 }
 

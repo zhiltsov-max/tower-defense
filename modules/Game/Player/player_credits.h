@@ -18,10 +18,6 @@ public:
 
     CPlayerCredits(const Parameters& info);
 
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
-
     const Credits& GetCredits() const;
     void SetCredits(const Credits& value);
 

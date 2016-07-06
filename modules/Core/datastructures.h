@@ -3,6 +3,7 @@
 
 #include <array>
 #include <initializer_list>
+#include <forward_list>
 #include <list>
 #include <vector>
 #include <set>
@@ -15,9 +16,12 @@
 #include "nameddata.h"
 #include "myon_datareader.h"
 
-using std::list;
-using std::vector;
 using std::array;
+using std::list;
+using std::forward_list;
+using std::initializer_list;
+using std::vector;
 using std::map;
+using std::pair;
 
 #endif

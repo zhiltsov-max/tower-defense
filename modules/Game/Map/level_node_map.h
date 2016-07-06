@@ -44,10 +44,6 @@ public:
     bool IsExit(const Node& node) const;
     bool IsEnter(const Node& node) const;
 
-    virtual void HandleMessage(const GE::TMessage& message,
-        Context& context) override;
-    virtual void Subscribe(GE::TComponentSystem& system) override;
-    virtual void Unsubscribe(GE::TComponentSystem& system) override;
 private:
     using parent_type = GE::CDataComponent;
 
@@ -85,18 +81,17 @@ public:
     CLevelNodeMapView(const Parameters* source = nullptr);
 
     virtual void Update(const GE::TTime& step, Context& context) override;
-    virtual void HandleMessage(const TMessage& message,
+    virtual void Render(Graphics::TRenderTarget& target) override;
+    virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() override;
 
-    void SetScene(TLevelScene* instance);
-    void SetNodeMap(const TLevelScene::ComponentHandle& handle);
 private:
     using parent_type = GE::CGraphicsComponent;
 
-    TLevelScene* scene;
-    TLevelScene::ComponentPath nodeMapComponent;
+    TLevelScene::ComponentPath nodeMapComponentPath;
+    TLevelScene::ComponentHandle nodeMapHandle;
+
 };
 
 template<>

@@ -1,4 +1,5 @@
 #include "component_system.h"
+#include "GameEngine/component.h"
 #include "GameEngine/game_engine.h"
 
 
@@ -14,19 +15,22 @@ TComponentSystem::Handle TComponentSystem::CreateComponent(
 
     auto& create = (*componentRegistry)[typeID];
     PComponent ptr = std::move(create(args));
-    auto& component = *ptr;
+    auto* component = ptr.get();
     components.emplace_back(std::move(ptr));
-    component.Subscribe(*this);
+    auto handle = components.size() - 1;
+    const auto messagesList = component->GetAcceptedMessages();
+    Subscribe(handle, messagesList.begin(), messagesList.end());
 
-    return Handle(components.size() - 1);
+    return handle;
 }
 
-void TComponentSystem::RemoveComponent(const Handle& componentHandle) {
-    auto* component = GetComponent(componentHandle);
-    component->Unsubscribe(*this);
+void TComponentSystem::RemoveComponent(const Handle& handle) {
+    auto* component = GetComponent(handle);
+    const auto messagesList = component->GetAcceptedMessages();
+    Unsubscribe(handle, messagesList.begin(), messagesList.end());
 
     auto it = components.begin();
-    std::advance(it, componentHandle);
+    std::advance(it, handle);
     components.erase(it);
 }
 
@@ -37,15 +41,28 @@ TComponentSystem::GetComponent(const Handle& handle) {
     return components[handle].get();
 }
 
-void TComponentSystem::Subscribe(Component* component, const Message::ID& id) {
-    ASSERT(component != nullptr, "Unexpected component.");
+void TComponentSystem::Subscribe(const Handle& handle, const Message::ID& id) {
+    ASSERT(handle < components.size(), "Wrong component handle.");
 
-    listeners[id].push_back(component);
+    listeners[id].push_back(handle);
 }
 
 void
-TComponentSystem::Unsubscribe(Component* component, const Message::ID& id) {
-    listeners[id].remove(component);
+TComponentSystem::Unsubscribe(const Handle& handle, const Message::ID& id) {
+    ASSERT(handle < components.size(), "Wrong component handle.");
+
+    auto currentListeners = listeners.find(id);
+    if (currentListeners == listeners.end()) {
+        return;
+    }
+
+    for (auto it = currentListeners->second.begin(),
+        iend = currentListeners->second.end(); it != iend; ++ it)
+    {
+        if (*it == handle) {
+            it = currentListeners->second.erase(it);
+        }
+    }
 }
 
 void TComponentSystem::HandleMessage(const Message& message, Context& context) {
@@ -53,8 +70,8 @@ void TComponentSystem::HandleMessage(const Message& message, Context& context) {
         return;
     }
 
-    for (auto& listener : listeners[message.GetID()]) {
-        listener->HandleMessage(message, context);
+    for (auto& handle : listeners.at(message.GetID())) {
+        GetComponent(handle)->HandleMessage(message, context);
     }
 }
 

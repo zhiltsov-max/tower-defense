@@ -15,12 +15,16 @@ public:
     virtual void Update(const TTime& step, Context& context) override;
 };
 
-class CDataComponent : /*Abstract*/
+class CDataComponent :
     public TComponent
 {
 public:
     CDataComponent(const ID& id);
     virtual ~CDataComponent() = default;
+
+    virtual void HandleMessage(const TMessage& message,
+        Context& context) override;
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() override;
 };
 
 } //namespace GE

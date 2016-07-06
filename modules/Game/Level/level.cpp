@@ -10,11 +10,11 @@ TLevel::CommonData::CommonData(const TLevelInfoCommon& info) :
     levelType(info.levelType)
 {}
 
-TLevel::TLevel(const TLevelInfo& info, GE::TGameEngine& engine) :
+TLevel::TLevel(const TLevelInfo& info, GE::TGameEngine* engine) :
     common(info.common),
     clock(Clock::Rate::Pause),
-    scene(info.scene, &engine),
-    gameEngine(&engine)
+    scene(info.scene, engine),
+    gameEngine(engine)
 {
     loadScript(info);
 }
@@ -36,15 +36,15 @@ TLevel::Scene& TLevel::GetScene() {
 }
 
 void TLevel::Update() {
-    GE::TGameEngine::Context context(gameEngine, &scene.GetRaw());
     for(auto i = 0; i < (uint)clock.GetRate(); ++i) {
-        gameEngine->Update(clock.tick(), context);
+        scene.Update(clock.tick());
         clock.Update();
     }
 }
 
 void TLevel::SetGameEngine(GE::TGameEngine* instance) {
     gameEngine = instance;
+    scene.SetGameEngine(instance);
 }
 
 void TLevel::loadScript(const TLevelInfo& info) {

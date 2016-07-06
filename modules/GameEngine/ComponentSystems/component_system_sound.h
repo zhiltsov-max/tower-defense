@@ -12,7 +12,6 @@ public:
     virtual ~CSSoundSystem() = default;
 
     virtual void Update(const TTime& step, Context& context) override;
-    virtual void Play(const TTime& step, Context& context);
 };
 
 class CSoundComponent : /*Abstract*/

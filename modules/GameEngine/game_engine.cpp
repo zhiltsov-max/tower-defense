@@ -10,18 +10,16 @@ TGameEngine::TGameEngine() :
 
 void TGameEngine::Update(const TTime& step, Context& context) {
     /*
-    Now the concrete order of system updates is specified by adjusting index
+    The concrete order of system updates is specified by adjusting index
     in ComponentSystems enumeration.
     */
     for (auto& system : componentSystems.systems) {
         system->Update(step, context);
     }
-
-    componentSystems.sound.Play(step, context);
 }
 
 void TGameEngine::Draw(Graphics::TRenderTarget& target) {
-    componentSystems.graphics.Draw(target);
+    componentSystems.graphics.Render(target);
     componentSystems.ui.Draw(target);
 }
 

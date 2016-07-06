@@ -168,8 +168,9 @@ protected:
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() override {
+        return { MessageID::CustomMessage };
+    }
 
     virtual void SetUp() override {
         handledMessage.clear();
@@ -236,14 +237,6 @@ void TestComponent::HandleMessage(const TMessage& message, Context& context) {
     UNUSED(context);
 }
 
-void TestComponent::Subscribe(TComponentSystem& system) {
-    system.Subscribe(this, MessageID::CustomMessage);
-}
-
-void TestComponent::Unsubscribe(TComponentSystem& system) {
-    system.Unsubscribe(this, MessageID::CustomMessage);
-}
-
 
 TEST_F(TestComponent, initialization) {
     EXPECT_EQ(ComponentID<TestComponent>::value, GetID());
@@ -280,12 +273,10 @@ public:
 
     CustomComponent();
 
-    virtual void HandleMessage(const TMessage& message, Context& context) override { /* none */ }
-    virtual void Subscribe(TComponentSystem& system) override {
-        system.Subscribe(this, MessageID::CustomMessage);
-    }
-    virtual void Unsubscribe(TComponentSystem& system) override {
-        system.Unsubscribe(this, MessageID::CustomMessage);
+    virtual void HandleMessage(const TMessage& message,
+        Context& context) override { /* none */ }
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() override {
+        return { MessageID::CustomMessage };
     }
 };
 
@@ -326,12 +317,10 @@ protected:
         SetComponentRegistry(&testRegistry);
     }
 
-    bool HasSubscription(const TComponent* component,
-        const TMessage::ID& id) const
-    {
+    bool HasSubscription(const Handle& handle, const TMessage::ID& id) const {
         return (listeners.count(id) != 0) &&
             (std::find(listeners.at(id).cbegin(), listeners.at(id).cend(),
-                component) != listeners.at(id).cend());
+                handle) != listeners.at(id).cend());
     }
 
     virtual void Update(const TTime& step, Context& context) override { /*none*/ }
@@ -374,18 +363,17 @@ TEST_F(TestComponentSystem, subscribe_component) {
 
     // automatic subscription in CreateComponent()
 
-    EXPECT_TRUE(HasSubscription(GetComponent(component),
-        MessageID::CustomMessage));
+    EXPECT_TRUE(HasSubscription(component, MessageID::CustomMessage));
 }
 
 TEST_F(TestComponentSystem, unsubscribe_component) {
     auto component = CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
+    // automatic subscription in CreateComponent()
 
-    Unsubscribe(GetComponent(component), MessageID::CustomMessage);
+    Unsubscribe(component, MessageID::CustomMessage);
 
-    EXPECT_FALSE(HasSubscription(GetComponent(component),
-        MessageID::CustomMessage));
+    EXPECT_FALSE(HasSubscription(component, MessageID::CustomMessage));
 }
 
 

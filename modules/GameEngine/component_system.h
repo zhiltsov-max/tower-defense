@@ -2,14 +2,14 @@
 #define COMPONENT_SYSTEM_H
 
 #include "GameEngine/engine_core.h"
-#include "GameEngine/component.h"
 #include "GameEngine/component_registry.h"
-#include "GameEngine/component_system.h"
 #include "GameEngine/engine_message.h"
 #include "GameEngine/game_engine_context.h"
 
 
 namespace GE {
+
+class TComponent;
 
 class TComponentSystem /*Abstract*/
 {
@@ -25,13 +25,20 @@ public:
     Handle CreateComponent(const TComponent::ID& typeID,
         const TComponentCreateArgs* args = nullptr);
 
-    void RemoveComponent(const Handle& componentHandle);
+    void RemoveComponent(const Handle& handle);
     Component* GetComponent(const Handle& handle);
 
     virtual void Update(const TTime& step, Context& context) = 0;
 
-    virtual void Subscribe(Component* component, const TMessage::ID& id);
-    virtual void Unsubscribe(Component* component, const TMessage::ID& id);
+    virtual void Subscribe(const Handle& handle, const TMessage::ID& id);
+    virtual void Unsubscribe(const Handle& handle, const TMessage::ID& id);
+
+    template < typename FwdIt >
+    void Subscribe(const Handle& handle,
+        const FwdIt& begin, const FwdIt& end);
+    template < typename FwdIt >
+    void Unsubscribe(const Handle& handle,
+        const FwdIt& begin, const FwdIt& end);
 
     virtual void HandleMessage(const Message& message, Context& context);
 
@@ -45,10 +52,37 @@ protected:
     using PComponent = std::unique_ptr<Component>;
     vector<PComponent> components;
 
-    using Listener = Component*;
-    using Listeners = std::map< Message::ID, list<Listener> >;
+    using Listener = Handle;
+    using Listeners = std::map< Message::ID, vector<Listener> >;
     Listeners listeners;
 };
+
+
+template<typename FwdIt>
+void TComponentSystem::Subscribe(const TComponentSystem::Handle& handle,
+    const FwdIt& begin, const FwdIt& end)
+{
+    ASSERT(handle < components.size(), "Wrong component handle.");
+
+    auto current = begin;
+    while (current != end) {
+        Subscribe(handle, *current);
+        ++current;
+    }
+}
+
+template<typename FwdIt>
+void TComponentSystem::Unsubscribe(const TComponentSystem::Handle& handle,
+    const FwdIt& begin, const FwdIt& end)
+{
+    ASSERT(handle < components.size(), "Wrong component handle.");
+
+    auto current = begin;
+    while (current != end) {
+        Unsubscribe(handle, *current);
+        ++current;
+    }
+}
 
 } //namespace GE
 
