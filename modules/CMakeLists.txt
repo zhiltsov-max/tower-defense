@@ -7,10 +7,11 @@ add_subdirectory(GameEngine)
 
 
 set(td_application_headers
-    Application/application_task.h 
-    Application/application_task_game.h 
-    Application/application_task_menu.h 
-    Application/td_application.h 
+    Game/Application/application_task.h
+    Game/Application/application_task_game.h
+    Game/Application/application_task_menu.h
+    Game/Application/fpscounter.h
+    Game/Application/td_application.h
     Game/Buildings/building.h 
     Game/Buildings/building_animation.h 
     Game/Buildings/building_selection.h 
@@ -98,10 +99,11 @@ set(td_application_headers
 )
 
 set(td_application_sources 
-    Application/application_task.cpp 
-    Application/application_task_game.cpp 
-    Application/application_task_menu.cpp 
-    Application/td_application.cpp 
+    Game/Application/application_task.cpp
+    Game/Application/application_task_game.cpp
+    Game/Application/application_task_menu.cpp
+    Game/Application/td_application.cpp
+    Game/Application/fpscounter.cpp
     Game/Buildings/building.cpp 
     Game/Buildings/building_animation.cpp 
     Game/Buildings/building_selection.cpp 
@@ -113,6 +115,7 @@ set(td_application_sources
     Game/Buildings/turret_bullet.cpp 
     Game/Buildings/turretselection.cpp 
     Game/Components/animation.cpp 
+    Game/Components/components_list.cpp
     Game/Level/level.cpp 
     Game/Level/level_clock.cpp 
     Game/Level/level_info_loader.cpp 
