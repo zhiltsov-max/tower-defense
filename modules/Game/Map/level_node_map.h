@@ -55,26 +55,37 @@ private:
     void checkNode(const Node& node, const Vec2ui& mapSize);
 };
 
-template<>
-struct GE::ComponentID<CLevelNodeMap>
-{
-    static constexpr GE::ComponentIDs value = GE::ComponentIDs::LevelNodeMap;
-};
-
 struct CLevelNodeMap::Parameters : GE::TComponentCreateArgs
 {
-    vector<Node> pathes;
+    vector<Path> pathes;
     vector<Node> enters;
     vector<Node> exits;
 
     Vec2ui size;
 };
 
+} // namespace TD
+
+
+namespace GE {
+
+template<>
+struct ComponentID<TD::CLevelNodeMap>
+{
+    static constexpr ComponentIDs value = ComponentIDs::LevelNodeMap;
+};
+
+} // namespace GE
+
+
+namespace TD {
 
 class CLevelNodeMapView :
     public GE::CGraphicsComponent
 {
 public:
+    struct Parameters;
+
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
 
@@ -94,18 +105,22 @@ private:
 
 };
 
-template<>
-struct GE::ComponentID<CLevelNodeMapView>
-{
-    static constexpr GE::ComponentIDs value =
-        GE::ComponentIDs::LevelNodeMapView;
-};
-
 struct CLevelNodeMapView::Parameters : GE::TComponentCreateArgs
 {
     TLevelScene::ComponentPath nodeMapComponent;
 };
 
 } // namespace TD
+
+
+namespace GE {
+
+template<>
+struct ComponentID<TD::CLevelNodeMapView>
+{
+    static constexpr ComponentIDs value = ComponentIDs::LevelNodeMapView;
+};
+
+} // namespace GE
 
 #endif // LEVEL_NODE_MAP_H

@@ -1,10 +1,11 @@
 #include "level_scene.h"
 #include "Game/Components/components_list.h"
+#include "GameEngine/game_engine_context.h"
 
 
 namespace TD {
 
-TLevelScene::TLevelScene(const Parameters& info, GE::GameEngine* engine) :
+TLevelScene::TLevelScene(const Parameters& info, GE::TGameEngine* engine) :
     scene()
 {
     SetGameEngine(engine);
@@ -16,18 +17,16 @@ TLevelScene::ComponentHandle
 TLevelScene::CreateComponent(const GE::TComponent::ID& id,
     const GE::TComponentCreateArgs* args)
 {
-    return scene.CreateComponent(id, GetComponentSystemForId(id), args);
+    return scene.CreateComponent(id, GetComponentSystemForComponentID(id),
+        args);
 }
 
 void TLevelScene::RemoveComponent(const ComponentHandle& handle) {
     return scene.RemoveComponent(handle);
 }
 
-const TComponent* TLevelScene::FindComponent(const ComponentPath& path) const {
-    return scene.FindComponent(path);
-}
-
-TComponent* TLevelScene::FindComponent(const ComponentPath& path) {
+TLevelScene::ComponentHandle
+TLevelScene::FindComponent(const ComponentPath& path) const {
     return scene.FindComponent(path);
 }
 
@@ -35,13 +34,8 @@ GE::TComponent* TLevelScene::GetComponent(const ComponentHandle& handle) {
     return scene.GetComponent(handle);
 }
 
-const TLevelScene::Object*
+TLevelScene::ObjectHandle
 TLevelScene::FindSceneObject(const ObjectName& name) const {
-    return scene.FindSceneObject(name);
-}
-
-TLevelScene::Object*
-TLevelScene::FindSceneObject(const ObjectName& name) {
     return scene.FindSceneObject(name);
 }
 
@@ -50,7 +44,7 @@ TLevelScene::GetSceneObject(const ObjectHandle& handle) const {
     return scene.GetSceneObject(handle);
 }
 
-TLevelScene::Object& TLevelScene::FindObject(const ObjectHandle& handle) {
+TLevelScene::Object& TLevelScene::GetSceneObject(const ObjectHandle& handle) {
     return scene.GetSceneObject(handle);
 }
 
@@ -60,10 +54,6 @@ bool TLevelScene::HasObject(const ObjectName& name) const {
 
 bool TLevelScene::HasObject(const ObjectHandle& handle) const {
     return scene.HasObject(handle);
-}
-
-TLevelScene::ObjectHandle TLevelScene::GetHandle(const ObjectName& name) const {
-    return scene.GetHandle(name);
 }
 
 TLevelScene::ObjectHandle
@@ -88,7 +78,7 @@ bool TLevelScene::IsEmpty() const {
 }
 
 void TLevelScene::Update(const GE::TTime& step) {
-    GE::TGameEngine::Context context(gameEngine, this);
+    GE::TGameEngine::Context context(gameEngine, &scene);
     gameEngine->Update(step, context);
 }
 
@@ -98,13 +88,14 @@ void TLevelScene::SetGameEngine(GE::TGameEngine* instance) {
 }
 
 TLevelScene::ObjectHandle
-TLevelScene::AddSceneObject(const ObjectName& name, SceneObject&& sceneObject) {
+TLevelScene::AddSceneObject(const ObjectName& name, Object&& sceneObject) {
     return scene.AddSceneObject(name, std::move(sceneObject));
 }
 
 void TLevelScene::loadResources(const Parameters& info) {
-    for (const auto& entry : info.resources.data) {
-        scene.GetResources().LoadResource(entry);
+    for (const auto& entry : info.resources) {
+        //TODO:
+        //scene.GetResourceManager().LoadResource(entry, GE::SceneResourceTypeID::);
     }
 }
 
@@ -113,7 +104,7 @@ void TLevelScene::loadObjects(const Parameters& info) {
         Object object;
         for (const auto& componentInfo : objectInfo.components) {
             const auto componentHandle = CreateComponent(componentInfo.id,
-                componentInfo.parameters);
+                componentInfo.parameters.get());
             object.AddComponent(componentInfo.name, componentHandle);
         }
         AddSceneObject(objectInfo.name, object);

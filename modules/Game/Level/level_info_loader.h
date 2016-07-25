@@ -1,24 +1,26 @@
 #ifndef LEVEL_INFO_LOADER_H
 #define LEVEL_INFO_LOADER_H
 
-#include "Game/Level/level_info.h"
-#include "Game/Level/level_code.h"
+#include "Core/core.h"
+#include "Game/Level/level.h"
 
 
 namespace TD {
+
+using TRawLevelInfo = TNamedData<string>;
 
 class TLevelInfoLoader
 {
 public:
     TLevelInfoLoader();
 
-    TLevelInfo Load(const TLevelCode& code);
+    TLevel::Parameters Load(const TLevelCode& code);
 
     void SetDataPath(const string& value);
 
 private:
-    static constexpr string DEFAULT_LEVEL_DATA_PATH = "Data/Levels/";
-    static constexpr string DEFAULT_LEVEL_DATA_FILE = "levelData.dat";
+    static const char DEFAULT_LEVEL_DATA_PATH[];
+    static const char DEFAULT_LEVEL_DATA_FILE[];
 
     string dataPath;
 

@@ -18,7 +18,6 @@
 
 # Old code files
 *.bmx
-*.autosave
 
 # Compiled Static libraries
 *.lai
@@ -30,3 +29,15 @@
 *.exe
 *.out
 *.app
+
+# Development environment
+*.autosave
+*.pro
+*.pro.*
+*.sublime*
+bin/
+data/
+docs/
+lib/
+*.user
+Doxyfile

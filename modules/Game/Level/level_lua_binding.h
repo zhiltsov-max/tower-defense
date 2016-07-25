@@ -2,8 +2,7 @@
 #define LEVEL_LUA_BINDING_H
 
 #include "Core/luawrapper.h"
-#include "level.h"
-
+#include "Game/Level/level.h"
 
 
 #define BEGIN_TD_LUA_BINDING namespace TD { namespace lua_binding {
@@ -12,13 +11,21 @@
 BEGIN_TD_LUA_BINDING
 
 
-using TLevel = ::TLevel*;
-using TLevelState = ::TLevel::State;
-using TLevelAction = ::TLevel::Action;
-using TClock = ::TLevel::Clock::Time;
-using TScript = string;
-using TLevelInfo = ::TLevelInfo*;
-using TLevelScene = ::CSceneController*;
+using TLevel = TD::TLevel *;
+using TClock = TD::TLevelClock *;
+using TScene = TD::TLevelScene *;
+
+using TSceneComponent = GE::TComponent *;
+using TSceneComponentID = GE::TComponent::ID;
+using TSceneComponentCreateArgs = GE::TComponentCreateArgs *;
+using TSceneComponentHandle = TD::TLevelScene::ComponentHandle;
+using TSceneComponentPath = TD::TLevelScene::ComponentPath;
+using TSceneComponentName = TD::TLevelScene::ComponentName;
+
+using TSceneObject = TD::TLevelScene::Object;
+using TSceneObjectHandle = TD::TLevelScene::ObjectHandle;
+using TSceneObjectName = TD::TLevelScene::ObjectName;
+
 
 void loadLevel(lua::State& state, TLevel level);
 void loadStage(lua::State& state, TLevel level);

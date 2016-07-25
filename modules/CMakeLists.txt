@@ -32,7 +32,6 @@ set(td_application_headers
     Game/Components/game_objects_info.h 
     Game/Level/level.h 
     Game/Level/level_clock.h 
-    Game/Level/level_info.h 
     Game/Level/level_info_loader.h 
     Game/Level/level_info_loader_impl.h
     Game/Level/level_lua_binding.h 

@@ -5,8 +5,8 @@
 
 namespace TD {
 
-void TD::TLevelTileMapTilesetRegistryLoader::Load(
-    const std::set<TLevelTileMapTilesetId>& ids_,
+void TLevelTileMapTilesetRegistryLoader::Load(
+    const std::set<TLevelTileMapTilesetId>& ids,
     TLevelTileMapTilesetRegistry& registry
 ) {
     if (ids.empty() == true) {
@@ -18,14 +18,14 @@ void TD::TLevelTileMapTilesetRegistryLoader::Load(
         THROW("Unable to load tileset info: source is not found.");
     }
 
-    std::set<TLevelTileMapTilesetId> ids;
-    for (const auto& id : ids_) {
+    std::set<TLevelTileMapTilesetId> remaining_ids;
+    for (const auto& id : ids) {
         if (registry.IsRegistered(id) == false) {
-            ids.insert(id);
+            remaining_ids.insert(id);
         }
     }
 
-    while ((data.good()) && (ids.empty() == false)) {
+    while ((data.good()) && (remaining_ids.empty() == false)) {
         string raw_data;
         std::getline(data, raw_data);
         if ((raw_data.empty() == true) ||
@@ -45,22 +45,21 @@ void TD::TLevelTileMapTilesetRegistryLoader::Load(
             THROW("Unable to load tileset: wrong tile index at pos " +
                 std::to_string(data.tellg()));
         }
-        if (ids.count(id) == 0) {
+        if (remaining_ids.count(id) == 0) {
             continue;
         }
 
-        TLevelInfoTileMapTileset info;
+        TLevelTileMapTileset info;
         readInfo(source, info);
-        TLevelTileMapTileset entry(info);
         registry.Register(id, entry);
 
-        ids.remove(id);
+        remaining_ids.remove(id);
     }
     data.close();
 }
 
 void TLevelTileMapTilesetRegistryLoader::readInfo(std::istream& is,
-    TLevelInfoTileMapTileset& info)
+    TLevelTileMapTileset& info)
 {
     //TODO: upgrade when necessary
     is >> info.imageResourceHash;

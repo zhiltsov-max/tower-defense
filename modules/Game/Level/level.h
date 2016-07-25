@@ -1,13 +1,20 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include "Game/Level/level_info.h"
 #include "Game/Level/level_clock.h"
 #include "Game/Level/level_scene.h"
 #include "GameEngine/game_engine.h"
 
 
 namespace TD {
+
+using TLevelCode = string;
+
+enum class LevelType {
+    Undefined = 0,
+    Normal,
+    Free
+};
 
 /*
 See docs for complete information.
@@ -17,15 +24,37 @@ class TLevel
 public:
     using Clock = TLevelClock;
     using Scene = TLevelScene;
-    struct CommonData {
+    struct Parameters
+    {
+        struct Common
+        {
+            TLevelCode levelCode;
+            TLevelCode nextLevelCode;
+            LevelType levelType;
+            string loadingScript;
+        };
+
+        struct Stage
+        {
+            TLevelScene::Parameters scene; //TODO: decide if it is needed
+        };
+
+        using Scene = TLevelScene::Parameters;
+
+        Common common;
+        Scene scene;
+        vector<Stage> stages;
+    };
+    struct CommonData
+    {
         TLevelCode levelCode;
         TLevelCode nextLevelCode;
         LevelType  levelType;
 
-        CommonData(const TLevelInfoCommon& info);
+        CommonData(const Parameters::Common& info = Parameters::Common());
     };
 
-    TLevel(const TLevelInfo& info, GE::TGameEngine* engine);
+    TLevel(const Parameters& info, GE::TGameEngine* engine);
 
     const Clock& GetClock() const;
     Clock& GetClock();
@@ -51,7 +80,7 @@ private:
     i.e. new game objects/components import, method overrides,
     scene loading, progress managing, etc.
     */
-    void loadScript(const TLevelInfo& info);
+    void loadScript(const Parameters& info);
 };
 
 } // namespace TD

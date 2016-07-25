@@ -22,9 +22,6 @@ public:
         };
         uint index;
     };
-    struct Parameters;
-    using TileParameters = Tile;
-    struct LayerParameters;
     enum class Layer : uchar {
         _min = 0,
 
@@ -35,7 +32,12 @@ public:
 
         _count
     };
+    using Layers = vector<Tile>;
     using Tilesets = std::set<TLevelTileMapTilesetId>;
+
+    struct Parameters;
+    using TileParameters = Tile;
+    struct LayerParameters;
 
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
@@ -56,7 +58,6 @@ public:
 private:
     using parent_type = CDataComponent;
 
-    using Layers = vector<Tile>;
     Layers layers;
     Tilesets tilesets;
     Size size;
@@ -66,12 +67,6 @@ private:
 
     void loadTilesets();
     void loadTiles(const Parameters& source);
-};
-
-template<>
-struct GE::ComponentID<CLevelTileMap>
-{
-    static constexpr GE::ComponentIDs value = GE::ComponentIDs::LevelTileMap;
 };
 
 struct CLevelTileMap::LayerParameters
@@ -85,6 +80,21 @@ struct CLevelTileMap::Parameters : GE::TComponentCreateArgs
     vector<LayerParameters> layers;
 };
 
+} // namepsace TD
+
+
+namespace GE {
+
+template<>
+struct ComponentID<TD::CLevelTileMap>
+{
+    static constexpr ComponentIDs value = ComponentIDs::LevelTileMap;
+};
+
+} // namespace GE
+
+
+namespace TD {
 
 class CLevelTileMapView :
     public GE::CGraphicsComponent
@@ -102,11 +112,10 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() override;
+    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() override;
 
     virtual void Update(const GE::TTime& step, Context& context) override;
-    virtual void Render(Graphics::TRenderTarget& target,
-        GE::TScene* scene) override;
+    virtual void Render(Graphics::TRenderTarget& target) override;
 
     void SetTilesetRegistry(TLevelTileMapTilesetRegistry* instance);
 
@@ -117,13 +126,6 @@ private:
     TLevelScene::ComponentPath tileMapComponent;
 };
 
-template<>
-struct GE::ComponentID<CLevelTileMapView>
-{
-    static constexpr GE::ComponentIDs value =
-        GE::ComponentIDs::LevelTileMapView;
-};
-
 struct CLevelTileMapView::Parameters : GE::TComponentCreateArgs
 {
     TLevelTileMapTilesetRegistry* tilesetRegistry;
@@ -131,5 +133,16 @@ struct CLevelTileMapView::Parameters : GE::TComponentCreateArgs
 };
 
 } // namespace TD
+
+
+namespace GE {
+
+template<>
+struct ComponentID<TD::CLevelTileMapView>
+{
+    static constexpr ComponentIDs value = ComponentIDs::LevelTileMapView;
+};
+
+} // namespace GE
 
 #endif // LEVEL_TILE_MAP_H

@@ -1,39 +1,51 @@
 #include "level_info_loader.h"
 #include "level_info_loader_impl.h"
-#include "Application/td_application.h"
+#include <fstream>
 
 
 namespace TD {
+
+const char TLevelInfoLoader::DEFAULT_LEVEL_DATA_PATH[] = "Data/Levels/";
+const char TLevelInfoLoader::DEFAULT_LEVEL_DATA_FILE[] = "levelData.dat";
 
 TLevelInfoLoader::TLevelInfoLoader() :
     dataPath(DEFAULT_LEVEL_DATA_PATH)
 {}
 
 TRawLevelInfo TLevelInfoLoader::loadRawInfo(const TLevelCode& code) {
-    TNamedData<string> data;
-
-    TMyON_DataReader parser(dataPath, &data, code);
-    if (parser.parse()) {
+    std::ifstream file(dataPath);
+    if (file.is_open() == false) {
+        THROW("Failed to open file '" + dataPath + "'.");
+    }
+    TMyON_DataReader levelsParser(file, code);
+    bool result = levelsParser.parse();
+    file.close();
+    if (result == true) {
         THROW("Failed to load level data for level code '" +
-            string(code) + "'. Message is: " + parser.getError());
+            string(code) + "'. Message is: " + levelsParser.getError());
     }
 
-    const string address = dataPath + data["source"];
-    parser = TMyON_DataReader(address, &data);
-    if (parser.parse()) {
+    file.open(dataPath + levelsParser.getParsedData()["source"]);
+    if (file.is_open() == false) {
+        THROW("Failed to open file '" + dataPath + "'.");
+    }
+    TMyON_DataReader levelParser(file);
+    result = levelParser.parse();
+    file.close();
+    if (result == true) {
         THROW("Failed to load level data for level code '" +
-            string(code) + "'. Message is: " + parser.getError());
+            string(code) + "'. Message is: " + levelParser.getError());
     }
 
-    return data;
+    return levelParser.getParsedData();
 }
 
-TLevelInfo TLevelInfoLoader::Load(const TLevelCode& code) {
-    TLevelInfo info;
+TLevel::Parameters TLevelInfoLoader::Load(const TLevelCode& code) {
+    TLevel::Parameters info;
 
     try {
         const auto raw = loadRawInfo(code);
-        info = readFromRawLevelInfo<TLevelInfo>(raw);
+        info = readFromRawLevelInfo<TLevel::Parameters>(raw);
         info.common.levelCode = code;
     } catch (const std::exception& e) {
         //TODO: error logging

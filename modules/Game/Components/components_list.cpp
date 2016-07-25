@@ -4,11 +4,13 @@
 #include "Game/Map/level_passability_map.h"
 #include "Game/Map/level_tile_map.h"
 
-#include "Game/Player/player_credits.h"
+//#include "Game/Player/player_credits.h"
 
 
-static constexpr std::map<GE::ComponentIDs, GE::ComponentSystem>
-_componentSystemForId = {
+namespace TD {
+
+static const std::map<GE::ComponentIDs, GE::ComponentSystem>
+COMPONENT_SYSTEM_FOR_COMPONENT_ID = {
     {GE::ComponentIDs::PlayerStatistics, GE::ComponentSystem::data},
     {GE::ComponentIDs::PlayerProgress, GE::ComponentSystem::logics},
     {GE::ComponentIDs::PlayerQuests, GE::ComponentSystem::logics},
@@ -31,6 +33,9 @@ _componentSystemForId = {
     {GE::ComponentIDs::LevelResearchesController, GE::ComponentSystem::logics}
 };
 
-GE::ComponentSystem TD::GetComponentSystemForID(const GE::ComponentIDs& id) {
-    return _componentSystemForId[id];
+GE::ComponentSystem
+GetComponentSystemForComponentID(const GE::ComponentIDs& id) {
+    return COMPONENT_SYSTEM_FOR_COMPONENT_ID.at(id);
 }
+
+} // namespace TD

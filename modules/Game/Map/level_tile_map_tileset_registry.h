@@ -22,13 +22,8 @@ private:
     static const string DEFAULT_DATA_SOURCE_PATH;
     string dataPath;
 
-    void readInfo(std::istream& is, TLevelInfoTileMapTileset& info);
+    void readInfo(std::istream& is, TLevelTileMapTileset& info);
 };
-
-void TLevelTileMapTilesetRegistryLoader::Load(
-    const std::set<TLevelTileMapTilesetId>& ids,
-    TLevelTileMapTilesetRegistry& registry
-);
 
 } // namespace TD
 

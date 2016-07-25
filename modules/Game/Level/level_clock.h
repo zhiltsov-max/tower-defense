@@ -15,7 +15,7 @@ class TLevelClock
 public:
     using Time = GE::TTime;
 
-    static constexpr const Time& tick() { return Time(0.01); }
+    static constexpr const Time tick() { return Time(0.01); }
 
     enum class Rate : uint {
         _min = 0,

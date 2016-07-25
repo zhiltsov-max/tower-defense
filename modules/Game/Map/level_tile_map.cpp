@@ -114,39 +114,38 @@ forward_list<GE::TMessage::ID> TD::CLevelTileMapView::GetAcceptedMessages() {
     /*TODO:...*/
 }
 
-void CLevelTileMapView::Render(Graphics::TRenderTarget& target,
-    const GE::TScene* scene)
-{
+void CLevelTileMapView::Render(Graphics::TRenderTarget& target) {
     //TODO: implementation
-    if (tileMapComponent.empty() == true) {
-        return;
-    }
-    ASSERT(scene != nullptr, "Scene must be set.");
-    ASSERT(tileMapHandle != GE::TScene::ComponentHandle::Undefined,
-        "Tile map data component is not found.");
+    THROW("Not implemented yet.");
+//    if (tileMapComponent.empty() == true) {
+//        return;
+//    }
+//    ASSERT(scene != nullptr, "Scene must be set.");
+//    ASSERT(tileMapHandle != GE::TScene::ComponentHandle::Undefined,
+//        "Tile map data component is not found.");
 
-    const auto* tileMap =
-        scene->GetComponent<CLevelTileMap>(tileMapHandle);
-    if (tileMap == nullptr) {
-        tileMapHandle = TLevelScene::ComponentHandle::Undefined;
-        return;
-    }
-    for (uchar i = 0; i < CLevelTileMap::Layer::_count; ++i) {
-        const auto boundaries =
-            tileMap->GetLayer(static_cast<CLevelTileMap::Layer>(i));
+//    const auto* tileMap =
+//        scene->GetComponent<CLevelTileMap>(tileMapHandle);
+//    if (tileMap == nullptr) {
+//        tileMapHandle = TLevelScene::ComponentHandle::Undefined;
+//        return;
+//    }
+//    for (uchar i = 0; i < CLevelTileMap::Layer::_count; ++i) {
+//        const auto boundaries =
+//            tileMap->GetLayer(static_cast<CLevelTileMap::Layer>(i));
 
-        size_t x = 0;
-        size_t y = 0;
-        for (auto it = boundaries.first; it != boundaries.second; ++it) {
-            const auto tileId = *it;
-            if (tileId.index != 0) {
-                //TODO: ...
-                sf::Sprite sprite = tileset.getImage(tileId - 1);
-                sprite.setPosition(x * tileSize, y * tileSize);
-                target.draw(sprite);
-            }
-        }
-    }
+//        size_t x = 0;
+//        size_t y = 0;
+//        for (auto it = boundaries.first; it != boundaries.second; ++it) {
+//            const auto tileId = *it;
+//            if (tileId.index != 0) {
+//                //TODO: ...
+//                sf::Sprite sprite = tileset.getImage(tileId - 1);
+//                sprite.setPosition(x * tileSize, y * tileSize);
+//                target.draw(sprite);
+//            }
+//        }
+//    }
 }
 
 void CLevelTileMapView::SetTilesetRegistry(

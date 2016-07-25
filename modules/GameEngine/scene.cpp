@@ -49,10 +49,6 @@ bool TScene::HasObject(const ObjectHandle& handle) const {
     return objectManager.HasObject(handle);
 }
 
-TScene::ObjectHandle TScene::GetHandle(const ObjectName& name) const {
-    return objectManager.GetHandle(name);
-}
-
 TScene::ObjectHandle
 TScene::AddSceneObject(const ObjectName& name, const Object& sceneObject) {
     return objectManager.AddSceneObject(name, sceneObject);

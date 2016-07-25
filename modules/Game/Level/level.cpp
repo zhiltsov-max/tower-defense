@@ -4,19 +4,21 @@
 
 namespace TD {
 
-TLevel::CommonData::CommonData(const TLevelInfoCommon& info) :
+TLevel::CommonData::CommonData(const TLevel::Parameters::Common& info) :
     levelCode(info.levelCode),
     nextLevelCode(info.nextLevelCode),
     levelType(info.levelType)
 {}
 
-TLevel::TLevel(const TLevelInfo& info, GE::TGameEngine* engine) :
+TLevel::TLevel(const Parameters& info, GE::TGameEngine* engine) :
     common(info.common),
     clock(Clock::Rate::Pause),
     scene(info.scene, engine),
     gameEngine(engine)
 {
-    loadScript(info);
+    if (engine != nullptr) {
+        loadScript(info);
+    }
 }
 
 const TLevel::Clock& TLevel::GetClock() const {
@@ -36,7 +38,7 @@ TLevel::Scene& TLevel::GetScene() {
 }
 
 void TLevel::Update() {
-    for(auto i = 0; i < (uint)clock.GetRate(); ++i) {
+    for(uint i = 0; i < static_cast<uint>(clock.GetRate()); ++i) {
         scene.Update(clock.tick());
         clock.Update();
     }
@@ -47,7 +49,7 @@ void TLevel::SetGameEngine(GE::TGameEngine* instance) {
     scene.SetGameEngine(instance);
 }
 
-void TLevel::loadScript(const TLevelInfo& info) {
+void TLevel::loadScript(const Parameters& info) {
     ASSERT(gameEngine != nullptr, "Game engine must be set");
 
     auto& scriptEngine = gameEngine->GetScriptEngine();
@@ -55,7 +57,7 @@ void TLevel::loadScript(const TLevelInfo& info) {
 
     if (script.empty() == false) {
         scriptEngine.Get().runFile(script);
-        lua_binding::loadLevel(scriptEngine.Get(), &level);
+        lua_binding::loadLevel(scriptEngine.Get(), this);
     }
 }
 

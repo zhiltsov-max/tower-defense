@@ -45,8 +45,6 @@ public:
     bool HasObject(const ObjectName& name) const;
     bool HasObject(const ObjectHandle& handle) const;
 
-    ObjectHandle GetHandle(const ObjectName& name) const;
-
     ObjectHandle AddSceneObject(const ObjectName& name,
         const Object& sceneObject);
     ObjectHandle AddSceneObject(const ObjectName& name, Object&& sceneObject);

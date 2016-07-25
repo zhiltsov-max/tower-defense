@@ -10,7 +10,7 @@
 
 namespace TD {
 
-class CPassabilityMap :
+class CLevelPassabilityMap :
     public GE::CDataComponent
 {
 public:
@@ -22,7 +22,7 @@ public:
     static std::unique_ptr<GE::TComponent> Create(
         const GE::TComponentCreateArgs* args = nullptr);
 
-    CPassabilityMap(const Parameters* source);
+    CLevelPassabilityMap(const Parameters* source);
 	
     const PassabilityMap& GetMap(const Altitude& altitude);
     const Size& GetSize() const;
@@ -34,18 +34,22 @@ private:
     Size size;
 };
 
-template<>
-struct GE::ComponentID<CPassabilityMap>
-{
-    static constexpr GE::ComponentIDs value =
-        GE::ComponentIDs::LevelPassabilityMap;
-};
-
-struct CPassabilityMap::Parameters : GE::TComponentCreateArgs
+struct CLevelPassabilityMap::Parameters : GE::TComponentCreateArgs
 {
     Size size;
 };
 
 } // namespace TD
+
+
+namespace GE {
+
+template<>
+struct ComponentID<TD::CLevelPassabilityMap>
+{
+    static constexpr ComponentIDs value = ComponentIDs::LevelPassabilityMap;
+};
+
+} // namespace GE
 
 #endif // LEVEL_PASSABILITY_MAP_H
