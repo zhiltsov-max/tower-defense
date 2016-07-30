@@ -1,5 +1,4 @@
 #include "level_scene.h"
-#include "Game/Components/components_list.h"
 #include "GameEngine/game_engine_context.h"
 
 
@@ -17,8 +16,7 @@ TLevelScene::ComponentHandle
 TLevelScene::CreateComponent(const GE::TComponent::ID& id,
     const GE::TComponentCreateArgs* args)
 {
-    return scene.CreateComponent(id, GetComponentSystemForComponentID(id),
-        args);
+    return scene.CreateComponent(id, args);
 }
 
 void TLevelScene::RemoveComponent(const ComponentHandle& handle) {
@@ -28,6 +26,14 @@ void TLevelScene::RemoveComponent(const ComponentHandle& handle) {
 TLevelScene::ComponentHandle
 TLevelScene::FindComponent(const ComponentPath& path) const {
     return scene.FindComponent(path);
+}
+
+bool TLevelScene::HasComponent(const ComponentPath& path) const {
+    return scene.HasComponent(path);
+}
+
+bool TLevelScene::HasComponent(const ComponentHandle& handle) const {
+    return scene.HasComponent(handle);
 }
 
 GE::TComponent* TLevelScene::GetComponent(const ComponentHandle& handle) {
@@ -61,12 +67,12 @@ TLevelScene::AddSceneObject(const ObjectName& name, const Object& sceneObject) {
     return scene.AddSceneObject(name, sceneObject);
 }
 
-TLevelScene::Object TLevelScene::RemoveSceneObject(const ObjectName& name) {
-    return scene.RemoveSceneObject(name);
+void TLevelScene::RemoveSceneObject(const ObjectName& name) {
+    scene.RemoveSceneObject(name);
 }
 
-TLevelScene::Object TLevelScene::RemoveSceneObject(const ObjectHandle& handle) {
-    return scene.RemoveSceneObject(handle);
+void TLevelScene::RemoveSceneObject(const ObjectHandle& handle) {
+    scene.RemoveSceneObject(handle);
 }
 
 void TLevelScene::Clear() {

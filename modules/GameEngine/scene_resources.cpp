@@ -54,7 +54,7 @@ TSceneResources::PWeakResource TSceneResources::GetResource(const ID& id) {
     return resources.at(id);
 }
 
-bool TSceneResources::Empty() const {
+bool TSceneResources::IsEmpty() const {
     return resources.empty();
 }
 

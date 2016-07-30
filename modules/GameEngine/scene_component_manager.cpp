@@ -8,9 +8,24 @@ void TSceneComponentManager::SetGameEngine(TGameEngine* instance) {
     engine = instance;
 }
 
+bool TSceneComponentManager::IsEmpty() const {
+    for (const auto& system : engine->GetComponentSystems().systems) {
+        if (system->IsEmpty() == false) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void TSceneComponentManager::Clear() {
+    for (const auto& system : engine->GetComponentSystems().systems) {
+        system->Clear();
+    }
+}
+
 TSceneComponentManager::ComponentHandle
 TSceneComponentManager::CreateComponent(const TComponent::ID& id,
-    const ComponentSystem& componentClass, const TComponentCreateArgs* args)
+    const TComponentCreateArgs* args)
 {
 #if defined(_DEBUG)
     ASSERT(engine != nullptr, "Game engine must be set.")
@@ -20,11 +35,17 @@ TSceneComponentManager::CreateComponent(const TComponent::ID& id,
     }
 #endif // DEBUG
 
+    const auto& componentClass = engine->GetComponentRegistry()[id].system;
     auto* system = engine->GetComponentSystems().
         systems[static_cast<uchar>(componentClass)];
 
     ComponentHandle handle(system->CreateComponent(id, args), componentClass);
     return handle;
+}
+
+bool TSceneComponentManager::HasComponent(const ComponentHandle& handle) const {
+    return engine->GetComponentSystems().
+        systems[static_cast<uchar>(handle.GetSystem())]->HasComponent(handle);
 }
 
 void TSceneComponentManager::RemoveComponent(const ComponentHandle& handle) {

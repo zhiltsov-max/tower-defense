@@ -110,7 +110,7 @@ void CLevelTileMapView::Update(const GE::TTime& step, Context& context) {
     //TODO: implementation
 }
 
-forward_list<GE::TMessage::ID> TD::CLevelTileMapView::GetAcceptedMessages() {
+forward_list<GE::TMessage::ID> TD::CLevelTileMapView::GetAcceptedMessages() const {
     /*TODO:...*/
 }
 

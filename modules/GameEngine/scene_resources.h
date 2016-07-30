@@ -39,7 +39,7 @@ public:
     PWeakResource GetResource(const ID& id);
 
     void Clear();
-    bool Empty() const;
+    bool IsEmpty() const;
     bool IsResourceLoaded(const ID& id) const;
 
     const TSceneResourceRegistry& GetRegistry() const;

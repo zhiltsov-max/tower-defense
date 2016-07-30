@@ -2,14 +2,13 @@
 #define COMPONENT_SYSTEM_H
 
 #include "GameEngine/engine_core.h"
-#include "GameEngine/component_registry.h"
 #include "GameEngine/engine_message.h"
+#include "GameEngine/component.h"
+#include "GameEngine/component_registry.h"
 #include "GameEngine/game_engine_context.h"
 
 
 namespace GE {
-
-class TComponent;
 
 class TComponentSystem /*Abstract*/
 {
@@ -25,8 +24,13 @@ public:
     Handle CreateComponent(const TComponent::ID& typeID,
         const TComponentCreateArgs* args = nullptr);
 
+    bool HasComponent(const Handle& handle) const;
+
     void RemoveComponent(const Handle& handle);
     Component* GetComponent(const Handle& handle);
+
+    bool IsEmpty() const;
+    void Clear();
 
     virtual void Update(const TTime& step, Context& context) = 0;
 

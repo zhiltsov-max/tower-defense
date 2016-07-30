@@ -12,11 +12,11 @@ class TSceneComponentManager
 public:
     using ComponentHandle = TSceneObject::ComponentHandle;
 
-    ComponentHandle CreateComponent(
-        const TComponent::ID& id,
-        const ComponentSystem& componentClass,
+    ComponentHandle CreateComponent(const TComponent::ID& id,
         const TComponentCreateArgs* args = nullptr
     );
+
+    bool HasComponent(const ComponentHandle& handle) const;
 
     void RemoveComponent(const ComponentHandle& handle);
 
@@ -25,6 +25,9 @@ public:
     T* GetComponent(const ComponentHandle& handle);
 
     void SetGameEngine(TGameEngine* instance);
+
+    bool IsEmpty() const;
+    void Clear();
 
 private:
     using PGameEngine = TGameEngine *;

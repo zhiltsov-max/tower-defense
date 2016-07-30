@@ -7,10 +7,13 @@
 
 namespace GE {
 
-template< class Entry, class ID >
+template< class Entry_, class ID_ >
 class TRegistry
 {
 public:
+    using Entry = Entry_;
+    using ID = ID_;
+
     void Register(const ID& id, const Entry& entry);
     void Unregister(const ID& id);
 

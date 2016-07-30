@@ -147,7 +147,7 @@ void CLevelNodeMapView::Render(Graphics::TRenderTarget& target) {
 void CLevelNodeMapView::HandleMessage(const GE::TMessage& message,
     Context& context) { /*TODO:...*/ }
 
-forward_list<GE::TMessage::ID> TD::CLevelNodeMapView::GetAcceptedMessages() {
+forward_list<GE::TMessage::ID> TD::CLevelNodeMapView::GetAcceptedMessages() const {
     /*TODO:...*/
 }
 

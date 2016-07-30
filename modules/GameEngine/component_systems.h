@@ -2,6 +2,7 @@
 #define COMPONENT_SYSTEMS_H
 
 #include "GameEngine/component_system.h"
+#include "GameEngine/ComponentSystems/component_systems_enum.h"
 #include "GameEngine/ComponentSystems/component_system_data.h"
 #include "GameEngine/ComponentSystems/component_system_input.h"
 #include "GameEngine/ComponentSystems/component_system_sound.h"
@@ -12,22 +13,6 @@
 
 
 namespace GE {
-
-using TComponentSystemTypeId = uchar;
-enum class ComponentSystem : TComponentSystemTypeId {
-    _min = 0,
-
-    input = 0,
-    data,
-    movement,
-    logics,
-    ui,
-    graphics,
-    sound,
-
-    _count,
-    _undefined = _count
-};
 
 template< class Component >
 struct ComponentClass;

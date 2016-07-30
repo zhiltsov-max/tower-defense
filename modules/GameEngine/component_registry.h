@@ -2,6 +2,7 @@
 #define COMPONENT_REGISTRY_H
 
 #include "GameEngine/component.h"
+#include "GameEngine/ComponentSystems/component_systems_enum.h"
 #include "GameEngine/registry.h"
 
 
@@ -15,7 +16,13 @@ struct TComponentCreateArgs
 using TComponentCreate =
     std::unique_ptr<TComponent> (*)(const TComponentCreateArgs*);
 
-using TComponentRegistry = TRegistry< TComponentCreate, TComponent::ID >;
+struct TComponentRegistryEntry
+{
+    ComponentSystem system;
+    TComponentCreate create;
+};
+
+using TComponentRegistry = TRegistry<TComponentRegistryEntry, TComponent::ID>;
 
 } //namespace GE
 

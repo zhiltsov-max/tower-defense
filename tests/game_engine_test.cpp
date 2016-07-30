@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "GameEngine/game_engine.h"
 #include "GameEngine/registry.h"
 #include "GameEngine/component.h"
 #include "GameEngine/component_systems.h"
@@ -6,7 +7,7 @@
 #include "GameEngine/scene_object.h"
 #include "GameEngine/scene_object_container.h"
 #include "GameEngine/scene_resources.h"
-
+#include "GameEngine/scene.h"
 
 
 using namespace GE;
@@ -22,7 +23,7 @@ protected:
     using Registry = TRegistry<Entry, ID>;
 };
 
-TEST_F(TestRegistry, registration_and_access) {
+TEST_F(TestRegistry, register_unexisting_item) {
     Registry registry;
     ID id = 4;
     Entry entry = -10;
@@ -33,60 +34,58 @@ TEST_F(TestRegistry, registration_and_access) {
     EXPECT_EQ(entry, registry[id]);
 }
 
-TEST_F(TestRegistry, existing_item_registration) {
+TEST_F(TestRegistry, register_existing_item) {
     Registry registry;
     ID id = 4;
     Entry entry = -10;
+    registry.Register(id, entry);
 
-    ASSERT_NO_THROW(registry.Register(id, entry));
     ASSERT_ANY_THROW(registry.Register(id, entry));
 }
 
-TEST_F(TestRegistry, unregistration) {
+TEST_F(TestRegistry, unregister_existing_item) {
     Registry registry;
     ID id = 4;
     Entry entry = -10;
-    ASSERT_NO_THROW(registry.Register(id, entry));
+    registry.Register(id, entry);
 
     ASSERT_NO_THROW(registry.Unregister(id));
 
     EXPECT_FALSE(registry.IsRegistered(id));
 }
 
-TEST_F(TestRegistry, unexisting_item_unregistration) {
+TEST_F(TestRegistry, unregister_unexisting_item) {
     Registry registry;
-    ID id = 4;
-    Entry entry = -10;
 
-    ASSERT_NO_THROW(registry.Register(id, entry));
-    ASSERT_NO_THROW(registry.Unregister(id));
-    ASSERT_ANY_THROW(registry.Unregister(id));
+    ASSERT_ANY_THROW(registry.Unregister(100));
 }
 
-TEST_F(TestRegistry, isempty_test) {
+TEST_F(TestRegistry, is_empty_empty_when_empty) {
+    Registry registry;
+
+    ASSERT_TRUE(registry.IsEmpty());
+}
+
+TEST_F(TestRegistry, is_empty_not_empty_when_not_empty) {
     Registry registry;
     ID id = 6;
     Entry entry = 100500;
-
-    ASSERT_TRUE(registry.IsEmpty());
-
     registry.Register(id, entry);
 
     ASSERT_FALSE(registry.IsEmpty());
-
-    registry.Unregister(id);
-
-    ASSERT_TRUE(registry.IsEmpty());
 }
 
-TEST_F(TestRegistry, size) {
+TEST_F(TestRegistry, size_zero_when_empty) {
+    Registry registry;
+
+    ASSERT_EQ(0u, registry.Size());
+}
+
+TEST_F(TestRegistry, size_not_zero_when_not_empty) {
     Registry registry;
     const size_t count = 4;
     ID ids[count] = {5, 6, 10, 12};
     Entry entries[count] = {-10, 1, 50, 7};
-
-    ASSERT_EQ(0u, registry.Size());
-
     for(size_t i = 0; i < count; ++i) {
         registry.Register(ids[i], entries[i]);
     }
@@ -94,7 +93,7 @@ TEST_F(TestRegistry, size) {
     ASSERT_EQ(count, registry.Size());
 }
 
-TEST_F(TestRegistry, clear) {
+TEST_F(TestRegistry, clear_clears) {
     Registry registry;
     const size_t count = 4;
     ID ids[count] = {5, 6, 10, 12};
@@ -103,7 +102,7 @@ TEST_F(TestRegistry, clear) {
         registry.Register(ids[i], entries[i]);
     }
 
-    ASSERT_NO_THROW(registry.Clear());
+    registry.Clear();
 
     EXPECT_TRUE(registry.IsEmpty());
 }
@@ -114,7 +113,7 @@ TEST_F(TestRegistry, clear) {
 enum class GE::ComponentIDs : TComponentID {
     _min = 0,
 
-    TestComponent,
+    TestComponent = _min,
     CustomComponent,
 
     _max,
@@ -124,7 +123,7 @@ enum class GE::ComponentIDs : TComponentID {
 enum class GE::MessageID : TMessageID {
     _min = static_cast<TMessageID>(DefaultMessageID::_max) + 1,
 
-    CustomMessage,
+    CustomMessage = _min,
     CustomUnexpectedMessage,
     TestMessage,
 
@@ -168,7 +167,7 @@ protected:
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override;
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() override {
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() const override {
         return { MessageID::CustomMessage };
     }
 
@@ -264,20 +263,39 @@ TEST_F(TestComponent, message_handling_unexpected) {
 // === ComponentSystem Tests ===
 
 class CustomComponent :
-    public TComponent
+    public CDataComponent
 {
 public:
-    static std::unique_ptr<TComponent> Create(const TComponentCreateArgs*) {
-        return std::unique_ptr<TComponent>(new CustomComponent);
+    struct Parameters : GE::TComponentCreateArgs
+    {
+        int value;
+    };
+
+    static std::unique_ptr<TComponent> Create(
+        const TComponentCreateArgs* args_)
+    {
+        const auto* args = dynamic_cast<const Parameters*>(args_);
+        return std::unique_ptr<TComponent>(new CustomComponent(args));
     }
 
-    CustomComponent();
+    CustomComponent(const Parameters* parameters);
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override { /* none */ }
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() override {
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() const override {
         return { MessageID::CustomMessage };
     }
+
+    const int& GetValue() const {
+        return value;
+    }
+
+    void SetValue(const int& value) {
+        this->value = value;
+    }
+
+protected:
+    int value;
 };
 
 namespace GE {
@@ -293,12 +311,17 @@ struct ComponentClass< CustomComponent > {
     static const ComponentSystem value;
 };
 const ComponentSystem ComponentClass<CustomComponent>::value =
-    ComponentSystem::input;
+    ComponentSystem::data;
 } //namespace GE
 
-CustomComponent::CustomComponent() :
-    TComponent(ComponentID<CustomComponent>::value)
-{}
+CustomComponent::CustomComponent(const CustomComponent::Parameters* parameters) :
+    CDataComponent(ComponentID<CustomComponent>::value),
+    value(0)
+{
+    if (parameters != nullptr) {
+        value = parameters->value;
+    }
+}
 
 
 class TestComponentSystem :
@@ -311,8 +334,11 @@ protected:
 
         testRegistry.Clear();
 
+        TComponentRegistry::Entry customComponentEntry;
+        customComponentEntry.create = &CustomComponent::Create;
+        customComponentEntry.system = ComponentSystem::_undefined;
         testRegistry.Register(ComponentIDs::CustomComponent,
-            &CustomComponent::Create);
+            customComponentEntry);
 
         SetComponentRegistry(&testRegistry);
     }
@@ -331,30 +357,47 @@ private:
 
 
 TEST_F(TestComponentSystem, create_component_positive) {
-    auto component = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-
-    EXPECT_NE(HandleUndefined, component);
+    ASSERT_NO_THROW(CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr));
 }
 
 TEST_F(TestComponentSystem, create_component_negative) {
-    EXPECT_ANY_THROW(CreateComponent(ComponentIDs::_count, nullptr));
+    ASSERT_ANY_THROW(CreateComponent(ComponentIDs::_count, nullptr));
 }
 
-TEST_F(TestComponentSystem, remove_component) {
-    auto component = CreateComponent(
+TEST_F(TestComponentSystem, has_component_existing) {
+    const auto handle = CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
 
-    RemoveComponent(component);
+    ASSERT_TRUE(HasComponent(handle));
+}
+
+TEST_F(TestComponentSystem, has_component_unexisting) {
+    ASSERT_FALSE(HasComponent(HandleUndefined));
+}
+
+TEST_F(TestComponentSystem, remove_component_existing) {
+    const auto handle = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+
+    ASSERT_NO_THROW(RemoveComponent(handle));
 
     EXPECT_EQ(0u, components.size());
 }
 
-TEST_F(TestComponentSystem, get_component) {
-    auto component = CreateComponent(
+TEST_F(TestComponentSystem, remove_component_unexisting) {
+    ASSERT_NO_THROW(RemoveComponent(HandleUndefined));
+}
+
+TEST_F(TestComponentSystem, get_component_existing) {
+    const auto handle = CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
 
-    EXPECT_NE(nullptr, GetComponent(component));
+    ASSERT_NE(nullptr, GetComponent(handle));
+}
+
+TEST_F(TestComponentSystem, get_component_unexisting) {
+    ASSERT_EQ(nullptr, GetComponent(HandleUndefined));
 }
 
 TEST_F(TestComponentSystem, subscribe_component) {
@@ -376,6 +419,22 @@ TEST_F(TestComponentSystem, unsubscribe_component) {
     EXPECT_FALSE(HasSubscription(component, MessageID::CustomMessage));
 }
 
+TEST_F(TestComponentSystem, clear_clears) {
+    CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+
+    Clear();
+
+    EXPECT_TRUE(IsEmpty());
+}
+
+TEST_F(TestComponentSystem, is_empty_empty_when_empty) {
+    ASSERT_TRUE(IsEmpty());
+}
+
+TEST_F(TestComponentSystem, is_empty_not_empty_when_not_empty) {
+    CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    ASSERT_FALSE(IsEmpty());
+}
 
 // ### SCENE TESTS ###
 // === SceneObject Tests ===
@@ -677,21 +736,21 @@ TEST(SceneObjectContainerTest, remove_object_with_name_failure_empty_name) {
     const TSceneObjectContainer::SceneObjectName name;
     TSceneObjectContainer container;
 
-    ASSERT_ANY_THROW(container.RemoveSceneObject(name));
+    ASSERT_NO_THROW(container.RemoveSceneObject(name));
 }
 
 TEST(SceneObjectContainerTest, remove_object_with_handle_failure_unknown_handle) {
     const TSceneObjectContainer::ObjectHandle handle = 42;
     TSceneObjectContainer container;
 
-    ASSERT_ANY_THROW(container.RemoveSceneObject(handle));
+    ASSERT_NO_THROW(container.RemoveSceneObject(handle));
 }
 
 TEST(SceneObjectContainerTest, remove_object_with_handle_failure_undefined_handle) {
-    const auto handle = TSceneObjectContainer::HandleUndefined;
+    const auto handle = TSceneObjectContainer::ObjectHandle::Undefined;
     TSceneObjectContainer container;
 
-    ASSERT_ANY_THROW(container.RemoveSceneObject(handle));
+    ASSERT_NO_THROW(container.RemoveSceneObject(handle));
 }
 
 TEST(SceneObjectContainerTest, get_object_by_handle_positive) {
@@ -737,6 +796,274 @@ TEST(SceneObjectContainerTest, clear) {
     container.Clear();
 
     EXPECT_TRUE(container.IsEmpty());
+}
+
+
+// === Scene Tests ===
+class TestScene :
+    public ::testing::Test
+{
+public:
+    TestScene() :
+        ::testing::Test(),
+        engine(nullptr),
+        scene(nullptr)
+    {}
+
+    virtual void SetUp() override {
+        engine.reset(new GE::TGameEngine);
+
+        TComponentRegistry::Entry entry;
+        entry.create = &CustomComponent::Create;
+        entry.system = ComponentClass<CustomComponent>::value;
+        engine->GetComponentRegistry().Register(
+            ComponentID<CustomComponent>::value, entry);
+        scene.reset(new TScene);
+        scene->SetGameEngine(engine.get());
+    }
+
+protected:
+    std::unique_ptr<TGameEngine> engine;
+    std::unique_ptr<TScene> scene;
+};
+
+TEST(SceneTest, ctor_correct) {
+    ASSERT_NO_THROW(TScene());
+}
+
+TEST_F(TestScene, create_component_with_default_args_correct) {
+    ASSERT_NO_THROW(scene->CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr));
+}
+
+TEST_F(TestScene, create_component_with_custom_args_correct) {
+    CustomComponent::Parameters parameters;
+    parameters.value = 10;
+
+    TScene::ComponentHandle handle;
+    ASSERT_NO_THROW(handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value, &parameters));
+
+    const auto* component = scene->GetComponent<CustomComponent>(handle);
+    EXPECT_NE(nullptr, component);
+    EXPECT_EQ(parameters.value, component->GetValue());
+}
+
+TEST_F(TestScene, create_component_unregistered_incorrect) {
+    ASSERT_ANY_THROW(scene->CreateComponent(ComponentIDs::_count, nullptr));
+}
+
+TEST_F(TestScene, remove_component_existing_component) {
+    const auto handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+
+    ASSERT_NO_THROW(scene->RemoveComponent(handle));
+    EXPECT_FALSE(scene->HasComponent(handle));
+}
+
+TEST_F(TestScene, remove_component_unexisting_component) {
+    const auto handle = TScene::ComponentHandle::Undefined;
+
+    ASSERT_NO_THROW(scene->RemoveComponent(handle));
+}
+
+TEST_F(TestScene, get_component_and_cast_existing) {
+    const auto handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+
+    ASSERT_NE(nullptr, scene->GetComponent<CustomComponent>(handle));
+}
+
+TEST_F(TestScene, get_component_and_cast_unexisting_handle) {
+    const auto handle = TScene::ComponentHandle::Undefined;
+
+    ASSERT_EQ(nullptr, scene->GetComponent<CustomComponent>(handle));
+}
+
+TEST_F(TestScene, get_component_and_cast_wrong_class) {
+    const auto handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+
+    ASSERT_EQ(nullptr, scene->GetComponent<CLogicsComponent>(handle));
+}
+
+TEST_F(TestScene, get_component_existing) {
+    const auto handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+
+    ASSERT_NE(nullptr, scene->GetComponent(handle));
+}
+
+TEST_F(TestScene, get_component_unexisting_handle) {
+    const auto handle = TScene::ComponentHandle::Undefined;
+
+    ASSERT_EQ(nullptr, scene->GetComponent(handle));
+}
+
+TEST_F(TestScene, find_component_existing) {
+    const auto handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    const TScene::ComponentPath path{"object1", "component1"};
+    TSceneObject object;
+    object.AddComponent(path.second, handle);
+    scene->AddSceneObject(path.first, object);
+
+    ASSERT_EQ(handle, scene->FindComponent(path));
+}
+
+TEST_F(TestScene, find_component_unexisting) {
+    const TScene::ComponentPath path{"object1", "component1"};
+
+    ASSERT_EQ(TScene::ComponentHandle::Undefined, scene->FindComponent(path));
+}
+
+TEST_F(TestScene, find_scene_object_existing) {
+    const auto name = "object1";
+    TSceneObject object;
+    const auto handle = scene->AddSceneObject(name, object);
+
+    ASSERT_EQ(handle, scene->FindSceneObject(name));
+}
+
+TEST_F(TestScene, find_scene_object_unexisting) {
+    ASSERT_EQ(TScene::ObjectHandle::Undefined, scene->FindSceneObject("1"));
+}
+
+TEST_F(TestScene, get_scene_object_existing) {
+    TSceneObject object;
+    const auto handle = scene->AddSceneObject("object1", object);
+
+    ASSERT_NO_THROW(scene->GetSceneObject(handle));
+}
+
+TEST_F(TestScene, get_scene_object_unexisting) {
+    ASSERT_ANY_THROW(scene->GetSceneObject(TScene::ObjectHandle::Undefined));
+}
+
+TEST_F(TestScene, find_scene_object_with_name_existing) {
+    const auto name = "object1";
+    TSceneObject object;
+    scene->AddSceneObject(name, object);
+
+    ASSERT_TRUE(scene->HasObject(name));
+}
+
+TEST_F(TestScene, find_scene_object_with_name_unexisting) {
+    ASSERT_FALSE(scene->HasObject("1"));
+}
+
+TEST_F(TestScene, find_scene_object_with_handle_existing) {
+    const auto name = "object1";
+    TSceneObject object;
+    const auto handle = scene->AddSceneObject(name, object);
+
+    ASSERT_TRUE(scene->HasObject(handle));
+}
+
+TEST_F(TestScene, find_scene_object_with_handle_unexisting) {
+    ASSERT_FALSE(scene->HasObject(TScene::ObjectHandle::Undefined));
+}
+
+TEST_F(TestScene, add_scene_object_with_unexisting_name) {
+    const auto name = "object";
+    TSceneObject object;
+    TScene::ObjectHandle handle;
+
+    ASSERT_NO_THROW(handle = scene->AddSceneObject(name, object));
+
+    EXPECT_TRUE(scene->HasObject(handle));
+}
+
+TEST_F(TestScene, add_scene_object_with_existing_name_is_failure) {
+    const auto name = "object";
+    TSceneObject object;
+
+    scene->AddSceneObject(name, object);
+    ASSERT_ANY_THROW(scene->AddSceneObject(name, object));
+}
+
+TEST_F(TestScene, add_scene_object_by_rvalue) {
+    const auto name = "object";
+    TSceneObject object;
+
+    ASSERT_NO_THROW(scene->AddSceneObject(name, std::move(object)));
+}
+
+TEST_F(TestScene, remove_scene_object_by_handle_existing) {
+    const auto name = "object";
+    TSceneObject object;
+    TScene::ObjectHandle handle = scene->AddSceneObject(name, object);
+
+    ASSERT_NO_THROW(scene->RemoveSceneObject(handle));
+    EXPECT_FALSE(scene->HasObject(handle));
+}
+
+TEST_F(TestScene, remove_scene_object_by_handle_unexisting) {
+    ASSERT_NO_THROW(scene->RemoveSceneObject(TScene::ObjectHandle::Undefined));
+}
+
+TEST_F(TestScene, remove_scene_object_by_name_existing) {
+    const auto name = "object";
+    TSceneObject object;
+    TScene::ObjectHandle handle = scene->AddSceneObject(name, object);
+
+    ASSERT_NO_THROW(scene->RemoveSceneObject(handle));
+    EXPECT_FALSE(scene->HasObject(handle));
+}
+
+TEST_F(TestScene, remove_scene_object_by_name_unexisting) {
+    const auto name = "object";
+    ASSERT_NO_THROW(scene->RemoveSceneObject(name));
+}
+
+TEST_F(TestScene, clear_clears) {
+    scene->CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    scene->AddSceneObject("object", TSceneObject());
+
+    scene->Clear();
+
+    EXPECT_TRUE(scene->IsEmpty());
+}
+
+TEST_F(TestScene, is_empty_empty_when_empty) {
+    ASSERT_TRUE(scene->IsEmpty());
+}
+
+TEST_F(TestScene, is_empty_not_empty_when_has_object) {
+    scene->AddSceneObject("object", TSceneObject());
+
+    ASSERT_FALSE(scene->IsEmpty());
+}
+
+TEST_F(TestScene, is_empty_not_empty_when_has_component) {
+    scene->CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+
+    ASSERT_FALSE(scene->IsEmpty());
+}
+
+TEST(SceneTest, set_game_engine) {
+    TGameEngine engine;
+    TScene scene;
+
+    EXPECT_NO_THROW(scene.SetGameEngine(&engine));
+}
+
+TEST(SceneTest, set_game_engine_with_nullptr) {
+    TScene scene;
+
+    EXPECT_NO_THROW(scene.SetGameEngine(nullptr));
+}
+
+TEST_F(TestScene, get_component_manager) {
+    EXPECT_NO_THROW(scene->GetComponentManager());
+}
+
+TEST_F(TestScene, get_object_manager) {
+    EXPECT_NO_THROW(scene->GetObjectManager());
+}
+
+TEST_F(TestScene, get_resource_manager) {
+    EXPECT_NO_THROW(scene->GetResourceManager());
 }
 
 
@@ -788,14 +1115,14 @@ void TestSceneResources::SetUp() {
     GetRegistry().Register(TTestResource::typeID, TTestResource::Create);
 }
 
-TEST_F(TestSceneResources, empty_empty_collection_is_empty) {
-    ASSERT_TRUE(Empty());
+TEST_F(TestSceneResources, is_empty_empty_collection_is_empty) {
+    ASSERT_TRUE(IsEmpty());
 }
 
-TEST_F(TestSceneResources, empty_not_empty_collection_is_not_empty) {
+TEST_F(TestSceneResources, is_empty_not_empty_collection_is_not_empty) {
     LoadResource("testID", TTestResource::typeID);
 
-    ASSERT_FALSE(Empty());
+    ASSERT_FALSE(IsEmpty());
 }
 
 TEST_F(TestSceneResources, load_resource_success) {
@@ -827,12 +1154,12 @@ TEST_F(TestSceneResources, unload_resource_failure_unexisting_resource) {
     ASSERT_ANY_THROW(UnloadResource("testID"));
 }
 
-TEST_F(TestSceneResources, clear) {
+TEST_F(TestSceneResources, clear_clears) {
     static const TSceneResources::ID id = "testID";
     LoadResource(id, TTestResource::typeID);
     Clear();
 
-    ASSERT_TRUE(Empty());
+    ASSERT_TRUE(IsEmpty());
 }
 
 TEST_F(TestSceneResources, is_resource_loaded_is_true_success) {

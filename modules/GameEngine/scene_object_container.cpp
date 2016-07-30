@@ -4,15 +4,25 @@
 namespace GE {
 
 const TSceneObjectContainer::ObjectHandle
-TSceneObjectContainer::HandleUndefined = -1u;
+TSceneObjectContainer::ObjectHandle::Undefined{-1u};
 
 const TSceneObjectContainer::SceneObject&
 TSceneObjectContainer::operator [] (const SceneObjectName& name) const {
-    return objects.at(GetHandle(name)).second;
+    return GetSceneObject(name);
 }
 
 TSceneObjectContainer::SceneObject&
 TSceneObjectContainer::operator [] (const SceneObjectName& name) {
+    return GetSceneObject(name);
+}
+
+const TSceneObjectContainer::SceneObject&
+TSceneObjectContainer::GetSceneObject(const SceneObjectName& name) const {
+    return objects.at(GetHandle(name)).second;
+}
+
+TSceneObjectContainer::SceneObject&
+TSceneObjectContainer::GetSceneObject(const SceneObjectName& name) {
     return objects.at(GetHandle(name)).second;
 }
 
@@ -21,17 +31,27 @@ TSceneObjectContainer::GetHandle(const SceneObjectName& name) const {
     if (nameMapping.count(name) != 0) {
         return nameMapping.at(name);
     } else {
-        return HandleUndefined;
+        return ObjectHandle::Undefined;
     }
 }
 
 const TSceneObjectContainer::SceneObject&
-TSceneObjectContainer::operator [](const ObjectHandle& handle) const {
+TSceneObjectContainer::operator [] (const ObjectHandle& handle) const {
+    return GetSceneObject(handle);
+}
+
+TSceneObjectContainer::SceneObject&
+TSceneObjectContainer::operator [] (const ObjectHandle& handle) {
+    return GetSceneObject(handle);
+}
+
+const TSceneObjectContainer::SceneObject&
+TSceneObjectContainer::GetSceneObject(const ObjectHandle& handle) const {
     return objects.at(handle).second;
 }
 
 TSceneObjectContainer::SceneObject&
-TSceneObjectContainer::operator [](const ObjectHandle& handle) {
+TSceneObjectContainer::GetSceneObject(const ObjectHandle& handle) {
     return objects.at(handle).second;
 }
 
@@ -44,7 +64,7 @@ TSceneObjectContainer::AddSceneObject(const SceneObjectName& name,
     ASSERT(HasObject(name) == false,
         "Object with this name already exists.");
 
-    ObjectHandle handle = HandleUndefined;
+    ObjectHandle handle;
     if (freeHandles.empty() == false) {
         handle = freeHandles.top();
         freeHandles.pop();
@@ -68,7 +88,7 @@ TSceneObjectContainer::AddSceneObject(const SceneObjectName& name,
     ASSERT(HasObject(name) == false,
         "Object with this name already exists.");
 
-    ObjectHandle handle = HandleUndefined;
+    ObjectHandle handle;
     if (freeHandles.empty() == false) {
         handle = freeHandles.top();
         freeHandles.pop();
@@ -83,32 +103,25 @@ TSceneObjectContainer::AddSceneObject(const SceneObjectName& name,
     return handle;
 }
 
-TSceneObject
-TSceneObjectContainer::RemoveSceneObject(const SceneObjectName& name) {
-    ObjectHandle handle = GetHandle(name);
-    return RemoveSceneObject(handle);
+void TSceneObjectContainer::RemoveSceneObject(const SceneObjectName& name) {
+    RemoveSceneObject(GetHandle(name));
 }
 
-TSceneObject
-TSceneObjectContainer::RemoveSceneObject(const ObjectHandle& handle) {
-    ASSERT(handle != HandleUndefined,
-        "Attempt to remove an unexisting object")
-    ASSERT(objects.at(handle).first.empty() == false,
-        "Attempt to remove an unexisting object")
+void TSceneObjectContainer::RemoveSceneObject(const ObjectHandle& handle) {
+    if (HasObject(handle) == false) {
+        return;
+    }
 
     auto& entry = objects.at(handle);
     nameMapping.erase(entry.first);
     entry.first.clear();
-    auto object = std::move(entry.second);
 
     freeHandles.push(handle);
     checkSize();
-
-    return object;
 }
 
 bool TSceneObjectContainer::HasObject(const SceneObjectName& name) const {
-    return GetHandle(name) != HandleUndefined;
+    return GetHandle(name) != ObjectHandle::Undefined;
 }
 
 bool TSceneObjectContainer::HasObject(const ObjectHandle& handle) const {
@@ -131,6 +144,32 @@ void TSceneObjectContainer::checkSize() {
     if (objects.size() == freeHandles.size()) {
         Clear();
     }
+}
+
+
+TSceneObjectContainer::ObjectHandle::ObjectHandle(const size_t& handle) :
+    handle(handle)
+{}
+
+const TSceneObjectContainer::ObjectHandle::Value&
+TSceneObjectContainer::ObjectHandle::GetValue() const {
+    return handle;
+}
+
+TSceneObjectContainer::ObjectHandle::operator size_t() const {
+    return handle;
+}
+
+bool TSceneObjectContainer::ObjectHandle::operator == (
+    const ObjectHandle& other) const
+{
+    return handle == other.handle;
+}
+
+bool TSceneObjectContainer::ObjectHandle::operator != (
+    const ObjectHandle& other) const
+{
+    return handle != other.handle;
 }
 
 } //namespace GE

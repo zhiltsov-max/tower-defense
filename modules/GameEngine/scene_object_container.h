@@ -9,8 +9,7 @@ namespace GE {
 class TSceneObjectContainer
 {
 public:
-    using ObjectHandle = size_t;
-    static const ObjectHandle HandleUndefined;
+    class ObjectHandle;
 
     using SceneObject = TSceneObject;
     using SceneObjectName = string;
@@ -21,6 +20,12 @@ public:
     const SceneObject& operator [] (const ObjectHandle& handle) const;
     SceneObject& operator [] (const ObjectHandle& handle);
 
+    const SceneObject& GetSceneObject (const SceneObjectName& name) const;
+    SceneObject& GetSceneObject (const SceneObjectName& name);
+
+    const SceneObject& GetSceneObject (const ObjectHandle& handle) const;
+    SceneObject& GetSceneObject (const ObjectHandle& handle);
+
     ObjectHandle GetHandle(const SceneObjectName& name) const;
 
     ObjectHandle AddSceneObject(const SceneObjectName& name,
@@ -28,8 +33,8 @@ public:
     ObjectHandle AddSceneObject(const SceneObjectName& name,
         TSceneObject&& sceneObject);
 
-    TSceneObject RemoveSceneObject(const SceneObjectName& name);
-    TSceneObject RemoveSceneObject(const ObjectHandle& handle);
+    void RemoveSceneObject(const SceneObjectName& name);
+    void RemoveSceneObject(const ObjectHandle& handle);
 
     bool HasObject(const SceneObjectName& name) const;
     bool HasObject(const ObjectHandle& handle) const;
@@ -48,6 +53,24 @@ private:
     FreeHandles freeHandles;
 
     void checkSize();
+};
+
+class TSceneObjectContainer::ObjectHandle
+{
+public:
+    using Value = size_t;
+    static const ObjectHandle Undefined;
+
+    ObjectHandle(const size_t& handle = -1u);
+    operator size_t () const;
+
+    const Value& GetValue() const;
+
+    bool operator == (const ObjectHandle& other) const;
+    bool operator != (const ObjectHandle& other) const;
+
+private:
+    Value handle;
 };
 
 } //namespace GE

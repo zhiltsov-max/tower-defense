@@ -31,7 +31,7 @@ public:
     /*
     List all needed messages.
     */
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() = 0;
+    virtual forward_list<TMessage::ID> GetAcceptedMessages() const = 0;
 
 protected:
     TComponent(const ID& id);

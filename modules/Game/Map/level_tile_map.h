@@ -112,7 +112,7 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() override;
+    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override;
 
     virtual void Update(const GE::TTime& step, Context& context) override;
     virtual void Render(Graphics::TRenderTarget& target) override;

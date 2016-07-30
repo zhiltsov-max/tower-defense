@@ -5,10 +5,10 @@
 namespace GE {
 
 TScene::ComponentHandle
-TScene::CreateComponent(const TComponent::ID& id, const ComponentSystem& system,
+TScene::CreateComponent(const TComponent::ID& id,
     const TComponentCreateArgs* args)
 {
-    return componentManager.CreateComponent(id, system, args);
+    return componentManager.CreateComponent(id, args);
 }
 
 void TScene::RemoveComponent(const ComponentHandle& handle) {
@@ -23,6 +23,14 @@ TScene::ComponentHandle TScene::FindComponent(const ComponentPath& path) const {
         }
     }
     return ComponentHandle::Undefined;
+}
+
+bool TScene::HasComponent(const ComponentPath& path) const {
+    return FindComponent(path) != ComponentHandle::Undefined;
+}
+
+bool TScene::HasComponent(const ComponentHandle& handle) const {
+    return componentManager.HasComponent(handle);
 }
 
 TComponent* TScene::GetComponent(const ComponentHandle& handle) {
@@ -59,20 +67,21 @@ TScene::AddSceneObject(const ObjectName& name, Object&& sceneObject) {
     return objectManager.AddSceneObject(name, std::move(sceneObject));
 }
 
-TScene::Object TScene::RemoveSceneObject(const ObjectName& name) {
-    return objectManager.RemoveSceneObject(name);
+void TScene::RemoveSceneObject(const ObjectName& name) {
+    objectManager.RemoveSceneObject(name);
 }
 
-TScene::Object TScene::RemoveSceneObject(const ObjectHandle& handle) {
-    return objectManager.RemoveSceneObject(handle);
+void TScene::RemoveSceneObject(const ObjectHandle& handle) {
+    objectManager.RemoveSceneObject(handle);
 }
 
 void TScene::Clear() {
     objectManager.Clear();
+    componentManager.Clear();
 }
 
 bool TScene::IsEmpty() const {
-    return objectManager.IsEmpty();
+    return objectManager.IsEmpty() && componentManager.IsEmpty();
 }
 
 void TScene::SetGameEngine(TGameEngine* instance) {

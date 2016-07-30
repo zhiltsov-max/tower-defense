@@ -25,13 +25,15 @@ public:
     using ComponentPath = std::pair<ObjectName, ComponentName>;
 
     ComponentHandle CreateComponent(const TComponent::ID& id,
-        const ComponentSystem& system,
         const TComponentCreateArgs* args = nullptr
     );
 
     void RemoveComponent(const ComponentHandle& handle);
 
     ComponentHandle FindComponent(const ComponentPath& path) const;
+
+    bool HasComponent(const ComponentPath& path) const;
+    bool HasComponent(const ComponentHandle& handle) const;
 
     template <class T>
     T* GetComponent(const ComponentHandle& handle);
@@ -49,8 +51,8 @@ public:
         const Object& sceneObject);
     ObjectHandle AddSceneObject(const ObjectName& name, Object&& sceneObject);
 
-    Object RemoveSceneObject(const ObjectName& name);
-    Object RemoveSceneObject(const ObjectHandle& handle);
+    void RemoveSceneObject(const ObjectName& name);
+    void RemoveSceneObject(const ObjectHandle& handle);
 
     void Clear();
     bool IsEmpty() const;

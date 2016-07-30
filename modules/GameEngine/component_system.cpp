@@ -1,5 +1,5 @@
 #include "component_system.h"
-#include "GameEngine/component.h"
+#include "GameEngine/component_registry.h"
 #include "GameEngine/game_engine.h"
 
 
@@ -13,7 +13,7 @@ TComponentSystem::Handle TComponentSystem::CreateComponent(
     ASSERT(componentRegistry != nullptr, "Component registry is not set.");
     ASSERT(componentRegistry->IsRegistered(typeID) == true, "Unknown type id.");
 
-    auto& create = (*componentRegistry)[typeID];
+    auto& create = (*componentRegistry)[typeID].create;
     PComponent ptr = std::move(create(args));
     auto* component = ptr.get();
     components.emplace_back(std::move(ptr));
@@ -24,8 +24,15 @@ TComponentSystem::Handle TComponentSystem::CreateComponent(
     return handle;
 }
 
+bool TComponentSystem::HasComponent(const Handle& handle) const {
+    return (handle < components.size()) && (components[handle] != nullptr);
+}
+
 void TComponentSystem::RemoveComponent(const Handle& handle) {
-    auto* component = GetComponent(handle);
+    if (HasComponent(handle) == false) {
+        return;
+    }
+    const auto* component = GetComponent(handle);
     const auto messagesList = component->GetAcceptedMessages();
     Unsubscribe(handle, messagesList.begin(), messagesList.end());
 
@@ -36,9 +43,20 @@ void TComponentSystem::RemoveComponent(const Handle& handle) {
 
 TComponentSystem::Component*
 TComponentSystem::GetComponent(const Handle& handle) {
-    ASSERT(handle < components.size(), "Wrong component handle.");
+    if (HasComponent(handle) == true) {
+        return components[handle].get();
+    } else {
+        return nullptr;
+    }
+}
 
-    return components[handle].get();
+bool TComponentSystem::IsEmpty() const {
+    return components.empty();
+}
+
+void TComponentSystem::Clear() {
+    components.clear();
+    listeners.clear();
 }
 
 void TComponentSystem::Subscribe(const Handle& handle, const Message::ID& id) {

@@ -14,7 +14,6 @@ public:
     static const Handle HandleUndefined;
 
     class ComponentHandle;
-    static const ComponentHandle ComponentHandleUndefined;
 
     using ComponentName = string;
     struct Entry;

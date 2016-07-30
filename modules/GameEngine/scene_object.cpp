@@ -3,10 +3,7 @@
 
 namespace GE {
 
-const TSceneObject::ComponentHandle TSceneObject::ComponentHandle::Undefined; //keep it before TSceneObject::ComponentHandleUndefined
-
-const TSceneObject::ComponentHandle TSceneObject::ComponentHandleUndefined =
-    TSceneObject::ComponentHandle::Undefined;
+const TSceneObject::ComponentHandle TSceneObject::ComponentHandle::Undefined{}; //keep it before TSceneObject::ComponentHandleUndefined
 
 const TSceneObject::Handle TSceneObject::HandleUndefined = -1u;
 
@@ -42,7 +39,7 @@ TSceneObject::Handle TSceneObject::AddComponent(const ComponentName& name,
 {
     ASSERT(name.empty() == false,
         "Attempt to add an unnamed component.");
-    ASSERT(component != ComponentHandleUndefined,
+    ASSERT(component != ComponentHandle::Undefined,
         "Attempt to add an empty component handle.")
     ASSERT(HasComponent(name) == false,
         "Component with this name already exists.");
@@ -79,7 +76,7 @@ TSceneObject::RemoveComponent(const Handle& handle) {
     entry.name.clear();
 
     auto componentHandle = entry.component;
-    entry.component = ComponentHandleUndefined;
+    entry.component = ComponentHandle::Undefined;
 
     freeHandles.push(handle);
     checkSize();
@@ -93,14 +90,14 @@ bool TSceneObject::HasComponent(const ComponentName& name) const {
 
 bool TSceneObject::HasComponent(const Handle& handle) const {
     return (handle < components.size()) &&
-        (components.at(handle).component != ComponentHandleUndefined);
+        (components.at(handle).component != ComponentHandle::Undefined);
 }
 
 bool TSceneObject::HasComponents() const {
     return components.empty() == false;
 }
 
-const TSceneObject::Components&TSceneObject::GetComponents() const {
+const TSceneObject::Components& TSceneObject::GetComponents() const {
     return components;
 }
 
@@ -112,7 +109,6 @@ void TSceneObject::checkSize() {
         nameMapping.clear();
     }
 }
-
 
 
 TSceneObject::ComponentHandle::ComponentHandle(

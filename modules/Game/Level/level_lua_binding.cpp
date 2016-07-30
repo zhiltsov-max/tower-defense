@@ -93,6 +93,14 @@ LUAPP_RV_CONVERT (TD::lua_binding::TSceneComponentID,
     { return context.ret(static_cast<int>(val)); }
 )
 
+LUAPP_ARG_CONVERT(TD::lua_binding::TSceneObjectHandle,
+    { return static_cast<TD::TLevelScene::ObjectHandle>(val.cast<uint>()); }
+)
+
+LUAPP_RV_CONVERT(TD::lua_binding::TSceneObjectHandle,
+    { return context.ret(static_cast<uint>(val)); }
+)
+
 LUAPP_USERDATA(TD::lua_binding::TSceneComponentHandle, "TSceneComponentHandle")
 LUAPP_USERDATA(TD::lua_binding::TSceneComponentPath, "TSceneComponentPath")
 LUAPP_USERDATA(TD::lua_binding::TSceneObject, "TSceneObject")
@@ -233,16 +241,16 @@ eTScene_AddSceneObject(TScene self, const TSceneObjectName& name,
     return self->AddSceneObject(name, sceneObject);
 }
 
-TSceneObject
+void
 eTScene_RemoveSceneObjectWithName(TScene self, const TSceneObjectName& name) {
-    return self->RemoveSceneObject(name);
+    self->RemoveSceneObject(name);
 }
 
-TSceneObject
+void
 eTScene_RemoveSceneObjectWithHandle(TScene self,
     const TSceneObjectHandle& handle)
 {
-    return self->RemoveSceneObject(handle);
+    self->RemoveSceneObject(handle);
 }
 
 void eTScene_Clear(TScene self) {
