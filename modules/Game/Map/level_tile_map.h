@@ -88,7 +88,7 @@ namespace GE {
 template<>
 struct ComponentID<TD::CLevelTileMap>
 {
-    static constexpr ComponentIDs value = ComponentIDs::LevelTileMap;
+    static const ComponentIDs value;
 };
 
 } // namespace GE
@@ -140,7 +140,7 @@ namespace GE {
 template<>
 struct ComponentID<TD::CLevelTileMapView>
 {
-    static constexpr ComponentIDs value = ComponentIDs::LevelTileMapView;
+    static const ComponentIDs value;
 };
 
 } // namespace GE

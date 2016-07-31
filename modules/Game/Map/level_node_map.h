@@ -15,6 +15,7 @@ class CLevelNodeMap :
 public:
     using Node = Vec2ui;
     using Path = vector<Node>;
+    using Index = size_t;
     struct Parameters;
 
     static std::unique_ptr<GE::TComponent> Create(
@@ -26,20 +27,20 @@ public:
     void AddEnter(const Node& node);
     void AddExit(const Node& node);
 	
-    const Node& GetEnter(size_t index = 0) const;
-    Node& GetEnter(size_t index = 0);
+    const Node& GetEnter(const Index& index = 0) const;
+    Node& GetEnter(const Index& index = 0);
 
-    const Node& GetExit(size_t index = 0) const;
-    Node& GetExit(size_t index = 0);
+    const Node& GetExit(const Index& index = 0) const;
+    Node& GetExit(const Index& index = 0);
 
-    const Path& GetPath(size_t index = 0) const;
-    Path& GetPath(size_t index = 0);
+    const Path& GetPath(const Index& index = 0) const;
+    Path& GetPath(const Index& index = 0);
 
     size_t GetPathCount() const;
     size_t GetEnterCount() const;
     size_t GetExitCount() const;
 	
-    size_t FindNearestExit(uint x, uint y) const;
+    Index FindNearestExit(uint x, uint y) const;
 		
     bool IsExit(const Node& node) const;
     bool IsEnter(const Node& node) const;
@@ -72,7 +73,7 @@ namespace GE {
 template<>
 struct ComponentID<TD::CLevelNodeMap>
 {
-    static constexpr ComponentIDs value = ComponentIDs::LevelNodeMap;
+    static const ComponentIDs value;
 };
 
 } // namespace GE
@@ -118,7 +119,7 @@ namespace GE {
 template<>
 struct ComponentID<TD::CLevelNodeMapView>
 {
-    static constexpr ComponentIDs value = ComponentIDs::LevelNodeMapView;
+    static const ComponentIDs value;
 };
 
 } // namespace GE

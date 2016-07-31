@@ -1,11 +1,20 @@
 #include "level_tile_map.h"
 
 
+const GE::ComponentIDs GE::ComponentID<TD::CLevelTileMap>::value =
+    GE::ComponentIDs::LevelTileMap;
+
+const GE::ComponentIDs GE::ComponentID<TD::CLevelTileMapView>::value =
+    GE::ComponentIDs::LevelTileMapView;
+
 namespace TD {
 
 std::unique_ptr<GE::TComponent>
 CLevelTileMap::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<CLevelTileMap::Parameters*>(args_);
+    const auto* args = dynamic_cast<const Parameters*>(args_);
+    if ((args_ != nullptr) && (args == nullptr)) {
+        THROW("Wrong args passed to function.");
+    }
     return std::unique_ptr<GE::TComponent>(new CLevelTileMap(args));
 }
 
@@ -24,16 +33,20 @@ CLevelTileMap::CLevelTileMap(const Parameters* source) :
     ASSERT(source->layers.size() == static_cast<size_t>(Layer::_count),
         "Unable to load levelTileMap: unexpected layers count.");
     for (uchar i = 0; i != source->layers.size(); ++i) {
-        ASSERT(source->layers[i].size() == source->size.x * source->size.y,
+        ASSERT(source->layers[i].tiles.size() == source->size.x * source->size.y,
             "Unexpected source layer size, layer #" + std::to_string(i));
     }
-    loadTiles(source);
+    loadTiles(*source);
     loadTilesets();
 }
 
 void CLevelTileMap::loadTiles(const Parameters& source) {
+    ASSERT(source.layers.size() <= static_cast<size_t>(Layer::_count),
+        "Failed to load tiles for map: unexpected layers count");
     for (uchar i = 0; i < source.layers.size(); ++i) {
-        std::copy(source.layers[i].begin(), source.layers[i].end(),
+        ASSERT(source.layers[i].tiles.size() <= size.x * size.y,
+            "Failed to load tiles for map: unexpected tiles count");
+        std::copy(source.layers[i].tiles.begin(), source.layers[i].tiles.end(),
             layers.begin() + getLayerBegin(i));
     }
 }
@@ -65,11 +78,22 @@ CLevelTileMap::GetLayer(const Layer& layer) const {
 }
 
 uchar CLevelTileMap::GetLayerCount() const {
-    return Layer::_count;
+    return static_cast<uchar>(Layer::_count);
 }
 
-std::pair<CLevelTileMap::Layers::iterator, CLevelTileMap::Layers::iterator>
-CLevelTileMap::GetLayer(const Layer& layer) const {
+size_t CLevelTileMap::getLayerBegin(uchar index) const {
+    return index * size.x * size.y;
+}
+
+size_t CLevelTileMap::getLayerEnd(uchar index) const {
+    return (index + 1) * size.x * size.y;
+}
+
+std::pair<
+    CLevelTileMap::Layers::iterator,
+    CLevelTileMap::Layers::iterator
+>
+CLevelTileMap::GetLayer(const Layer& layer) {
     return {
         layers.begin() + getLayerBegin(static_cast<uchar>(layer)),
         layers.begin() + getLayerEnd(static_cast<uchar>(layer))
@@ -81,15 +105,18 @@ void CLevelTileMap::SetSize(const Size& value) {
         "Unable to load levelTileMap: unexpected size.");
     if (size != value) {
         size = value;
-        layers.reserve(size.x * size.y * source.layers.size());
+        layers.resize(size.x * size.y * static_cast<uchar>(Layer::_count));
     }
 }
 
 
 std::unique_ptr<GE::TComponent>
 CLevelTileMapView::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<CLevelTileMap::Parameters*>(args_);
-    return std::unique_ptr<GE::TComponent>(new CLevelTileMapView(*args));
+    const auto* args = dynamic_cast<const Parameters*>(args_);
+    if ((args_ != nullptr) && (args == nullptr)) {
+        THROW("Wrong args passed to function.");
+    }
+    return std::unique_ptr<GE::TComponent>(new CLevelTileMapView(args));
 }
 
 CLevelTileMapView::CLevelTileMapView(const Parameters* source) :
@@ -110,8 +137,9 @@ void CLevelTileMapView::Update(const GE::TTime& step, Context& context) {
     //TODO: implementation
 }
 
-forward_list<GE::TMessage::ID> TD::CLevelTileMapView::GetAcceptedMessages() const {
+forward_list<GE::TMessage::ID> CLevelTileMapView::GetAcceptedMessages() const {
     /*TODO:...*/
+    return forward_list<GE::TMessage::ID>();
 }
 
 void CLevelTileMapView::Render(Graphics::TRenderTarget& target) {

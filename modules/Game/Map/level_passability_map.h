@@ -47,7 +47,7 @@ namespace GE {
 template<>
 struct ComponentID<TD::CLevelPassabilityMap>
 {
-    static constexpr ComponentIDs value = ComponentIDs::LevelPassabilityMap;
+    static const ComponentIDs value;
 };
 
 } // namespace GE

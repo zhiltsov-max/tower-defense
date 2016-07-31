@@ -10,7 +10,7 @@ namespace TD {
 using TLevelTileMapTilesetRegistry = GE::TRegistry<
     TLevelTileMapTileset, TLevelTileMapTilesetId>;
 
-class TLevelTileMapTilesetRegistryLoader
+class TLevelTileMapTilesetRegistryLoader //TODO: refactor class code
 {
 public:
     void SetDataPath(const string& value);

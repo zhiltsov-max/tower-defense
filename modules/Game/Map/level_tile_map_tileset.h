@@ -42,7 +42,7 @@ struct TLevelTileMapTileset
     struct TileProperties
     {
         std::array<bool, static_cast<TAltitude>(Altitude::_count)> passability;
-        std::array<PassWeight, static_cast<TPassWeight>(PassWeight::_count)>
+        std::array<PassWeight, static_cast<TAltitude>(Altitude::_count)>
             passWeight;
         bool buildable;
     };

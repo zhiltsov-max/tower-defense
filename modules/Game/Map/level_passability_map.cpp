@@ -1,16 +1,22 @@
 #include "level_passability_map.h"
 
 
+const GE::ComponentIDs GE::ComponentID<TD::CLevelPassabilityMap>::value =
+    GE::ComponentIDs::LevelPassabilityMap;
+
 namespace TD {
 
 std::unique_ptr<GE::TComponent>
-CPassabilityMap::Create(const GE::TComponentCreateArgs* args_) {
-    const auto* args = dynamic_cast<CLevelPassabilityMap::Parameters*>(args_);
-    return std::unique_ptr<GE::TComponent>(new CPassabilityMap(args));
+CLevelPassabilityMap::Create(const GE::TComponentCreateArgs* args_) {
+    const auto* args = dynamic_cast<const Parameters*>(args_);
+    if ((args_ != nullptr) && (args == nullptr)) {
+        THROW("Wrong args passed to function.");
+    }
+    return std::unique_ptr<GE::TComponent>(new CLevelPassabilityMap(args));
 }
 
-CPassabilityMap::CPassabilityMap(const Parameters* source) :
-    parent_type(GE::ComponentID<CPassabilityMap>::value)
+CLevelPassabilityMap::CLevelPassabilityMap(const Parameters* source) :
+    parent_type(GE::ComponentID<CLevelPassabilityMap>::value)
 {
     if (source != nullptr) {
         size = source->size;
@@ -20,12 +26,12 @@ CPassabilityMap::CPassabilityMap(const Parameters* source) :
     }
 }
 
-const CPassabilityMap::PassabilityMap&
-CPassabilityMap::GetMap(const Altitude& altitude) {
+const CLevelPassabilityMap::PassabilityMap&
+CLevelPassabilityMap::GetMap(const Altitude& altitude) {
     return maps[static_cast<uchar>(altitude)];
 }
 
-const Size& CPassabilityMap::GetSize() const {
+const CLevelPassabilityMap::Size& CLevelPassabilityMap::GetSize() const {
     return size;
 }
 

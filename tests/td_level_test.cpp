@@ -8,6 +8,7 @@ using namespace GE;
 using namespace TD;
 
 // ### Level tests ###
+
 class TestLevel :
     public ::testing::Test
 {
@@ -84,6 +85,7 @@ TEST_F(TestLevel, update_max_tick) {
     level->GetClock().SetRate(TLevelClock::Rate::_max);
     ASSERT_NO_THROW(level->Update());
 }
+
 
 // ### LevelScene tests ###
 

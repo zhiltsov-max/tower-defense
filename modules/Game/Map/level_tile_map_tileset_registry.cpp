@@ -25,9 +25,9 @@ void TLevelTileMapTilesetRegistryLoader::Load(
         }
     }
 
-    while ((data.good()) && (remaining_ids.empty() == false)) {
+    while ((source.good()) && (remaining_ids.empty() == false)) {
         string raw_data;
-        std::getline(data, raw_data);
+        std::getline(source, raw_data);
         if ((raw_data.empty() == true) ||
             (String::startsWith(raw_data, "'") == true))
         {
@@ -37,13 +37,13 @@ void TLevelTileMapTilesetRegistryLoader::Load(
         const auto parts = String::split(raw_data, ',');
         if (parts.size() < 4) {
             THROW("Unable to load tileset: wrong symbol at pos " +
-                std::to_string(data.tellg()));
+                std::to_string(source.tellg()));
         }
 
-        const TileID id = std::stoi(parts[0]);
+        const TLevelTileMapTilesetRegistry::ID id = std::stoi(parts[0]);
         if (id == 0) {
             THROW("Unable to load tileset: wrong tile index at pos " +
-                std::to_string(data.tellg()));
+                std::to_string(source.tellg()));
         }
         if (remaining_ids.count(id) == 0) {
             continue;
@@ -51,11 +51,11 @@ void TLevelTileMapTilesetRegistryLoader::Load(
 
         TLevelTileMapTileset info;
         readInfo(source, info);
-        registry.Register(id, entry);
+        registry.Register(id, info);
 
-        remaining_ids.remove(id);
+        remaining_ids.erase(id);
     }
-    data.close();
+    source.close();
 }
 
 void TLevelTileMapTilesetRegistryLoader::readInfo(std::istream& is,
@@ -70,9 +70,17 @@ void TLevelTileMapTilesetRegistryLoader::readInfo(std::istream& is,
     is >> count;
     info.properties.resize(count);
     for (int i = 0; i < count; ++i) {
-        is >> info.properties[i].passability;
-        is >> info.properties[i].passWeight;
-        is >> info.properties[i].buildability;
+        for (auto altitude = static_cast<TAltitude>(Altitude::_min);
+            altitude < static_cast<TAltitude>(Altitude::_count); ++altitude)
+        {
+            is >> info.properties[i].passability[altitude];
+
+            TPassWeight passWeight;
+            is >> passWeight;
+            info.properties[i].passWeight[altitude] = static_cast<PassWeight>(
+                passWeight);
+        }
+        is >> info.properties[i].buildable;
     }
 }
 
