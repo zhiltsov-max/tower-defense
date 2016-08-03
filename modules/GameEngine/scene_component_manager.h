@@ -20,7 +20,11 @@ public:
 
     void RemoveComponent(const ComponentHandle& handle);
 
+    const TComponent* GetComponent(const ComponentHandle& handle) const;
     TComponent* GetComponent(const ComponentHandle& handle);
+
+    template <class T>
+    const T* GetComponent(const ComponentHandle& handle) const;
     template <class T>
     T* GetComponent(const ComponentHandle& handle);
 
@@ -33,6 +37,13 @@ private:
     using PGameEngine = TGameEngine *;
     PGameEngine engine;
 };
+
+
+template< class T >
+const T*
+TSceneComponentManager::GetComponent(const ComponentHandle& handle) const {
+    return dynamic_cast<const T*>(GetComponent(handle));
+}
 
 template< class T >
 T* TSceneComponentManager::GetComponent(

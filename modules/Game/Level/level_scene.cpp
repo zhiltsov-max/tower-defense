@@ -36,6 +36,11 @@ bool TLevelScene::HasComponent(const ComponentHandle& handle) const {
     return scene.HasComponent(handle);
 }
 
+const GE::TComponent*
+TLevelScene::GetComponent(const ComponentHandle& handle) const {
+    return scene.GetComponent(handle);
+}
+
 GE::TComponent* TLevelScene::GetComponent(const ComponentHandle& handle) {
     return scene.GetComponent(handle);
 }

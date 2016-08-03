@@ -34,7 +34,10 @@ public:
     bool HasComponent(const ComponentHandle& handle) const;
 
     template <class T>
+    const T* GetComponent(const ComponentHandle& handle) const;
+    template <class T>
     T* GetComponent(const ComponentHandle& handle);
+    const GE::TComponent* GetComponent(const ComponentHandle& handle) const;
     GE::TComponent* GetComponent(const ComponentHandle& handle);
 
     ObjectHandle FindSceneObject(const ObjectName& name) const;
@@ -94,6 +97,11 @@ template<class Component>
 TLevelScene::ComponentHandle
 TLevelScene::CreateComponent(const GE::TComponentCreateArgs* args) {
     return CreateComponent(GE::ComponentID<Component>::value, args);
+}
+
+template< class T >
+const T* TLevelScene::GetComponent(const ComponentHandle& handle) const {
+    return dynamic_cast<T*>(GetComponent(handle));
 }
 
 template<class T>

@@ -66,6 +66,8 @@ public:
     bool operator==(const ComponentHandle& other) const;
     bool operator!=(const ComponentHandle& other) const;
 
+    bool IsNull() const;
+
 private:
     using Value = TComponentSystem::Handle;
     using System = ComponentSystem;

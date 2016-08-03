@@ -62,6 +62,12 @@ void TSceneComponentManager::RemoveComponent(const ComponentHandle& handle) {
     system->RemoveComponent(handle);
 }
 
+const TComponent*
+TSceneComponentManager::GetComponent(const ComponentHandle& handle) const {
+    return engine->GetComponentSystems().
+        systems[static_cast<uchar>(handle.GetSystem())]->GetComponent(handle);
+}
+
 TComponent* TSceneComponentManager::GetComponent(
     const TSceneComponentManager::ComponentHandle& handle)
 {

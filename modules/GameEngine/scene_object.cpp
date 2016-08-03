@@ -140,6 +140,10 @@ bool TSceneObject::ComponentHandle::operator != (
     return !operator==(other);
 }
 
+bool TSceneObject::ComponentHandle::IsNull() const {
+    return operator==(Undefined);
+}
+
 TSceneObject::ComponentHandle::operator size_t() const {
     return value;
 }

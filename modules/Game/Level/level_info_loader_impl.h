@@ -292,12 +292,12 @@ readFromRawLevelInfo<TLevel::Parameters::Common>(const TRawLevelInfo& source) {
     info.levelCode = source[CommonLevelInfo::LevelCode];
     info.nextLevelCode = source[CommonLevelInfo::NextLevelCode];
     info.loadingScript = source[CommonLevelInfo::LoadingScript];
-    info.levelType = LevelType::Undefined;
+    info.levelType = TLevel::LevelType::Undefined;
     const auto& type = source[CommonLevelInfo::LevelType];
     if (CommonLevelInfo::LevelType_Normal == type) {
-        info.levelType = LevelType::Normal;
+        info.levelType = TLevel::LevelType::Normal;
     } else if (CommonLevelInfo::LevelType_Free == type) {
-        info.levelType = LevelType::Free;
+        info.levelType = TLevel::LevelType::Free;
     } else {
         THROW("Unexpected level type: " + type);
     }

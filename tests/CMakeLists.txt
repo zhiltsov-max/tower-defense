@@ -137,3 +137,35 @@ target_link_libraries(gui_application_test
     td_gui_LIB
     td_application_core_LIB
 )
+
+add_executable(td_level_example examples/td_level_example.cpp
+    ../modules/Game/Components/components_list.h
+    ../modules/Game/Components/game_objects_info.h
+    ../modules/Game/Level/level.h
+    ../modules/Game/Level/level_clock.h
+    ../modules/Game/Level/level_info_loader.h
+    ../modules/Game/Level/level_info_loader_impl.h
+    ../modules/Game/Level/level_lua_binding.h
+    ../modules/Game/Level/level_scene.h
+    ../modules/Game/Components/components_list.cpp
+    ../modules/Game/Level/level.cpp
+    ../modules/Game/Level/level_clock.cpp
+    ../modules/Game/Level/level_info_loader.cpp
+    ../modules/Game/Level/level_lua_binding.cpp
+    ../modules/Game/Level/level_scene.cpp
+    ../modules/Game/Map/level_node_map.h
+    ../modules/Game/Map/level_passability_map.h
+    ../modules/Game/Map/level_tile_map.h
+    ../modules/Game/Map/level_tile_map_tileset.h
+    ../modules/Game/Map/level_tile_map_tileset_registry.h
+    ../modules/Game/Map/level_node_map.cpp
+    ../modules/Game/Map/level_passability_map.cpp
+    ../modules/Game/Map/level_tile_map.cpp
+    ../modules/Game/Map/level_tile_map_tileset_registry.cpp
+)
+target_link_libraries(td_level_example
+    td_core_LIB
+    td_gui_LIB
+    td_application_core_LIB
+    td_game_engine_LIB
+)

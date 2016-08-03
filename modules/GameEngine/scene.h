@@ -37,6 +37,9 @@ public:
 
     template <class T>
     T* GetComponent(const ComponentHandle& handle);
+    template <class T>
+    const T* GetComponent(const ComponentHandle& handle) const;
+    const TComponent* GetComponent(const ComponentHandle& handle) const;
     TComponent* GetComponent(const ComponentHandle& handle);
 
     ObjectHandle FindSceneObject(const ObjectName& name) const;
@@ -73,6 +76,12 @@ private:
     ObjectManager objectManager;
     ResourceManager resourceManager;
 };
+
+
+template< class T >
+const T* TScene::GetComponent(const TScene::ComponentHandle& handle) const {
+    return dynamic_cast<const T*>(GetComponent(handle));
+}
 
 template< class T >
 T* TScene::GetComponent(const ComponentHandle& handle) {

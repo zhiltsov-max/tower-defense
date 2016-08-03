@@ -33,6 +33,10 @@ bool TScene::HasComponent(const ComponentHandle& handle) const {
     return componentManager.HasComponent(handle);
 }
 
+const TComponent* TScene::GetComponent(const ComponentHandle& handle) const {
+    return componentManager.GetComponent(handle);
+}
+
 TComponent* TScene::GetComponent(const ComponentHandle& handle) {
     return componentManager.GetComponent(handle);
 }

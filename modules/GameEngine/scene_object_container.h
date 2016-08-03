@@ -69,6 +69,8 @@ public:
     bool operator == (const ObjectHandle& other) const;
     bool operator != (const ObjectHandle& other) const;
 
+    bool IsNull() const;
+
 private:
     Value handle;
 };

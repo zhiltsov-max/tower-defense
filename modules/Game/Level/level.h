@@ -10,12 +10,6 @@ namespace TD {
 
 using TLevelCode = string;
 
-enum class LevelType {
-    Undefined = 0,
-    Normal,
-    Free
-};
-
 /*
 See docs for complete information.
 */
@@ -24,6 +18,11 @@ class TLevel
 public:
     using Clock = TLevelClock;
     using Scene = TLevelScene;
+    enum class LevelType {
+        Undefined = 0,
+        Normal,
+        Free
+    };
     struct Parameters
     {
         struct Common
