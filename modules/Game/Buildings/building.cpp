@@ -124,12 +124,12 @@ void TBuilding::upgradeTo(uint newClass) { // TODO:
 
 	TEvent_BuildingUpgraded(this, [newBuilding->getClass()]);
 }
-	
+
 void TBuilding::explode() {
-	animation->setAction(BuildingAnimationGroup::Explode);
+    animation->setAction(BuildingAnimationGroup::Explode);
 }
-	
-	
+
+
 bool TBuilding::isPlaced() const {
 	return BuildState::Built <= buildState;
 }

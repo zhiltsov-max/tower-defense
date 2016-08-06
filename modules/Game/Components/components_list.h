@@ -6,7 +6,11 @@
 
 
 enum class GE::ComponentIDs : GE::TComponentID {
-    PlayerStatistics = 0,
+    Position2d = 0,
+
+    Health,
+
+    PlayerStatistics,
     PlayerProgress,
     PlayerQuests,
     PlayerResearches,
@@ -32,8 +36,25 @@ enum class GE::ComponentIDs : GE::TComponentID {
 
 namespace TD {
 
-GE::ComponentSystem
-GetComponentSystemForComponentID(const GE::ComponentIDs& id);
+namespace CS {
+
+namespace impl {
+
+GE::TComponentRegistry& GetComponentsRegistry();
+
+} // namespace impl
+
+template<class C>
+void RegisterComponentClass() {
+    GE::TComponentRegistry::Entry entry;
+    entry.create = &C::Create;
+    entry.system = GE::ComponentClass<C>::value;
+    impl::GetComponentsRegistry().Register(GE::ComponentID<C>::value, entry);
+}
+
+const GE::TComponentRegistry& GetComponentsRegistry();
+
+} // namespace CS
 
 } // namespace TD
 

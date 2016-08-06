@@ -30,6 +30,8 @@ set(td_application_headers
     Game/Components/animation.h 
     Game/Components/components_list.h 
     Game/Components/game_objects_info.h 
+    Game/Components/health_component.h
+    Game/Components/position_component.h
     Game/Level/level.h 
     Game/Level/level_clock.h 
     Game/Level/level_info_loader.h 
@@ -115,6 +117,8 @@ set(td_application_sources
     Game/Buildings/turretselection.cpp 
     Game/Components/animation.cpp 
     Game/Components/components_list.cpp
+    Game/Components/health_component.cpp
+    Game/Components/position_component.cpp
     Game/Level/level.cpp 
     Game/Level/level_clock.cpp 
     Game/Level/level_info_loader.cpp 

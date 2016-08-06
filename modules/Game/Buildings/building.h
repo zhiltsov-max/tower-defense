@@ -2,123 +2,121 @@
 #define BUILDING_H
 
 #include "GameEngine/scene_object.h"
+#include "GameEngine/component_systems.h"
+#include "GameEngine/scene.h"
 
 
 namespace TD {
 
-
-using TBuilding = TSceneObject;
 using TBuildingClassId = TGameObjectClassId;
 
-
-class CMouseInput : public CInputComponent
+class CMouseInput : public GE::CInputComponent
 {
 public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    virtual void HandleMessage(const GE::TMessage& message,
+        Context& context) override;
+    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override;
+    virtual Update(Context& context) override;
 };
 
-
-class CPosition : public CMovementComponent
+class CSelectableModel : public GE::CDataComponent
 {
 public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
-
-private:
-    Point2f position;
-    float rotation;
-};
-
-
-class CSelection : public CGraphicsComponent
-{
-public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
-
+    bool IsSelected() const;
+    void SetSelection(bool value);
 private:
     bool selected;
-    std::unique_ptr<TBuildingSelection> selection;
 };
 
-
-enum class BuildingAppearance {
-    undefined = 0,
-    Ground = 1,
-    Air = 2
-};
-
-
-class TBuildingsController;
-
-class CBuildingBehaviour : public CLogicsComponent
+class CExplodableBehaviour : public GE::CLogicsComponent
 {
 public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    using Power = uint;
 
 private:
-    const TBuildingClassId id;
+    Power power;
 
-    enum class State {
+    void Explode();
+};
 
+class CBreakableBehaviour : public GE::CLogicsComponent
+{
+public:
+};
+
+class CConstructibleBehaviour : public GE::CLogicsComponent
+{
+public:
+    virtual void HandleMessage(const GE::TMessage& message,
+        Context& context) override;
+    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override;
+
+    virtual void Update(const GE::TTime& step, Context& context) override;
+
+private:
+    enum class State : char {
+        Undefined = 0,
+        PositionSelection,
+        RotationSelection,
+        Placed,
+        Built
     };
+    GE::TScene::ComponentPath buildingsControllerPath;
+    GE::TScene::ComponentHandle buildingsControllerHandle;
+    GE::TScene::ComponentPath buildingModelPath;
+    GE::TScene::ComponentHandle buildingModelHandle;
     State state;
 
-    TBuildingsController* controller;
+    const Altitude& GetAltitude() const;
 
+    bool IsPlaced() const;
+    bool IsBuilt() const;
+    bool IsOnTile(const Point2f& tilePos) const;
+    bool CanBuildThere(const Point2f& tilePos) const;
 
-    virtual uint getUpgradeCost() const;
-    virtual uint getMajorUpgrade() const;
-    virtual const BuildingAppearance& getAppearance() const;
-    virtual uint getCost() const;
-
-    virtual void sell();
-    virtual void rejectBuilding();
-    virtual void upgradeTo(uint newClass);
-    virtual void explode();
-
-    virtual bool isPlaced() const;
-    virtual bool isBuilt() const;
-    virtual bool isSelected() const;
-    virtual bool isOnTile(const Point2f& tilePos) const;
-    virtual bool canBuildThere(const Point2f& tilePos) const;
-
-    virtual void updateBuildState();
-    virtual void updateSelection();
-    virtual void updateAnimation();
-    virtual void updateBehaviour() = 0;
-
-    virtual void tryBuild();
-    virtual void selectPlace();
-    virtual void selectRotation();
+    void RejectBuilding();
+    void TryBuild();
+    void SelectPlace();
+    void SelectRotation();
 };
 
-
-class CHealth : public CLogicsComponent
+class CTradableBehaviour : public GE::CLogicsComponent
 {
 public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    using Cost = int;
 
 private:
-    int health;
+    Cost cost;
+
+    const Cost& GetCost() const;
+    void Sell();
 };
 
+class CUpgradableBehaviour : public GE::CLogicsComponent
+{
+public:
 
-static void BuildingInfoLoader_Basic(Info& info, std::istream& source);
+private:
+    GE::TScene::ComponentPath buildingsControllerPath;
+    GE::TScene::ComponentHandle buildingsControllerHandle;
+    GE::TScene::ComponentPath buildingModelPath;
+    GE::TScene::ComponentHandle buildingModelHandle;
 
+    const Cost& GetUpgradeCost() const;
+
+    const UpgradeIndex& GetMajorUpgrade() const;
+    void UpgradeTo(const TBuildingClassId& newClass);
+};
+
+class CBuilding : public GE::CDataComponent
+{
+public:
+    using ClassID = TBuildingClassId;
+
+    const ClassID& GetClassID() const;
+private:
+    ClassID classId;
+};
 
 } // namespace TD
 
