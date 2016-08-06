@@ -1,6 +1,7 @@
 #include "game_state_initial.h"
 #include "Game/States/game_state_level_loading.h"
 #include "Game/Level/level_lua_binding.h"
+#include "Game/Components/td_components_registry.h"
 
 
 namespace TD {
@@ -14,6 +15,8 @@ void TGameState_Initial::Update() {
 
     game->gameEngine.GetComponentSystems().
         ui.SetApplicationUI(&app->getUI());
+
+    game->gameEngine.GetComponentRegistry() = CS::GetComponentRegistry();
 
     TD::lua_binding::bindToLUA(
         game->gameEngine.GetScriptEngine().Get());

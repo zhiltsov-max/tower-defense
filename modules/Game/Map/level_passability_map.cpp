@@ -1,8 +1,12 @@
-#include "level_passability_map.h"
+#include "Game/Map/level_passability_map.h"
+#include "Game/Components/components_list.h"
 
 
 const GE::ComponentIDs GE::ComponentID<TD::CLevelPassabilityMap>::value =
     GE::ComponentIDs::LevelPassabilityMap;
+
+const GE::ComponentSystem GE::ComponentClass<TD::CLevelPassabilityMap>::value =
+    GE::ComponentSystem::data;
 
 namespace TD {
 

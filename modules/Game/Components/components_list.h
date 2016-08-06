@@ -6,7 +6,11 @@
 
 
 enum class GE::ComponentIDs : GE::TComponentID {
-    PlayerStatistics = 0,
+    Position2d = 0,
+
+    Health,
+
+    PlayerStatistics,
     PlayerProgress,
     PlayerQuests,
     PlayerResearches,
@@ -29,12 +33,5 @@ enum class GE::ComponentIDs : GE::TComponentID {
 
     _count
 };
-
-namespace TD {
-
-GE::ComponentSystem
-GetComponentSystemForComponentID(const GE::ComponentIDs& id);
-
-} // namespace TD
 
 #endif // COMPONENTS_LIST_H

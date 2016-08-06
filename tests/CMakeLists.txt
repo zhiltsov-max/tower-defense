@@ -74,7 +74,6 @@ add_executable(td_level_test td_level_test.cpp
     ../modules/Game/Level/level_info_loader_impl.h
     ../modules/Game/Level/level_lua_binding.h
     ../modules/Game/Level/level_scene.h
-    ../modules/Game/Components/components_list.cpp
     ../modules/Game/Level/level.cpp
     ../modules/Game/Level/level_clock.cpp
     ../modules/Game/Level/level_info_loader.cpp
@@ -102,7 +101,6 @@ add_executable(td_map_components_test td_map_components_test.cpp
     ../modules/Game/Level/level_info_loader_impl.h
     ../modules/Game/Level/level_lua_binding.h
     ../modules/Game/Level/level_scene.h
-    ../modules/Game/Components/components_list.cpp
     ../modules/Game/Level/level.cpp
     ../modules/Game/Level/level_clock.cpp
     ../modules/Game/Level/level_info_loader.cpp
@@ -147,7 +145,6 @@ add_executable(td_level_example examples/td_level_example.cpp
     ../modules/Game/Level/level_info_loader_impl.h
     ../modules/Game/Level/level_lua_binding.h
     ../modules/Game/Level/level_scene.h
-    ../modules/Game/Components/components_list.cpp
     ../modules/Game/Level/level.cpp
     ../modules/Game/Level/level_clock.cpp
     ../modules/Game/Level/level_info_loader.cpp

@@ -2,7 +2,6 @@
 #define LEVEL_NODE_MAP_H
 
 #include "Core/core.h"
-#include "Game/Components/components_list.h"
 #include "GameEngine/component_systems.h"
 #include "Game/Level/level_scene.h"
 
@@ -76,6 +75,12 @@ struct ComponentID<TD::CLevelNodeMap>
     static const ComponentIDs value;
 };
 
+template<>
+struct ComponentClass<TD::CLevelNodeMap>
+{
+    static const ComponentSystem value;
+};
+
 } // namespace GE
 
 
@@ -103,7 +108,6 @@ private:
 
     TLevelScene::ComponentPath nodeMapComponentPath;
     TLevelScene::ComponentHandle nodeMapHandle;
-
 };
 
 struct CLevelNodeMapView::Parameters : GE::TComponentCreateArgs
@@ -120,6 +124,12 @@ template<>
 struct ComponentID<TD::CLevelNodeMapView>
 {
     static const ComponentIDs value;
+};
+
+template<>
+struct ComponentClass<TD::CLevelNodeMapView>
+{
+    static const ComponentSystem value;
 };
 
 } // namespace GE
