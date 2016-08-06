@@ -110,6 +110,17 @@ TEST_F(TestRegistry, clear_clears) {
 
 // ### COMPONENT SYSTEM TESTS ###
 
+enum class GE::ComponentSystem : TComponentSystemTypeId {
+    _min = 0,
+
+    Custom = _min,
+
+    _max,
+    _count = _max - _min,
+
+    _undefined
+};
+
 enum class GE::ComponentIDs : TComponentID {
     _min = 0,
 
@@ -217,6 +228,7 @@ const ComponentSystem ComponentClass<TestComponent>::value =
     ComponentSystem::_undefined;
 } //namespace GE
 
+
 TestComponent::TestComponent() :
     ::testing::Test(),
     TComponent(ComponentID<TestComponent>::value)
@@ -263,7 +275,7 @@ TEST_F(TestComponent, message_handling_unexpected) {
 // === ComponentSystem Tests ===
 
 class CustomComponent :
-    public CDataComponent
+    public TComponent
 {
 public:
     struct Parameters : GE::TComponentCreateArgs
@@ -311,11 +323,11 @@ struct ComponentClass< CustomComponent > {
     static const ComponentSystem value;
 };
 const ComponentSystem ComponentClass<CustomComponent>::value =
-    ComponentSystem::data;
+    ComponentSystem::Custom;
 } //namespace GE
 
 CustomComponent::CustomComponent(const CustomComponent::Parameters* parameters) :
-    CDataComponent(ComponentID<CustomComponent>::value),
+    TComponent(ComponentID<CustomComponent>::value),
     value(0)
 {
     if (parameters != nullptr) {
@@ -336,7 +348,7 @@ protected:
 
         TComponentRegistry::Entry customComponentEntry;
         customComponentEntry.create = &CustomComponent::Create;
-        customComponentEntry.system = ComponentSystem::_undefined;
+        customComponentEntry.system = ComponentClass<CustomComponent>::value;
         testRegistry.Register(ComponentIDs::CustomComponent,
             customComponentEntry);
 
@@ -436,11 +448,97 @@ TEST_F(TestComponentSystem, is_empty_not_empty_when_not_empty) {
     ASSERT_FALSE(IsEmpty());
 }
 
+// === ComponentSystems Tests ===
+
+class CustomComponentSystem : public TComponentSystem
+{
+public:
+    virtual void Update(const TTime& step, Context& context) {}
+};
+
+
+TEST(ComponentSystemsTest, set_game_engine_with_no_systems) {
+    TGameEngine engine;
+    TComponentSystems systems;
+
+    ASSERT_NO_THROW(systems.SetGameEngine(&engine));
+}
+
+TEST(ComponentSystemsTest, set_game_engine_with_nullptr) {
+    TComponentSystems systems;
+
+    ASSERT_NO_THROW(systems.SetGameEngine(nullptr));
+}
+
+TEST(ComponentSystemsTest, add_system) {
+    std::unique_ptr<TComponentSystem> system(new CustomComponentSystem);
+    const auto* ptr = system.get();
+    TComponentSystems systems;
+
+    ASSERT_EQ(ptr, systems.AddSystem(
+        ComponentSystem::Custom, std::move(system)));
+}
+
+TEST(ComponentSystemsTest, add_system_by_template) {
+    TComponentSystems systems;
+
+    ASSERT_NE(nullptr, systems.AddSystem<CustomComponentSystem>(
+        ComponentSystem::Custom));
+}
+
+TEST(ComponentSystemsTest, remove_system_existing) {
+    const auto id = ComponentSystem::Custom;
+    TComponentSystems systems;
+    systems.AddSystem<CustomComponentSystem>(id);
+
+    ASSERT_NO_THROW(systems.RemoveSystem(id));
+
+    EXPECT_FALSE(systems.HasSystem(id));
+}
+
+TEST(ComponentSystemsTest, remove_system_unexisting_failure) {
+    const auto id = ComponentSystem::Custom;
+    TComponentSystems systems;
+
+    ASSERT_ANY_THROW(systems.RemoveSystem(id));
+}
+
+TEST(ComponentSystemsTest, has_system_has_existing) {
+    const auto id = ComponentSystem::Custom;
+    TComponentSystems systems;
+    systems.AddSystem<CustomComponentSystem>(id);
+
+    ASSERT_TRUE(systems.HasSystem(id));
+}
+
+TEST(ComponentSystemsTest, has_system_has_not_unexisting) {
+    const auto id = ComponentSystem::Custom;
+    TComponentSystems systems;
+
+    ASSERT_FALSE(systems.HasSystem(id));
+}
+
+TEST(ComponentSystemsTest, find_system_existing_success) {
+    const auto id = ComponentSystem::Custom;
+    TComponentSystems systems;
+    const auto* ptr = systems.AddSystem<CustomComponentSystem>(id);
+
+    ASSERT_EQ(ptr, systems.FindSystem(id));
+}
+
+TEST(ComponentSystemsTest, find_system_unexisting_failure) {
+    const auto id = ComponentSystem::Custom;
+    TComponentSystems systems;
+
+    ASSERT_EQ(nullptr, systems.FindSystem(id));
+}
+
+
 // ### SCENE TESTS ###
 // === SceneObject Tests ===
 
 TEST(SceneObjectTest, add_component_success) {
-    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
 
@@ -450,7 +548,7 @@ TEST(SceneObjectTest, add_component_success) {
 }
 
 TEST(SceneObjectTest, add_component_failure_empty_name) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name;
     TSceneObject sceneObject;
 
@@ -466,7 +564,7 @@ TEST(SceneObjectTest, add_component_failure_empty_component) {
 }
 
 TEST(SceneObjectTest, add_component_failure_duplicate) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     sceneObject.AddComponent(name, handle);
@@ -475,7 +573,7 @@ TEST(SceneObjectTest, add_component_failure_duplicate) {
 }
 
 TEST(SceneObjectTest, has_component_with_handle_positive) {
-    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeHandle);
@@ -484,7 +582,7 @@ TEST(SceneObjectTest, has_component_with_handle_positive) {
 }
 
 TEST(SceneObjectTest, has_component_with_handle_negative_unknown_handle) {
-    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     sceneObject.AddComponent(name, fakeHandle);
@@ -493,7 +591,7 @@ TEST(SceneObjectTest, has_component_with_handle_negative_unknown_handle) {
 }
 
 TEST(SceneObjectTest, has_component_with_name) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
 
@@ -505,7 +603,7 @@ TEST(SceneObjectTest, has_component_with_name) {
 }
 
 TEST(SceneObjectTest, has_components) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
 
@@ -517,7 +615,7 @@ TEST(SceneObjectTest, has_components) {
 }
 
 TEST(SceneObjectTest, remove_component_with_handle_success) {
-    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeHandle);
@@ -528,7 +626,7 @@ TEST(SceneObjectTest, remove_component_with_handle_success) {
 }
 
 TEST(SceneObjectTest, remove_component_with_name_success) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     sceneObject.AddComponent(name, handle);
@@ -539,7 +637,7 @@ TEST(SceneObjectTest, remove_component_with_name_success) {
 }
 
 TEST(SceneObjectTest, remove_component_with_name_failure_unknown_component) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
 
@@ -547,7 +645,7 @@ TEST(SceneObjectTest, remove_component_with_name_failure_unknown_component) {
 }
 
 TEST(SceneObjectTest, remove_component_with_name_failure_empty_name) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name;
     TSceneObject sceneObject;
 
@@ -564,7 +662,7 @@ TEST(SceneObjectTest, remove_component_with_name_failure_unknown_handle) {
 
 TEST(SceneObjectTest, get_component_handle_by_handle) {
     const TSceneObject::ComponentHandle fakeComponentHandle(
-        1, ComponentSystem::logics);
+        1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeComponentHandle);
@@ -573,7 +671,7 @@ TEST(SceneObjectTest, get_component_handle_by_handle) {
 }
 
 TEST(SceneObjectTest, get_component_handle_by_name) {
-    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     sceneObject.AddComponent(name, fakeHandle);
@@ -582,7 +680,7 @@ TEST(SceneObjectTest, get_component_handle_by_name) {
 }
 
 TEST(SceneObjectTest, get_handle_by_name) {
-    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeHandle);
@@ -593,7 +691,7 @@ TEST(SceneObjectTest, get_handle_by_name) {
 
 TEST(SceneObject_ComponentHandleTest, get_value) {
     const size_t handleValue = 1;
-    const auto handleSystem = ComponentSystem::logics;
+    const auto handleSystem = ComponentSystem::Custom;
     const TSceneObject::ComponentHandle handle(handleValue, handleSystem);
 
     EXPECT_EQ(handleValue, handle.GetValue());
@@ -601,7 +699,7 @@ TEST(SceneObject_ComponentHandleTest, get_value) {
 
 TEST(SceneObject_ComponentHandleTest, get_system) {
     const size_t handleValue = 1;
-    const auto handleSystem = ComponentSystem::logics;
+    const auto handleSystem = ComponentSystem::Custom;
     const TSceneObject::ComponentHandle handle(handleValue, handleSystem);
 
     EXPECT_EQ(handleSystem, handle.GetSystem());
@@ -609,36 +707,36 @@ TEST(SceneObject_ComponentHandleTest, get_system) {
 
 TEST(SceneObject_ComponentHandleTest, explicit_conversion_to_handle) {
     const size_t handleValue = 1;
-    const auto handleSystem = ComponentSystem::logics;
+    const auto handleSystem = ComponentSystem::Custom;
     const TSceneObject::ComponentHandle handle(handleValue, handleSystem);
 
     EXPECT_EQ(handleValue, static_cast<size_t>(handle));
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_equals_positive) {
-    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::logics);
-    const TSceneObject::ComponentHandle handle2(0, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
+    const TSceneObject::ComponentHandle handle2(0, ComponentSystem::Custom);
 
     EXPECT_TRUE(handle1 == handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_equals_negative) {
-    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::logics);
-    const TSceneObject::ComponentHandle handle2(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
+    const TSceneObject::ComponentHandle handle2(1, ComponentSystem::Custom);
 
     EXPECT_FALSE(handle1 == handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_not_equals_positive) {
-    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::logics);
-    const TSceneObject::ComponentHandle handle2(1, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
+    const TSceneObject::ComponentHandle handle2(1, ComponentSystem::Custom);
 
     EXPECT_TRUE(handle1 != handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_not_equals_negative) {
-    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::logics);
-    const TSceneObject::ComponentHandle handle2(0, ComponentSystem::logics);
+    const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
+    const TSceneObject::ComponentHandle handle2(0, ComponentSystem::Custom);
 
     EXPECT_FALSE(handle1 != handle2);
 }
@@ -811,14 +909,17 @@ public:
     {}
 
     virtual void SetUp() override {
-        engine.reset(new GE::TGameEngine);
+        engine.reset(new GE::TGameEngine());
+        engine->GetComponentSystems().
+            AddSystem<CustomComponentSystem>(GE::ComponentSystem::Custom);
 
         TComponentRegistry::Entry entry;
         entry.create = &CustomComponent::Create;
         entry.system = ComponentClass<CustomComponent>::value;
         engine->GetComponentRegistry().Register(
             ComponentID<CustomComponent>::value, entry);
-        scene.reset(new TScene);
+
+        scene.reset(new TScene());
         scene->SetGameEngine(engine.get());
     }
 
@@ -881,10 +982,19 @@ TEST_F(TestScene, get_component_and_cast_unexisting_handle) {
 }
 
 TEST_F(TestScene, get_component_and_cast_wrong_class) {
+    class OtherComponent : TComponent {
+        virtual void HandleMessage(const TMessage& message,
+            Context& context) override {}
+        virtual forward_list<TMessage::ID>
+            GetAcceptedMessages() const override
+        {
+            return forward_list<TMessage::ID>();
+        }
+    };
     const auto handle = scene->CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
 
-    ASSERT_EQ(nullptr, scene->GetComponent<CLogicsComponent>(handle));
+    ASSERT_EQ(nullptr, scene->GetComponent<OtherComponent>(handle));
 }
 
 TEST_F(TestScene, get_component_existing) {

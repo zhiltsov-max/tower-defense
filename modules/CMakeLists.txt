@@ -31,6 +31,8 @@ set(td_application_headers
     Game/Components/components_list.h 
     Game/Components/td_components_registry.h
     Game/Components/game_objects_info.h 
+    Game/ComponentSystems/td_component_systems.h
+    Game/ComponentSystems/td_component_systems_list.h
     Game/Level/level.h 
     Game/Level/level_clock.h 
     Game/Level/level_info_loader.h 

@@ -25,7 +25,6 @@ public:
     TGameEngine();
 
     void Update(const TTime& step, Context& context);
-    void Draw(Graphics::TRenderTarget& target);
     void SendMessage(const Message& message, Context& context);
 
     const ScriptEngine& GetScriptEngine() const;

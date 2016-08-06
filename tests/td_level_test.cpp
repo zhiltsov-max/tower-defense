@@ -2,6 +2,7 @@
 #include "GameEngine/game_engine.h"
 #include "Game/Level/level.h"
 #include "Game/Level/level_scene.h"
+#include "GameEngine/ComponentSystems/component_system_data.h"
 
 
 using namespace GE;
@@ -89,6 +90,17 @@ TEST_F(TestLevel, update_max_tick) {
 
 // ### LevelScene tests ###
 
+enum class GE::ComponentSystem : GE::TComponentSystemTypeId {
+    _min = 0,
+
+    Data = _min,
+
+    _max,
+    _count = _max - _min,
+
+    _undefined
+};
+
 enum class GE::ComponentIDs : TComponentID {
     _min = 0,
 
@@ -147,11 +159,11 @@ struct ComponentClass< CustomComponent > {
     static const ComponentSystem value;
 };
 const ComponentSystem ComponentClass<CustomComponent>::value =
-    ComponentSystem::data;
+    ComponentSystem::Data;
 } //namespace GE
 
 CustomComponent::CustomComponent(const CustomComponent::Parameters* parameters) :
-    CDataComponent(ComponentID<CustomComponent>::value),
+    GE::CDataComponent(ComponentID<CustomComponent>::value),
     value(0)
 {
     if (parameters != nullptr) {
@@ -171,13 +183,16 @@ public:
     {}
 
     virtual void SetUp() override {
-        engine.reset(new GE::TGameEngine);
+        engine.reset(new GE::TGameEngine());
+        engine->GetComponentSystems().
+            AddSystem<GE::CSDataSystem>(GE::ComponentSystem::Data);
 
         GE::TComponentRegistry::Entry entry;
         entry.create = &CustomComponent::Create;
         entry.system = GE::ComponentClass<CustomComponent>::value;
         engine->GetComponentRegistry().Register(
             GE::ComponentID<CustomComponent>::value, entry);
+
         scene.reset(new TD::TLevelScene(generateInfo(), engine.get()));
     }
 
@@ -265,10 +280,19 @@ TEST_F(TestLevelScene, get_component_and_cast_unexisting_handle) {
 }
 
 TEST_F(TestLevelScene, get_component_and_cast_wrong_class) {
+    class OtherComponent : GE::TComponent {
+        virtual void HandleMessage(const GE::TMessage& message,
+            Context& context) override {}
+        virtual forward_list<GE::TMessage::ID>
+            GetAcceptedMessages() const override
+        {
+            return forward_list<GE::TMessage::ID>();
+        }
+    };
     const auto handle = scene->CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
 
-    ASSERT_EQ(nullptr, scene->GetComponent<GE::CLogicsComponent>(handle));
+    ASSERT_EQ(nullptr, scene->GetComponent<OtherComponent>(handle));
 }
 
 TEST_F(TestLevelScene, get_component_existing) {

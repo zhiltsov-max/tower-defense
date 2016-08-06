@@ -9,8 +9,10 @@ void TSceneComponentManager::SetGameEngine(TGameEngine* instance) {
 }
 
 bool TSceneComponentManager::IsEmpty() const {
-    for (const auto& system : engine->GetComponentSystems().systems) {
-        if (system->IsEmpty() == false) {
+    ASSERT(engine != nullptr, "Game engine must be set.");
+
+    for (const auto& system : engine->GetComponentSystems().GetSystems()) {
+        if (system.second->IsEmpty() == false) {
             return false;
         }
     }
@@ -18,8 +20,10 @@ bool TSceneComponentManager::IsEmpty() const {
 }
 
 void TSceneComponentManager::Clear() {
-    for (const auto& system : engine->GetComponentSystems().systems) {
-        system->Clear();
+    ASSERT(engine != nullptr, "Game engine must be set.");
+
+    for (const auto& system : engine->GetComponentSystems().GetSystems()) {
+        system.second->Clear();
     }
 }
 
@@ -27,52 +31,61 @@ TSceneComponentManager::ComponentHandle
 TSceneComponentManager::CreateComponent(const TComponent::ID& id,
     const TComponentCreateArgs* args)
 {
-#if defined(_DEBUG)
-    ASSERT(engine != nullptr, "Game engine must be set.")
-#else
-    if (engine == nullptr) {
-        return ComponentHandle::Undefined;
-    }
-#endif // DEBUG
+    ASSERT(engine != nullptr, "Game engine must be set.");
 
     const auto& componentClass = engine->GetComponentRegistry()[id].system;
-    auto* system = engine->GetComponentSystems().
-        systems[static_cast<uchar>(componentClass)];
+    auto* system = engine->GetComponentSystems().FindSystem(componentClass);
+    ASSERT(system != nullptr, "Unexpected system requested for component.");
 
     ComponentHandle handle(system->CreateComponent(id, args), componentClass);
     return handle;
 }
 
 bool TSceneComponentManager::HasComponent(const ComponentHandle& handle) const {
-    return engine->GetComponentSystems().
-        systems[static_cast<uchar>(handle.GetSystem())]->HasComponent(handle);
+    ASSERT(engine != nullptr, "Game engine must be set.");
+
+    const auto* system = engine->GetComponentSystems().
+        FindSystem(handle.GetSystem());
+    if (system != nullptr) {
+        return system->HasComponent(handle);
+    } else {
+        return false;
+    }
 }
 
 void TSceneComponentManager::RemoveComponent(const ComponentHandle& handle) {
-#if defined(_DEBUG)
-    ASSERT(engine != nullptr, "Game engine must be set.")
-#else
-    if (engine == nullptr) {
-        return;
-    }
-#endif // DEBUG
+    ASSERT(engine != nullptr, "Game engine must be set.");
 
-    const auto& componentClass = handle.GetSystem();
-    auto* system = engine->GetComponentSystems().systems[(uchar)componentClass];
+    auto* system = engine->GetComponentSystems().FindSystem(handle.GetSystem());
+    ASSERT(system != nullptr, "Unexpected system requested for component.");
+
     system->RemoveComponent(handle);
 }
 
 const TComponent*
 TSceneComponentManager::GetComponent(const ComponentHandle& handle) const {
-    return engine->GetComponentSystems().
-        systems[static_cast<uchar>(handle.GetSystem())]->GetComponent(handle);
+    ASSERT(engine != nullptr, "Game engine must be set.");
+
+    const auto* system = engine->GetComponentSystems().
+        FindSystem(handle.GetSystem());
+    if (system != nullptr) {
+        return system->GetComponent(handle);
+    } else {
+        return nullptr;
+    }
 }
 
-TComponent* TSceneComponentManager::GetComponent(
-    const TSceneComponentManager::ComponentHandle& handle)
-{
-    return engine->GetComponentSystems().
-        systems[static_cast<uchar>(handle.GetSystem())]->GetComponent(handle);
+TComponent*
+TSceneComponentManager::GetComponent(const ComponentHandle& handle) {
+    ASSERT(engine != nullptr, "Game engine must be set.");
+
+    auto* system = engine->GetComponentSystems().
+        FindSystem(handle.GetSystem());
+    if (system != nullptr) {
+        return system->GetComponent(handle);
+    } else {
+        return nullptr;
+    }
 }
 
 } //namespace GE

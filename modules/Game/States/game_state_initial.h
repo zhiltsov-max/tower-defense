@@ -1,7 +1,8 @@
 #ifndef GAME_STATE_INITIAL_H
 #define GAME_STATE_INITIAL_H
 
-#include "game_state.h"
+#include "Game/States/game_state.h"
+#include "GameEngine/game_engine.h"
 
 
 namespace TD {
@@ -18,6 +19,10 @@ public:
 
 private:
     using parent_type = TGame::State;
+
+    void setUpGameEngine(GE::TGameEngine& engine);
+    void setUpComponentSystems(GE::TComponentSystems& manager);
+    void setUpComponentRegistry(GE::TComponentRegistry& registry);
 };
 
 

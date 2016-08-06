@@ -2,7 +2,7 @@
 #define LEVEL_PASSABILITY_MAP_H
 
 #include "Core/core.h"
-#include "GameEngine/component_systems.h"
+#include "Game/ComponentSystems/td_component_systems.h"
 #include "Game/Map/level_tile_map_tileset.h"
 #include "Game/Map/level_tile_map_tileset_registry.h"
 

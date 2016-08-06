@@ -5,7 +5,6 @@ set(game_engine_headers
     component_registry.h
     component_system.h
     component_systems.h
-    ComponentSystems/component_systems_enum.h
     ComponentSystems/component_system_data.h
     ComponentSystems/component_system_graphics.h
     ComponentSystems/component_system_input.h

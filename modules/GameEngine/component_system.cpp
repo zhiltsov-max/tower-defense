@@ -7,6 +7,12 @@ namespace GE {
 
 const TComponentSystem::Handle TComponentSystem::HandleUndefined = -1u;
 
+TComponentSystem::TComponentSystem() :
+    componentRegistry(nullptr),
+    components(),
+    listeners()
+{}
+
 TComponentSystem::Handle TComponentSystem::CreateComponent(
     const TComponent::ID& typeID, const TComponentCreateArgs* args)
 {
@@ -39,6 +45,15 @@ void TComponentSystem::RemoveComponent(const Handle& handle) {
     auto it = components.begin();
     std::advance(it, handle);
     components.erase(it);
+}
+
+const TComponentSystem::Component*
+TComponentSystem::GetComponent(const Handle& handle) const {
+    if (HasComponent(handle) == true) {
+        return components[handle].get();
+    } else {
+        return nullptr;
+    }
 }
 
 TComponentSystem::Component*
