@@ -1,11 +1,18 @@
-#include "level_tile_map.h"
+#include "Game/Map/level_tile_map.h"
+#include "Game/Components/components_list.h"
 
 
 const GE::ComponentIDs GE::ComponentID<TD::CLevelTileMap>::value =
     GE::ComponentIDs::LevelTileMap;
 
+const GE::ComponentSystem GE::ComponentClass<TD::CLevelTileMap>::value =
+    GE::ComponentSystem::data;
+
 const GE::ComponentIDs GE::ComponentID<TD::CLevelTileMapView>::value =
     GE::ComponentIDs::LevelTileMapView;
+
+const GE::ComponentSystem GE::ComponentClass<TD::CLevelTileMapView>::value =
+    GE::ComponentSystem::graphics;
 
 namespace TD {
 

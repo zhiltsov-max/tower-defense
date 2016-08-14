@@ -2,7 +2,6 @@
 #define LEVEL_PASSABILITY_MAP_H
 
 #include "Core/core.h"
-#include "Game/Components/components_list.h"
 #include "GameEngine/component_systems.h"
 #include "Game/Map/level_tile_map_tileset.h"
 #include "Game/Map/level_tile_map_tileset_registry.h"
@@ -48,6 +47,12 @@ template<>
 struct ComponentID<TD::CLevelPassabilityMap>
 {
     static const ComponentIDs value;
+};
+
+template<>
+struct ComponentClass<TD::CLevelPassabilityMap>
+{
+    static const ComponentSystem value;
 };
 
 } // namespace GE

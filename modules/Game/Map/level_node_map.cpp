@@ -1,12 +1,19 @@
-#include "level_node_map.h"
+#include "Game/Map/level_node_map.h"
 #include <algorithm>
+#include "Game/Components/components_list.h"
 
 
 const GE::ComponentIDs GE::ComponentID<TD::CLevelNodeMap>::value =
     GE::ComponentIDs::LevelNodeMap;
 
+const GE::ComponentSystem GE::ComponentClass<TD::CLevelNodeMap>::value =
+    GE::ComponentSystem::data;
+
 const GE::ComponentIDs GE::ComponentID<TD::CLevelNodeMapView>::value =
     GE::ComponentIDs::LevelNodeMapView;
+
+const GE::ComponentSystem GE::ComponentClass<TD::CLevelNodeMapView>::value =
+    GE::ComponentSystem::graphics;
 
 namespace TD {
 
