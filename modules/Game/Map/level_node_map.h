@@ -104,7 +104,6 @@ public:
     virtual void Render(Graphics::TRenderTarget& target) override;
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override;
 
 private:
     using parent_type = GE::CGraphicsComponent;

@@ -130,9 +130,6 @@ public:
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override { /* none */ }
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() const override {
-        return forward_list<TMessage::ID>();
-    }
 
     int GetValue() const {
         return value;
@@ -283,11 +280,6 @@ TEST_F(TestLevelScene, get_component_and_cast_wrong_class) {
     class OtherComponent : GE::TComponent {
         virtual void HandleMessage(const GE::TMessage& message,
             Context& context) override {}
-        virtual forward_list<GE::TMessage::ID>
-            GetAcceptedMessages() const override
-        {
-            return forward_list<GE::TMessage::ID>();
-        }
     };
     const auto handle = scene->CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);

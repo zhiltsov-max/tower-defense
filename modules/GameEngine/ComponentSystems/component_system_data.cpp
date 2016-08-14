@@ -13,8 +13,4 @@ void CDataComponent::HandleMessage(const TMessage& message, Context& context) {
     /*none*/
 }
 
-forward_list<TMessage::ID> CDataComponent::GetAcceptedMessages() const {
-    return forward_list<TMessage::ID>();
-}
-
 } //namespace GE

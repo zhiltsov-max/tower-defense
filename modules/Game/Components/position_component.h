@@ -20,7 +20,6 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override;
 
     const Position& GetPosition() const;
     void SetPosition(const Position& value);

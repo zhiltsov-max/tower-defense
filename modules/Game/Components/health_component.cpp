@@ -34,10 +34,6 @@ void CHealth::HandleMessage(const GE::TMessage& message, Context& context) {
     //TODO: ...
 }
 
-forward_list<GE::TMessage::ID> CHealth::GetAcceptedMessages() const {
-    //TODO: ...
-}
-
 const CHealth::Health& CHealth::GetActualHealth() const {
     return actualHealth;
 }

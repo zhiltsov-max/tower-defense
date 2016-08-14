@@ -33,10 +33,6 @@ void CPosition2d::HandleMessage(const GE::TMessage& message, Context& context) {
     //TODO: ...
 }
 
-forward_list<GE::TMessage::ID> CPosition2d::GetAcceptedMessages() const {
-    //TODO: ...
-}
-
 const CPosition2d::Position& CPosition2d::GetPosition() const {
     return position;
 }

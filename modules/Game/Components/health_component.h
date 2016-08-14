@@ -19,7 +19,6 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override;
-    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override;
 
     const Health& GetActualHealth() const;
     void SetActualHealth(const Health& value);

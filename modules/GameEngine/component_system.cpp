@@ -21,13 +21,8 @@ TComponentSystem::Handle TComponentSystem::CreateComponent(
 
     auto& create = (*componentRegistry)[typeID].create;
     PComponent ptr = std::move(create(args));
-    auto* component = ptr.get();
     components.emplace_back(std::move(ptr));
-    auto handle = components.size() - 1;
-    const auto messagesList = component->GetAcceptedMessages();
-    Subscribe(handle, messagesList.begin(), messagesList.end());
-
-    return handle;
+    return components.size() - 1;
 }
 
 bool TComponentSystem::HasComponent(const Handle& handle) const {
@@ -38,9 +33,7 @@ void TComponentSystem::RemoveComponent(const Handle& handle) {
     if (HasComponent(handle) == false) {
         return;
     }
-    const auto* component = GetComponent(handle);
-    const auto messagesList = component->GetAcceptedMessages();
-    Unsubscribe(handle, messagesList.begin(), messagesList.end());
+    UnsubscribeFrom(handle);
 
     auto it = components.begin();
     std::advance(it, handle);
@@ -74,37 +67,68 @@ void TComponentSystem::Clear() {
     listeners.clear();
 }
 
-void TComponentSystem::Subscribe(const Handle& handle, const Message::ID& id) {
-    ASSERT(handle < components.size(), "Wrong component handle.");
+void TComponentSystem::Subscribe(const Handle& source, const Handle& listener) {
+    ASSERT((source < components.size()) || (source == HandleUndefined),
+        "Wrong component handle.");
+    ASSERT(listener < components.size(),"Wrong component handle.");
 
-    listeners[id].push_back(handle);
+    listeners[source].push_back(listener);
 }
 
 void
-TComponentSystem::Unsubscribe(const Handle& handle, const Message::ID& id) {
-    ASSERT(handle < components.size(), "Wrong component handle.");
+TComponentSystem::Unsubscribe(const Handle& source, const Handle& listener) {
+    ASSERT((source < components.size()) || (source == HandleUndefined),
+        "Wrong component handle.");
+    ASSERT(listener < components.size(),"Wrong component handle.");
 
-    auto currentListeners = listeners.find(id);
-    if (currentListeners == listeners.end()) {
+    auto it = listeners.find(source);
+    if (it == listeners.end()) {
         return;
     }
 
-    for (auto it = currentListeners->second.begin(),
-        iend = currentListeners->second.end(); it != iend; ++ it)
-    {
-        if (*it == handle) {
-            it = currentListeners->second.erase(it);
+    it->second.erase(
+        std::remove(it->second.begin(), it->second.end(), listener),
+        it->second.end());
+    if (it->second.empty() == true) {
+        listeners.erase(it);
+    }
+}
+
+void
+TComponentSystem::Unsubscribe(const Handle& listener) {
+    ASSERT(listener < components.size(),"Wrong component handle.");
+
+    for (auto it = listeners.begin(); it != listeners.end(); ++it) {
+        it->second.erase(
+            std::remove(it->second.begin(), it->second.end(), listener),
+            it->second.end());
+        if (it->second.empty() == true) {
+            listeners.erase(it);
         }
     }
 }
 
-void TComponentSystem::HandleMessage(const Message& message, Context& context) {
-    if (listeners.count(message.GetID()) == 0) {
+void
+TComponentSystem::UnsubscribeFrom(const Handle& source) {
+    ASSERT((source < components.size()) || (source == HandleUndefined),
+        "Wrong component handle.");
+
+    listeners.erase(source);
+}
+
+void TComponentSystem::HandleMessage(const Message& message, Context& context,
+    const Handle& source)
+{
+    auto it = listeners.find(source);
+    if (it == listeners.end()) {
         return;
     }
 
-    for (auto& handle : listeners.at(message.GetID())) {
-        GetComponent(handle)->HandleMessage(message, context);
+    for (auto& listener : it->second) {
+        auto* component = GetComponent(listener);
+        if (component != nullptr) {
+            component->HandleMessage(message, context);
+        }
     }
 }
 

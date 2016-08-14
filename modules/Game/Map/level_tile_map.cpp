@@ -143,11 +143,6 @@ void CLevelTileMapView::Update(const GE::TTime& step, Context& context) {
     //TODO: implementation
 }
 
-forward_list<GE::TMessage::ID> CLevelTileMapView::GetAcceptedMessages() const {
-    /*TODO:...*/
-    return forward_list<GE::TMessage::ID>();
-}
-
 void CLevelTileMapView::Render(Graphics::TRenderTarget& target) {
     //TODO: implementation
     THROW("Not implemented yet.");

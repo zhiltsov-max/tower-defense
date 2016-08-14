@@ -173,9 +173,4 @@ void CLevelNodeMapView::HandleMessage(const GE::TMessage& message,
     /*TODO:...*/
 }
 
-forward_list<GE::TMessage::ID> CLevelNodeMapView::GetAcceptedMessages() const {
-    /*TODO:...*/
-    return forward_list<GE::TMessage::ID>();
-}
-
 } // namespace TD

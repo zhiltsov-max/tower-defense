@@ -24,7 +24,6 @@ public:
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override;
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() const override;
 };
 
 } //namespace GE

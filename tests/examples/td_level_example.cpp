@@ -49,9 +49,6 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override { /* none */ }
-    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override {
-        return forward_list<GE::TMessage::ID>();
-    }
 
     int GetValue() const {
         return value;
@@ -110,9 +107,6 @@ public:
 
     virtual void HandleMessage(const GE::TMessage& message,
         Context& context) override { /* none */ }
-    virtual forward_list<GE::TMessage::ID> GetAcceptedMessages() const override {
-        return forward_list<GE::TMessage::ID>();
-    }
 
     virtual void Update(const GE::TTime& step, Context& context) override {
         if (dataComponentHandle.IsNull() == true) {

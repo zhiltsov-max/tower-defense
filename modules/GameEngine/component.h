@@ -28,11 +28,6 @@ public:
     */
     virtual void HandleMessage(const TMessage& message, Context& context) = 0;
 
-    /*
-    List all needed messages.
-    */
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() const = 0;
-
 protected:
     TComponent(const ID& id);
 

@@ -178,9 +178,6 @@ protected:
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override;
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() const override {
-        return { MessageID::CustomMessage };
-    }
 
     virtual void SetUp() override {
         handledMessage.clear();
@@ -294,9 +291,6 @@ public:
 
     virtual void HandleMessage(const TMessage& message,
         Context& context) override { /* none */ }
-    virtual forward_list<TMessage::ID> GetAcceptedMessages() const override {
-        return { MessageID::CustomMessage };
-    }
 
     const int& GetValue() const {
         return value;
@@ -355,10 +349,11 @@ protected:
         SetComponentRegistry(&testRegistry);
     }
 
-    bool HasSubscription(const Handle& handle, const TMessage::ID& id) const {
-        return (listeners.count(id) != 0) &&
-            (std::find(listeners.at(id).cbegin(), listeners.at(id).cend(),
-                handle) != listeners.at(id).cend());
+    bool HasSubscription(const Handle& source, const Handle& listener) const {
+        return (listeners.count(source) != 0) &&
+            (std::find(listeners.at(source).cbegin(),
+                listeners.at(source).cend(), listener)
+             != listeners.at(source).cend());
     }
 
     virtual void Update(const TTime& step, Context& context) override { /*none*/ }
@@ -412,23 +407,63 @@ TEST_F(TestComponentSystem, get_component_unexisting) {
     ASSERT_EQ(nullptr, GetComponent(HandleUndefined));
 }
 
-TEST_F(TestComponentSystem, subscribe_component) {
-    auto component = CreateComponent(
+TEST_F(TestComponentSystem, subscribe_component_to_other) {
+    const auto source = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    const auto listener = CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
 
-    // automatic subscription in CreateComponent()
+    Subscribe(source, listener);
 
-    EXPECT_TRUE(HasSubscription(component, MessageID::CustomMessage));
+    EXPECT_TRUE(HasSubscription(source, listener));
 }
 
-TEST_F(TestComponentSystem, unsubscribe_component) {
-    auto component = CreateComponent(
+TEST_F(TestComponentSystem, subscribe_component_to_global) {
+    const auto source = HandleUndefined;
+    const auto listener = CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
-    // automatic subscription in CreateComponent()
 
-    Unsubscribe(component, MessageID::CustomMessage);
+    Subscribe(source, listener);
 
-    EXPECT_FALSE(HasSubscription(component, MessageID::CustomMessage));
+    EXPECT_TRUE(HasSubscription(source, listener));
+}
+
+TEST_F(TestComponentSystem, unsubscribe_component_from_other) {
+    const auto source = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    const auto listener = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    Subscribe(source, listener);
+
+    Unsubscribe(source, listener);
+
+    EXPECT_FALSE(HasSubscription(source, listener));
+}
+
+TEST_F(TestComponentSystem, unsubscribe_component_from_all) {
+    const auto source = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    const auto listener = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    Subscribe(source, listener);
+    Subscribe(HandleUndefined, listener);
+
+    Unsubscribe(listener);
+
+    EXPECT_FALSE(HasSubscription(source, listener));
+    EXPECT_FALSE(HasSubscription(HandleUndefined, listener));
+}
+
+TEST_F(TestComponentSystem, unsubscribe_all_from_component) {
+    const auto source = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    const auto listener = CreateComponent(
+        ComponentID<CustomComponent>::value, nullptr);
+    Subscribe(source, listener);
+
+    UnsubscribeFrom(source);
+
+    EXPECT_FALSE(HasSubscription(source, listener));
 }
 
 TEST_F(TestComponentSystem, clear_clears) {
@@ -972,11 +1007,6 @@ TEST_F(TestScene, get_component_and_cast_wrong_class) {
     class OtherComponent : TComponent {
         virtual void HandleMessage(const TMessage& message,
             Context& context) override {}
-        virtual forward_list<TMessage::ID>
-            GetAcceptedMessages() const override
-        {
-            return forward_list<TMessage::ID>();
-        }
     };
     const auto handle = scene->CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
