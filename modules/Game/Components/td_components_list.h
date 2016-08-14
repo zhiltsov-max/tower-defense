@@ -1,5 +1,5 @@
-#ifndef COMPONENTS_LIST_H
-#define COMPONENTS_LIST_H
+#ifndef TD_COMPONENTS_LIST_H
+#define TD_COMPONENTS_LIST_H
 
 #include "GameEngine/component.h"
 #include "GameEngine/component_systems.h"
@@ -34,28 +34,4 @@ enum class GE::ComponentIDs : GE::TComponentID {
     _count
 };
 
-namespace TD {
-
-namespace CS {
-
-namespace impl {
-
-GE::TComponentRegistry& GetComponentsRegistry();
-
-} // namespace impl
-
-template<class C>
-void RegisterComponentClass() {
-    GE::TComponentRegistry::Entry entry;
-    entry.create = &C::Create;
-    entry.system = GE::ComponentClass<C>::value;
-    impl::GetComponentsRegistry().Register(GE::ComponentID<C>::value, entry);
-}
-
-const GE::TComponentRegistry& GetComponentsRegistry();
-
-} // namespace CS
-
-} // namespace TD
-
-#endif // COMPONENTS_LIST_H
+#endif // TD_COMPONENTS_LIST_H

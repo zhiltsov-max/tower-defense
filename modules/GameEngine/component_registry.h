@@ -2,7 +2,7 @@
 #define COMPONENT_REGISTRY_H
 
 #include "GameEngine/component.h"
-#include "GameEngine/ComponentSystems/component_systems_enum.h"
+#include "GameEngine/component_system_type.h"
 #include "GameEngine/registry.h"
 
 

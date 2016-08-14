@@ -19,6 +19,8 @@ public:
     using Handle = size_t;
     static const Handle HandleUndefined;
 
+    TComponentSystem();
+
     virtual ~TComponentSystem() = default;
 
     Handle CreateComponent(const TComponent::ID& typeID,
@@ -27,6 +29,8 @@ public:
     bool HasComponent(const Handle& handle) const;
 
     void RemoveComponent(const Handle& handle);
+
+    const Component* GetComponent(const Handle& handle) const;
     Component* GetComponent(const Handle& handle);
 
     bool IsEmpty() const;

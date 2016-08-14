@@ -2,6 +2,9 @@
 #include "Game/Level/level_lua_binding.h"
 #include "Game/States/game_state_statistics.h"
 #include "GameEngine/game_engine.h"
+#include "Game/ComponentSystems/td_component_systems_list.h"
+#include "GameEngine/ComponentSystems/component_system_graphics.h"
+#include "GameEngine/ComponentSystems/component_system_ui.h"
 
 
 namespace TD {
@@ -28,7 +31,17 @@ void TGameState_Playing::Draw(Graphics::TRenderTarget& target) {
         return;
     }
 
-    game->gameEngine.Draw(target);
+    auto& systems = game->gameEngine.GetComponentSystems();
+    auto* graphics = systems.FindSystem<GE::CSGraphicsSystem>(
+        GE::ComponentSystem::graphics);
+    if (graphics != nullptr) {
+        graphics->Draw(target);
+    }
+
+    auto* ui = systems.FindSystem<GE::CSUiSystem>(GE::ComponentSystem::ui);
+    if (ui != nullptr) {
+        ui->Draw(target);
+    }
 }
 
 void TGameState_Playing::HandleEvent(const TApplication::Event& event) {

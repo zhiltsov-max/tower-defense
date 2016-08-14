@@ -1,5 +1,4 @@
 #include "Game/Map/level_passability_map.h"
-#include "Game/Components/components_list.h"
 
 
 const GE::ComponentIDs GE::ComponentID<TD::CLevelPassabilityMap>::value =

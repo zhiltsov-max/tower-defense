@@ -57,7 +57,7 @@ public:
     static const ComponentHandle Undefined;
 
     ComponentHandle(size_t handle = -1u,
-        const ComponentSystem& system = ComponentSystem::_undefined);
+        const ComponentSystem& system = static_cast<ComponentSystem>(0));
 
     operator size_t() const;
     const ComponentSystem& GetSystem() const;

@@ -1,8 +1,23 @@
 #include "Game/Level/level.h"
 #include "GameEngine/game_engine.h"
+#include "GameEngine/ComponentSystems/component_system_data.h"
+#include "GameEngine/ComponentSystems/component_system_logics.h"
 
 
 using namespace TD;
+
+enum class GE::ComponentSystem : GE::TComponentSystemTypeId {
+    _min = 0,
+
+    data = _min,
+    logics,
+
+    _max = data,
+    _count = _max - _min,
+
+    _undefined
+};
+
 
 enum class GE::ComponentIDs : GE::TComponentID {
     _min = 0,
@@ -182,6 +197,10 @@ int main(int argc, char ** argv) {
     UNUSED(argv);
 
     GE::TGameEngine engine;
+    engine.GetComponentSystems().
+        AddSystem<GE::CSDataSystem>(GE::ComponentSystem::data);
+    engine.GetComponentSystems().
+        AddSystem<GE::CSLogicsSystem>(GE::ComponentSystem::logics);
 
     GE::TComponentRegistry::Entry entry;
     entry.create = &CustomDataComponent::Create;

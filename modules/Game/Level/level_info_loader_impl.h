@@ -9,7 +9,7 @@
 #include "Game/Level/level_info_loader.h"
 #include "Game/Level/level_scene.h"
 
-#include "Game/Components/components_list.h"
+#include "Game/Components/td_components_list.h"
 #include "Game/Map/level_node_map.h"
 #include "Game/Map/level_tile_map.h"
 #include "Game/Map/level_passability_map.h"

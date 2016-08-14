@@ -27,11 +27,14 @@ set(td_application_headers
     Game/Buildings/turret_animation.h 
     Game/Buildings/turret_bullet.h 
     Game/Buildings/turret_selection.h 
-    Game/Components/animation.h 
-    Game/Components/components_list.h 
-    Game/Components/game_objects_info.h 
+    Game/Components/animation_component.h
+    Game/Components/game_objects_info.h
     Game/Components/health_component.h
+    Game/Components/td_components.h
+    Game/Components/td_components_list.h
     Game/Components/position_component.h
+    Game/ComponentSystems/td_component_systems.h
+    Game/ComponentSystems/td_component_systems_list.h
     Game/Level/level.h 
     Game/Level/level_clock.h 
     Game/Level/level_info_loader.h 
@@ -115,10 +118,10 @@ set(td_application_sources
     Game/Buildings/turret.cpp 
     Game/Buildings/turret_bullet.cpp 
     Game/Buildings/turretselection.cpp 
-    Game/Components/animation.cpp 
-    Game/Components/components_list.cpp
+    Game/Components/animation_component.cpp
     Game/Components/health_component.cpp
     Game/Components/position_component.cpp
+    Game/Components/td_components.cpp
     Game/Level/level.cpp 
     Game/Level/level_clock.cpp 
     Game/Level/level_info_loader.cpp 

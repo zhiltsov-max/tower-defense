@@ -1,6 +1,5 @@
 #include "Game/Map/level_node_map.h"
 #include <algorithm>
-#include "Game/Components/components_list.h"
 
 
 const GE::ComponentIDs GE::ComponentID<TD::CLevelNodeMap>::value =
@@ -169,7 +168,10 @@ void CLevelNodeMapView::Render(Graphics::TRenderTarget& target) {
 }
 
 void CLevelNodeMapView::HandleMessage(const GE::TMessage& message,
-    Context& context) { /*TODO:...*/ }
+    Context& context)
+{
+    /*TODO:...*/
+}
 
 forward_list<GE::TMessage::ID> CLevelNodeMapView::GetAcceptedMessages() const {
     /*TODO:...*/

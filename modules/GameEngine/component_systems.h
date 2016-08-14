@@ -1,42 +1,57 @@
 #ifndef COMPONENT_SYSTEMS_H
 #define COMPONENT_SYSTEMS_H
 
+#include "GameEngine/engine_message.h"
 #include "GameEngine/component_system.h"
-#include "GameEngine/ComponentSystems/component_systems_enum.h"
-#include "GameEngine/ComponentSystems/component_system_data.h"
-#include "GameEngine/ComponentSystems/component_system_input.h"
-#include "GameEngine/ComponentSystems/component_system_sound.h"
-#include "GameEngine/ComponentSystems/component_system_movement.h"
-#include "GameEngine/ComponentSystems/component_system_logics.h"
-#include "GameEngine/ComponentSystems/component_system_graphics.h"
-#include "GameEngine/ComponentSystems/component_system_ui.h"
+#include "GameEngine/game_engine_context.h"
 
 
 namespace GE {
 
-template< class Component >
-struct ComponentClass;
-
-class TGameEngine;
-
-struct TComponentSystems
+class TComponentSystems
 {
-    CSInputSystem input;
-    CSMovementSystem movement;
-    CSLogicsSystem logics;
-    CSGraphicsSystem graphics;
-    CSSoundSystem sound;
-    CSUiSystem ui;
-    CSDataSystem data;
+public:
+    using Message = TMessage;
+    using ID = ComponentSystem;
+    using Context = TGameEngineContext;
+    using PSystem = std::unique_ptr<TComponentSystem>;
 
-    using Systems = std::array<TComponentSystem*,
-        static_cast<TComponentSystemTypeId>(ComponentSystem::_count)>;
-    Systems systems;
-
-    TComponentSystems(TGameEngine* engine);
+    TComponentSystems(TGameEngine* engine = nullptr);
 
     void SetGameEngine(TGameEngine* instance);
+
+    void Update(const TTime& step, Context& context);
+
+    TComponentSystem* AddSystem(const ID& id, PSystem&& system);
+
+    template<class C>
+    C* AddSystem(const ID& id);
+
+    bool HasSystem(const ID& id) const;
+    void RemoveSystem(const ID& id);
+
+    const TComponentSystem* FindSystem(const ID& id) const;
+    TComponentSystem* FindSystem(const ID& id);
+
+    void SendMessage(const Message& message, Context& context);
+
+public:
+    //TODO: hide implementation
+    using Systems = map<ID, PSystem>;
+    const Systems& GetSystems() const;
+    Systems& GetSystems();
+
+private:
+    using PGameEngine = TGameEngine *;
+    PGameEngine engine;
+
+    Systems systems;
 };
+
+template<class C>
+C* TComponentSystems::AddSystem(const ID& id) {
+    return dynamic_cast<C*>(AddSystem(id, std::move(PSystem(new C()))));
+}
 
 } //namespace GE
 
