@@ -4,7 +4,7 @@ set(game_engine_headers
     component.h
     component_registry.h
     component_system.h
-    component_systems.h
+    component_systems_manager.h
     ComponentSystems/component_system_data.h
     ComponentSystems/component_system_graphics.h
     ComponentSystems/component_system_input.h
@@ -31,7 +31,7 @@ set(game_engine_headers
 set(game_engine_sources
     component.cpp
     component_system.cpp
-    component_systems.cpp
+    component_systems_manager.cpp
     ComponentSystems/component_system_data.cpp
     ComponentSystems/component_system_graphics.cpp
     ComponentSystems/component_system_input.cpp

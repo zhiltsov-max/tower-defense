@@ -197,21 +197,21 @@ int main(int argc, char ** argv) {
     UNUSED(argv);
 
     GE::TGameEngine engine;
-    engine.GetComponentSystems().
+    engine.GetComponentSystemsManager().
         AddSystem<GE::CSDataSystem>(GE::ComponentSystem::data);
-    engine.GetComponentSystems().
+    engine.GetComponentSystemsManager().
         AddSystem<GE::CSLogicsSystem>(GE::ComponentSystem::logics);
 
     GE::TComponentRegistry::Entry entry;
     entry.create = &CustomDataComponent::Create;
     entry.system = GE::ComponentClass<CustomDataComponent>::value;
-    engine.GetComponentRegistry().Register(
-        GE::ComponentID<CustomDataComponent>::value, entry);
+    engine.GetComponentSystemsManager().GetComponentRegistry().
+        Register(GE::ComponentID<CustomDataComponent>::value, entry);
 
     entry.create = &CustomLogicsComponent::Create;
     entry.system = GE::ComponentClass<CustomLogicsComponent>::value;
-    engine.GetComponentRegistry().Register(
-        GE::ComponentID<CustomLogicsComponent>::value, entry);
+    engine.GetComponentSystemsManager().GetComponentRegistry().
+        Register(GE::ComponentID<CustomLogicsComponent>::value, entry);
 
     const TD::TLevel::Parameters levelParameters = createLevelParameters();
     TD::TLevel level(levelParameters, &engine);

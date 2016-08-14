@@ -1,7 +1,7 @@
 #ifndef TD_COMPONENT_SYSTEMS_LIST_H
 #define TD_COMPONENT_SYSTEMS_LIST_H
 
-#include "GameEngine/component_systems.h"
+#include "GameEngine/component_system_type.h"
 
 
 enum class GE::ComponentSystem : GE::TComponentSystemTypeId {

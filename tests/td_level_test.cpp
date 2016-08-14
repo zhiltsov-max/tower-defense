@@ -184,14 +184,14 @@ public:
 
     virtual void SetUp() override {
         engine.reset(new GE::TGameEngine());
-        engine->GetComponentSystems().
+        engine->GetComponentSystemsManager().
             AddSystem<GE::CSDataSystem>(GE::ComponentSystem::Data);
 
         GE::TComponentRegistry::Entry entry;
         entry.create = &CustomComponent::Create;
         entry.system = GE::ComponentClass<CustomComponent>::value;
-        engine->GetComponentRegistry().Register(
-            GE::ComponentID<CustomComponent>::value, entry);
+        engine->GetComponentSystemsManager().GetComponentRegistry().
+            Register(GE::ComponentID<CustomComponent>::value, entry);
 
         scene.reset(new TD::TLevelScene(generateInfo(), engine.get()));
     }

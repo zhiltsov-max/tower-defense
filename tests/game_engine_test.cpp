@@ -2,7 +2,7 @@
 #include "GameEngine/game_engine.h"
 #include "GameEngine/registry.h"
 #include "GameEngine/component.h"
-#include "GameEngine/component_systems.h"
+#include "GameEngine/component_systems_manager.h"
 #include "GameEngine/engine_messages.h"
 #include "GameEngine/scene_object.h"
 #include "GameEngine/scene_object_container.h"
@@ -448,7 +448,7 @@ TEST_F(TestComponentSystem, is_empty_not_empty_when_not_empty) {
     ASSERT_FALSE(IsEmpty());
 }
 
-// === ComponentSystems Tests ===
+// === ComponentSystemsManager Tests ===
 
 class CustomComponentSystem : public TComponentSystem
 {
@@ -457,38 +457,25 @@ public:
 };
 
 
-TEST(ComponentSystemsTest, set_game_engine_with_no_systems) {
-    TGameEngine engine;
-    TComponentSystems systems;
-
-    ASSERT_NO_THROW(systems.SetGameEngine(&engine));
-}
-
-TEST(ComponentSystemsTest, set_game_engine_with_nullptr) {
-    TComponentSystems systems;
-
-    ASSERT_NO_THROW(systems.SetGameEngine(nullptr));
-}
-
-TEST(ComponentSystemsTest, add_system) {
+TEST(ComponentSystemsManagerTest, add_system) {
     std::unique_ptr<TComponentSystem> system(new CustomComponentSystem);
     const auto* ptr = system.get();
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
 
     ASSERT_EQ(ptr, systems.AddSystem(
         ComponentSystem::Custom, std::move(system)));
 }
 
-TEST(ComponentSystemsTest, add_system_by_template) {
-    TComponentSystems systems;
+TEST(ComponentSystemsManagerTest, add_system_by_template) {
+    TComponentSystemsManager systems;
 
     ASSERT_NE(nullptr, systems.AddSystem<CustomComponentSystem>(
         ComponentSystem::Custom));
 }
 
-TEST(ComponentSystemsTest, remove_system_existing) {
+TEST(ComponentSystemsManagerTest, remove_system_existing) {
     const auto id = ComponentSystem::Custom;
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
     systems.AddSystem<CustomComponentSystem>(id);
 
     ASSERT_NO_THROW(systems.RemoveSystem(id));
@@ -496,39 +483,39 @@ TEST(ComponentSystemsTest, remove_system_existing) {
     EXPECT_FALSE(systems.HasSystem(id));
 }
 
-TEST(ComponentSystemsTest, remove_system_unexisting_failure) {
+TEST(ComponentSystemsManagerTest, remove_system_unexisting_failure) {
     const auto id = ComponentSystem::Custom;
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
 
     ASSERT_ANY_THROW(systems.RemoveSystem(id));
 }
 
-TEST(ComponentSystemsTest, has_system_has_existing) {
+TEST(ComponentSystemsManagerTest, has_system_has_existing) {
     const auto id = ComponentSystem::Custom;
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
     systems.AddSystem<CustomComponentSystem>(id);
 
     ASSERT_TRUE(systems.HasSystem(id));
 }
 
-TEST(ComponentSystemsTest, has_system_has_not_unexisting) {
+TEST(ComponentSystemsManagerTest, has_system_has_not_unexisting) {
     const auto id = ComponentSystem::Custom;
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
 
     ASSERT_FALSE(systems.HasSystem(id));
 }
 
-TEST(ComponentSystemsTest, find_system_existing_success) {
+TEST(ComponentSystemsManagerTest, find_system_existing_success) {
     const auto id = ComponentSystem::Custom;
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
     const auto* ptr = systems.AddSystem<CustomComponentSystem>(id);
 
     ASSERT_EQ(ptr, systems.FindSystem(id));
 }
 
-TEST(ComponentSystemsTest, find_system_unexisting_failure) {
+TEST(ComponentSystemsManagerTest, find_system_unexisting_failure) {
     const auto id = ComponentSystem::Custom;
-    TComponentSystems systems;
+    TComponentSystemsManager systems;
 
     ASSERT_EQ(nullptr, systems.FindSystem(id));
 }
@@ -910,14 +897,14 @@ public:
 
     virtual void SetUp() override {
         engine.reset(new GE::TGameEngine());
-        engine->GetComponentSystems().
+        engine->GetComponentSystemsManager().
             AddSystem<CustomComponentSystem>(GE::ComponentSystem::Custom);
 
         TComponentRegistry::Entry entry;
         entry.create = &CustomComponent::Create;
         entry.system = ComponentClass<CustomComponent>::value;
-        engine->GetComponentRegistry().Register(
-            ComponentID<CustomComponent>::value, entry);
+        engine->GetComponentSystemsManager().GetComponentRegistry().
+            Register(ComponentID<CustomComponent>::value, entry);
 
         scene.reset(new TScene());
         scene->SetGameEngine(engine.get());

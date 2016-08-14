@@ -2,7 +2,7 @@
 #define SCENE_OBJECT_H
 
 #include <stack>
-#include "GameEngine/component_systems.h"
+#include "GameEngine/component_systems_manager.h"
 
 
 namespace GE {

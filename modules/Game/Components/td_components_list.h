@@ -2,7 +2,6 @@
 #define TD_COMPONENTS_LIST_H
 
 #include "GameEngine/component.h"
-#include "GameEngine/component_systems.h"
 
 
 enum class GE::ComponentIDs : GE::TComponentID {

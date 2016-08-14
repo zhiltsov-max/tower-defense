@@ -3,8 +3,7 @@
 
 #include "Core/core.h"
 #include "GameEngine/engine_core.h"
-#include "GameEngine/component_registry.h"
-#include "GameEngine/component_systems.h"
+#include "GameEngine/component_systems_manager.h"
 #include "GameEngine/script_engine.h"
 #include "GameEngine/game_engine_context.h"
 
@@ -17,12 +16,9 @@ class TGameEngine
 {
 public:
     using ScriptEngine = TScriptEngine;
-    using ComponentSystems = TComponentSystems;
-    using ComponentRegistry = TComponentRegistry;
+    using ComponentSystemsManager = TComponentSystemsManager;
     using Message = TMessage;
     using Context = TGameEngineContext;
-
-    TGameEngine();
 
     void Update(const TTime& step, Context& context);
     void SendMessage(const Message& message, Context& context);
@@ -30,15 +26,11 @@ public:
     const ScriptEngine& GetScriptEngine() const;
     ScriptEngine& GetScriptEngine();
 
-    const ComponentRegistry& GetComponentRegistry() const;
-    ComponentRegistry& GetComponentRegistry();
-
-    const ComponentSystems& GetComponentSystems() const;
-    ComponentSystems& GetComponentSystems();
+    const ComponentSystemsManager& GetComponentSystemsManager() const;
+    ComponentSystemsManager& GetComponentSystemsManager();
 
 protected:
-    ComponentRegistry componentRegistry;
-    ComponentSystems componentSystems;
+    ComponentSystemsManager componentSystems;
 
     ScriptEngine scriptEngine;
 };
