@@ -67,12 +67,15 @@ void TComponentSystem::Clear() {
     listeners.clear();
 }
 
-void TComponentSystem::Subscribe(const Handle& source, const Handle& listener) {
+void TComponentSystem::Subscribe(const Handle& source, const Handle& listener,
+    const MessageCallback& callback)
+{
     ASSERT((source < components.size()) || (source == HandleUndefined),
         "Wrong component handle.");
-    ASSERT(listener < components.size(),"Wrong component handle.");
+    ASSERT(listener < components.size(), "Wrong component handle.");
+    ASSERT(static_cast<bool>(callback) != false, "Wrong callback function.");
 
-    listeners[source].push_back(listener);
+    listeners[source].emplace_back(listener, callback);
 }
 
 void
@@ -125,15 +128,21 @@ void TComponentSystem::HandleMessage(const Message& message, Context& context,
     }
 
     for (auto& listener : it->second) {
-        auto* component = GetComponent(listener);
-        if (component != nullptr) {
-            component->HandleMessage(message, context);
-        }
+        listener.callback(listener.handle, message, context);
     }
 }
 
 void TComponentSystem::SetComponentRegistry(TComponentRegistry* instance) {
     componentRegistry = instance;
+}
+
+
+bool TComponentSystem::Listener::operator == (const Handle& otherHandle) const {
+    return handle == otherHandle;
+}
+
+bool TComponentSystem::Listener::operator != (const Handle& otherHandle) const {
+    return handle != otherHandle;
 }
 
 } //namespace GE

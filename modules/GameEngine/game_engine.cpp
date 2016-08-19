@@ -8,8 +8,10 @@ void TGameEngine::Update(const TTime& step, Context& context) {
     componentSystems.Update(step, context);
 }
 
-void TGameEngine::SendMessage(const Message& message, Context& context) {
-    componentSystems.SendMessage(message, context);
+void TGameEngine::SendMessage(const Message& message, Context& context,
+    const ComponentHandle& handle)
+{
+    componentSystems.SendMessage(message, context, handle);
 }
 
 const TGameEngine::ScriptEngine&

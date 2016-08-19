@@ -5,6 +5,7 @@
 #include "GameEngine/component_system.h"
 #include "GameEngine/component_registry.h"
 #include "GameEngine/game_engine_context.h"
+#include "GameEngine/scene_component_manager.h"
 
 
 namespace GE {
@@ -17,6 +18,7 @@ public:
     using Context = TGameEngineContext;
     using ComponentRegistry = TComponentRegistry;
     using PSystem = std::unique_ptr<TComponentSystem>;
+    using ComponentHandle = TSceneComponentManager::ComponentHandle;
 
     void Update(const TTime& step, Context& context);
 
@@ -31,7 +33,8 @@ public:
     const TComponentSystem* FindSystem(const ID& id) const;
     TComponentSystem* FindSystem(const ID& id);
 
-    void SendMessage(const Message& message, Context& context);
+    void SendMessage(const Message& message, Context& context,
+        const ComponentHandle& sender = ComponentHandle::Undefined);
 
     const ComponentRegistry& GetComponentRegistry() const;
     ComponentRegistry& GetComponentRegistry();

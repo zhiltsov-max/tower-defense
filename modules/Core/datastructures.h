@@ -24,4 +24,4 @@ using std::vector;
 using std::map;
 using std::pair;
 
-#endif
+#endif // CORE_DATASTRUCTURES_H

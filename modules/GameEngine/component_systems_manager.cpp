@@ -48,10 +48,10 @@ TComponentSystem* TComponentSystemsManager::FindSystem(const ID& id) {
 }
 
 void TComponentSystemsManager::SendMessage(const Message& message,
-    Context& context)
+    Context& context, const ComponentHandle& sender)
 {
     for (auto& system : systems) {
-        system.second->HandleMessage(message, context);
+        system.second->HandleMessage(message, context, sender);
     }
 }
 

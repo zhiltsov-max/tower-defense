@@ -5,9 +5,7 @@ set(game_engine_headers
     component_registry.h
     component_system.h
     component_systems_manager.h
-    ComponentSystems/component_system_data.h
     ComponentSystems/component_system_graphics.h
-    ComponentSystems/component_system_input.h
     ComponentSystems/component_system_logics.h
     ComponentSystems/component_system_movement.h
     ComponentSystems/component_system_sound.h
@@ -32,9 +30,7 @@ set(game_engine_sources
     component.cpp
     component_system.cpp
     component_systems_manager.cpp
-    ComponentSystems/component_system_data.cpp
     ComponentSystems/component_system_graphics.cpp
-    ComponentSystems/component_system_input.cpp
     ComponentSystems/component_system_logics.cpp
     ComponentSystems/component_system_movement.cpp
     ComponentSystems/component_system_sound.cpp

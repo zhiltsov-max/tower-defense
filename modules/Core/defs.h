@@ -12,4 +12,4 @@ typedef unsigned long int ulong;
 
 #include "datastructures.h"
 
-#endif
+#endif // CORE_DEFS_H

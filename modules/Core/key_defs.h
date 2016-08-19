@@ -309,4 +309,4 @@ struct TMouseInfo
 
 } //namepace IO
 
-#endif // __CORE_IO_KEY_DEFS_H__
+#endif // CORE_IO_KEY_DEFS_H

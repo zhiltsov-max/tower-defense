@@ -1,4 +1,4 @@
-#include "component.h"
+#include "GameEngine/component.h"
 
 
 namespace GE {

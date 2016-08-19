@@ -68,4 +68,4 @@ using TText = sf::Text;
 
 } //namespace Graphics
 
-#endif //CORE_GRAPHICS_H
+#endif // CORE_GRAPHICS_H

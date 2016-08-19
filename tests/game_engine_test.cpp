@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "GameEngine/game_engine.h"
 #include "GameEngine/registry.h"
+#include "GameEngine/engine_message.h"
 #include "GameEngine/component.h"
 #include "GameEngine/component_systems_manager.h"
 #include "GameEngine/engine_messages.h"
@@ -107,7 +108,6 @@ TEST_F(TestRegistry, clear_clears) {
     EXPECT_TRUE(registry.IsEmpty());
 }
 
-
 // ### COMPONENT SYSTEM TESTS ###
 
 enum class GE::ComponentSystem : TComponentSystemTypeId {
@@ -142,7 +142,6 @@ enum class GE::MessageID : TMessageID {
     _count = _max - _min
 };
 
-
 // === Message Tests ===
 
 class TestMessage :
@@ -160,121 +159,37 @@ TEST_F(TestMessage, get_id) {
     EXPECT_EQ(MessageID::TestMessage, GetID());
 }
 
-
 // === Component Tests ===
 
-class TestComponent :
-    public ::testing::Test,
-    protected TComponent
-{
-public:
-    TestComponent();
+TEST(ComponentTest, ctor) {
+    const auto id = ComponentIDs::TestComponent;
 
-protected:
-    class CustomMessage;
-    class CustomUnexpectedMessage;
+    const TComponent component(id);
 
-    string handledMessage;
-
-    virtual void HandleMessage(const TMessage& message,
-        Context& context) override;
-
-    virtual void SetUp() override {
-        handledMessage.clear();
-    }
-};
-
-class TestComponent::CustomMessage :
-    public TMessage
-{
-public:
-    CustomMessage(const string& message) :
-        TMessage(static_cast<ID>(MessageID::CustomMessage)),
-        message(message)
-    {}
-
-    const string& what() const {
-        return message;
-    }
-private:
-    string message;
-};
-
-class TestComponent::CustomUnexpectedMessage :
-    public TMessage
-{
-public:
-    CustomUnexpectedMessage() :
-        TMessage(MessageID::CustomUnexpectedMessage)
-    {}
-};
-
-namespace GE {
-template<>
-struct ComponentID< TestComponent > {
-    static const TComponent::ID value;
-};
-const TComponent::ID ComponentID<TestComponent>::value =
-    ComponentIDs::TestComponent;
-
-template<>
-struct ComponentClass< TestComponent > {
-    static const ComponentSystem value;
-};
-const ComponentSystem ComponentClass<TestComponent>::value =
-    ComponentSystem::_undefined;
-} //namespace GE
-
-
-TestComponent::TestComponent() :
-    ::testing::Test(),
-    TComponent(ComponentID<TestComponent>::value)
-{}
-
-void TestComponent::HandleMessage(const TMessage& message, Context& context) {
-    switch (message.GetID()) {
-    case MessageID::CustomMessage:
-        handledMessage = static_cast<const CustomMessage&>(message).what();
-        break;
-
-    default:
-        handledMessage.clear();
-        break;
-    }
-
-    UNUSED(context);
+    EXPECT_EQ(id, component.GetID());
 }
 
+TEST(ComponentTest, get_id) {
+    const auto id = ComponentIDs::TestComponent;
+    const TComponent component(id);
 
-TEST_F(TestComponent, initialization) {
-    EXPECT_EQ(ComponentID<TestComponent>::value, GetID());
+    ASSERT_EQ(id, component.GetID());
 }
 
-TEST_F(TestComponent, message_handling_expected) {
-    CustomMessage message("123");
+TEST(ComponentTest, operator_print_to_stream) {
+    const auto id = ComponentIDs::TestComponent;
+    const TComponent component(id);
+    std::stringstream ss;
 
-    Context context;
-    HandleMessage(message, context);
+    ss << component;
 
-    EXPECT_EQ(message.what(), handledMessage);
+    ASSERT_FALSE(ss.str().empty());
 }
-
-TEST_F(TestComponent, message_handling_unexpected) {
-    CustomUnexpectedMessage message;
-
-    Context context;
-    HandleMessage(message, context);
-
-    EXPECT_TRUE(handledMessage.empty());
-}
-
 
 // === ComponentSystem Tests ===
 
-class CustomComponent :
-    public TComponent
+struct CustomComponent : TComponent
 {
-public:
     struct Parameters : GE::TComponentCreateArgs
     {
         int value;
@@ -289,18 +204,6 @@ public:
 
     CustomComponent(const Parameters* parameters);
 
-    virtual void HandleMessage(const TMessage& message,
-        Context& context) override { /* none */ }
-
-    const int& GetValue() const {
-        return value;
-    }
-
-    void SetValue(const int& value) {
-        this->value = value;
-    }
-
-protected:
     int value;
 };
 
@@ -320,7 +223,7 @@ const ComponentSystem ComponentClass<CustomComponent>::value =
     ComponentSystem::Custom;
 } //namespace GE
 
-CustomComponent::CustomComponent(const CustomComponent::Parameters* parameters) :
+CustomComponent::CustomComponent(const Parameters* parameters) :
     TComponent(ComponentID<CustomComponent>::value),
     value(0)
 {
@@ -555,6 +458,32 @@ TEST(ComponentSystemsManagerTest, find_system_unexisting_failure) {
     ASSERT_EQ(nullptr, systems.FindSystem(id));
 }
 
+TEST(ComponentSystemsManagerTest, send_message_with_sender) {
+    class CustomMessage : TMessage {
+        CustomMessage() : TMessage(MessageID::CustomMessage) {}
+    };
+    CustomMessage message;
+    TGameEngine engine;
+    TScene scene;
+    TGameEngineContext context{&engine, &scene};
+    TComponentSystemsManager::ComponentHandle sender{10};
+    TComponentSystemsManager systems;
+
+    ASSERT_NO_THROW(systems.SendMessage(message, context, sender));
+}
+
+TEST(ComponentSystemsManagerTest, send_message_without_sender) {
+    class CustomMessage : TMessage {
+        CustomMessage() : TMessage(MessageID::CustomMessage) {}
+    };
+    CustomMessage message;
+    TGameEngine engine;
+    TScene scene;
+    TGameEngineContext context{&engine, &scene};
+    TComponentSystemsManager systems;
+
+    ASSERT_NO_THROW(systems.SendMessage(message, context));
+}
 
 // ### SCENE TESTS ###
 // === SceneObject Tests ===
@@ -918,7 +847,6 @@ TEST(SceneObjectContainerTest, clear) {
     EXPECT_TRUE(container.IsEmpty());
 }
 
-
 // === Scene Tests ===
 class TestScene :
     public ::testing::Test
@@ -1004,10 +932,7 @@ TEST_F(TestScene, get_component_and_cast_unexisting_handle) {
 }
 
 TEST_F(TestScene, get_component_and_cast_wrong_class) {
-    class OtherComponent : TComponent {
-        virtual void HandleMessage(const TMessage& message,
-            Context& context) override {}
-    };
+    struct OtherComponent : TComponent {};
     const auto handle = scene->CreateComponent(
         ComponentID<CustomComponent>::value, nullptr);
 
