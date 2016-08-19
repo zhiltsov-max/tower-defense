@@ -13,8 +13,6 @@ set(td_application_headers
     Game/Application/fpscounter.h
     Game/Application/td_application.h
     Game/Buildings/building.h 
-    Game/Buildings/building_animation.h 
-    Game/Buildings/building_selection.h 
     Game/Buildings/buildings_controller.h 
     Game/Buildings/buildings_info.h 
     Game/Buildings/buildings_list.h 
@@ -109,8 +107,6 @@ set(td_application_sources
     Game/Application/td_application.cpp
     Game/Application/fpscounter.cpp
     Game/Buildings/building.cpp 
-    Game/Buildings/building_animation.cpp 
-    Game/Buildings/building_selection.cpp 
     Game/Buildings/buildings_controller.cpp 
     Game/Buildings/buildings_info.cpp 
     Game/Buildings/tb_castle.cpp 

@@ -1,12 +1,6 @@
 #include "Game/Map/level_passability_map.h"
 
 
-const GE::ComponentIDs GE::ComponentID<TD::CLevelPassabilityMap>::value =
-    GE::ComponentIDs::LevelPassabilityMap;
-
-const GE::ComponentSystem GE::ComponentClass<TD::CLevelPassabilityMap>::value =
-    GE::ComponentSystem::data;
-
 namespace TD {
 
 std::unique_ptr<GE::TComponent>
@@ -27,15 +21,6 @@ CLevelPassabilityMap::CLevelPassabilityMap(const Parameters* source) :
             map.reserve(source->size.x * source->size.y);
         }
     }
-}
-
-const CLevelPassabilityMap::PassabilityMap&
-CLevelPassabilityMap::GetMap(const Altitude& altitude) {
-    return maps[static_cast<uchar>(altitude)];
-}
-
-const CLevelPassabilityMap::Size& CLevelPassabilityMap::GetSize() const {
-    return size;
 }
 
 } // namespace TD

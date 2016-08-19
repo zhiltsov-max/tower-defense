@@ -2,19 +2,17 @@
 #define LEVEL_TILE_MAP_H
 
 #include "Core/core.h"
+#include "GameEngine/component.h"
+#include "GameEngine/component_registry.h"
 #include "Game/Components/td_components_list.h"
 #include "Game/ComponentSystems/td_component_systems_list.h"
-#include "GameEngine/ComponentSystems/component_system_data.h"
-#include "GameEngine/ComponentSystems/component_system_graphics.h"
 #include "Game/Map/level_tile_map_tileset.h"
 #include "Game/Map/level_tile_map_tileset_registry.h"
-#include "Game/Level/level_scene.h"
 
 
 namespace TD {
 
-class CLevelTileMap :
-    public GE::CDataComponent
+class TLevelTileMap
 {
 public:
     using Size = Vec2ui;
@@ -37,16 +35,12 @@ public:
     };
     using Layers = vector<Tile>;
     using Tilesets = std::set<TLevelTileMapTilesetId>;
-
     struct Parameters;
-    using TileParameters = Tile;
     struct LayerParameters;
+    using TileParameters = TLevelTileMap::Tile;
 
-    static std::unique_ptr<GE::TComponent> Create(
-        const GE::TComponentCreateArgs* args = nullptr);
+    TLevelTileMap(const Parameters& source = Parameters());
 
-    CLevelTileMap(const CLevelTileMap::Parameters* source = nullptr);
-		
     const Size& GetSize() const;
     void SetSize(const Size& value);
 
@@ -59,8 +53,6 @@ public:
     uchar GetLayerCount() const;
 
 private:
-    using parent_type = CDataComponent;
-
     Layers layers;
     Tilesets tilesets;
     Size size;
@@ -72,43 +64,58 @@ private:
     void loadTiles(const Parameters& source);
 };
 
-struct CLevelTileMap::LayerParameters
+struct TLevelTileMap::LayerParameters
 {
     vector<TileParameters> tiles;
 };
 
-struct CLevelTileMap::Parameters : GE::TComponentCreateArgs
+struct TLevelTileMap::Parameters
 {
     Size size;
     vector<LayerParameters> layers;
 };
 
-} // namepsace TD
+} // namespace TD
 
 
-namespace GE {
-
-template<>
-struct ComponentID<TD::CLevelTileMap>
-{
-    static const ComponentIDs value;
-};
-
-template<>
-struct ComponentClass<TD::CLevelTileMap>
-{
-    static const ComponentSystem value;
-};
-
-} // namespace GE
+TD_DECLARE_COMPONENT_CLASS(CLevelTileMap,
+    GE::ComponentIDs::LevelTileMap, GE::ComponentSystem::Map)
 
 
 namespace TD {
 
-class CLevelTileMapView :
-    public GE::CGraphicsComponent
+struct CLevelTileMap : GE::CDataComponent
 {
-public:
+    using TileMap = TLevelTileMap;
+    struct Parameters;
+
+    static std::unique_ptr<GE::TComponent> Create(
+        const GE::TComponentCreateArgs* args = nullptr);
+
+    CLevelTileMap(const CLevelTileMap::Parameters* source = nullptr);
+
+    TileMap tileMap;
+
+private:
+    using parent_type = GE::TComponent;
+};
+
+struct CLevelTileMap::Parameters : GE::TComponentCreateArgs
+{
+    TileMap::Parameters map;
+};
+
+} // namepsace TD
+
+
+TD_DECLARE_COMPONENT_CLASS(CLevelTileMapView,
+    GE::ComponentIDs::LevelTileMapView, GE::ComponentSystem::Graphics)
+
+
+namespace TD {
+
+struct CLevelTileMapView : GE::TComponent // TODO: maybe it is Presenter and should be attached to Map CS?
+{
     using TileFrame = sf::IntRect;
     using ImageInstance = Graphics::TTexture*;
     using TileImage = Graphics::TSprite;
@@ -119,44 +126,48 @@ public:
 
     CLevelTileMapView(const Parameters* source = nullptr);
 
-    virtual void HandleMessage(const GE::TMessage& message,
-        Context& context) override;
-
-    virtual void Update(const GE::TTime& step, Context& context) override;
-    virtual void Render(Graphics::TRenderTarget& target) override;
-
-    void SetTilesetRegistry(TLevelTileMapTilesetRegistry* instance);
-
 private:
-    using parent_type = GE::CGraphicsComponent;
-
-    TLevelTileMapTilesetRegistry* tilesetRegistry;
-    TLevelScene::ComponentPath tileMapComponent;
+    using parent_type = GE::TComponent;
 };
 
 struct CLevelTileMapView::Parameters : GE::TComponentCreateArgs
 {
-    TLevelTileMapTilesetRegistry* tilesetRegistry;
-    TLevelScene::ComponentPath tileMapComponent;
+    /*none*/
 };
+
+//void CLevelTileMapView::Render(Graphics::TRenderTarget& target) {
+//    //TODO: implementation
+//    THROW("Not implemented yet.");
+//    if (tileMapComponent.empty() == true) {
+//        return;
+//    }
+//    ASSERT(scene != nullptr, "Scene must be set.");
+//    ASSERT(tileMapHandle != GE::TScene::ComponentHandle::Undefined,
+//        "Tile map data component is not found.");
+
+//    const auto* tileMap =
+//        scene->GetComponent<CLevelTileMap>(tileMapHandle);
+//    if (tileMap == nullptr) {
+//        tileMapHandle = TLevelScene::ComponentHandle::Undefined;
+//        return;
+//    }
+//    for (uchar i = 0; i < CLevelTileMap::Layer::_count; ++i) {
+//        const auto boundaries =
+//            tileMap->GetLayer(static_cast<CLevelTileMap::Layer>(i));
+
+//        size_t x = 0;
+//        size_t y = 0;
+//        for (auto it = boundaries.first; it != boundaries.second; ++it) {
+//            const auto tileId = *it;
+//            if (tileId.index != 0) {
+//                sf::Sprite sprite = tileset.getImage(tileId - 1);
+//                sprite.setPosition(x * tileSize, y * tileSize);
+//                target.draw(sprite);
+//            }
+//        }
+//    }
+//}
 
 } // namespace TD
-
-
-namespace GE {
-
-template<>
-struct ComponentID<TD::CLevelTileMapView>
-{
-    static const ComponentIDs value;
-};
-
-template<>
-struct ComponentClass<TD::CLevelTileMapView>
-{
-    static const ComponentSystem value;
-};
-
-} // namespace GE
 
 #endif // LEVEL_TILE_MAP_H

@@ -2,10 +2,12 @@
 #define TD_COMPONENTS_LIST_H
 
 #include "GameEngine/component.h"
+#include "GameEngine/component_system_type.h"
 
 
 enum class GE::ComponentIDs : GE::TComponentID {
     Position2d = 0,
+    Animation,
 
     Health,
 
@@ -32,5 +34,25 @@ enum class GE::ComponentIDs : GE::TComponentID {
 
     _count
 };
+
+#define TD_DECLARE_COMPONENT_CLASS(CLASS_NAME, COMPONENT_ID, SYSTEM_ID) \
+    namespace TD { \
+    class CLASS_NAME; \
+    }; \ // namepsace TD
+    namespace GE { \
+    template<> \
+    struct ComponentID< ::TD::CLASS_NAME > \
+    { \
+        static const ComponentIDs value; \
+    }; \
+    const ComponentIDs ComponentID< ::TD::CLASS_NAME >::value = COMPONENT_ID; \
+    \
+    template<> \
+    struct ComponentClass< ::TD::CLASS_NAME > \
+    { \
+        static const ComponentSystem value; \
+    }; \
+    const ComponentSystem ComponentClass< ::TD::CLASS_NAME >::value = SYSTEM_ID; \
+    } // namespace GE
 
 #endif // TD_COMPONENTS_LIST_H

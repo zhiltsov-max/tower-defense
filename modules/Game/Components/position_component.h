@@ -1,14 +1,19 @@
 #ifndef POSITION_COMPONENT_H
 #define POSITION_COMPONENT_H
 
-#include "GameEngine/component_systems.h"
+#include "GameEngine/component.h"
+#include "GameEngine/component_registry.h"
+#include "Game/Components/td_components_list.h"
+#include "Game/ComponentSystems/td_component_systems_list.h"
 
+
+TD_DECLARE_COMPONENT_CLASS(CPosition2d,
+    GE::ComponentIDs::Position2d, GE::ComponentSystem::Movement)
 
 namespace TD {
 
-class CPosition2d : public GE::CDataComponent
+struct CPosition2d : GE::TComponent
 {
-public:
     using Position = Point2f;
     using Rotation = float;
     struct Parameters;
@@ -18,21 +23,11 @@ public:
 
     CPosition2d(const Parameters* args = nullptr);
 
-    virtual void HandleMessage(const GE::TMessage& message,
-        Context& context) override;
-
-    const Position& GetPosition() const;
-    void SetPosition(const Position& value);
-
-    const Rotation& GetRotation() const;
-    void SetRotation(const Rotation& value);
-
-private:
-    using parent_type = GE::CDataComponent;
-
     Position position;
     Rotation rotation;
 
+private:
+    using parent_type = GE::TComponent;
 };
 
 struct CPosition2d::Parameters : GE::TComponentCreateArgs
@@ -42,22 +37,5 @@ struct CPosition2d::Parameters : GE::TComponentCreateArgs
 };
 
 } // namespace TD
-
-
-namespace GE {
-
-template<>
-struct ComponentID<TD::CPosition2d>
-{
-    static const ComponentIDs value;
-};
-
-template<>
-struct ComponentClass<TD::CPosition2d>
-{
-    static const ComponentSystem value;
-};
-
-} // namespace GE
 
 #endif // POSITION_COMPONENT_H

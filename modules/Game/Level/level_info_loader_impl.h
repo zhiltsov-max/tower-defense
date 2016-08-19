@@ -19,6 +19,13 @@
 //#include "Game/Player/player_researches.h"
 //#include "Game/Player/player_statistics.h"
 
+#include "Game/Components/animation_component.h"
+#include "Game/Components/position_component.h"
+
+#include "Game/Components/health_component.h"
+
+#include "Game/Buildings/building.h"
+
 
 namespace TD {
 
@@ -462,7 +469,7 @@ template <>
 std::unique_ptr<GE::TComponentCreateArgs>
 readComponentInfo<CLevelTileMapView::Parameters>(const TRawLevelInfo& source) {
     auto info = std::unique_ptr<CLevelTileMapView::Parameters>(
-                new CLevelTileMapView::Parameters);
+        new CLevelTileMapView::Parameters);
     info->tileMapComponent = readFromString<TLevelScene::ComponentPath>(
         source[TileMapViewInfo::TileMap]);
     return { std::move(info) };
@@ -487,12 +494,38 @@ readFromRawLevelInfo<TLevel::Parameters::Stage>(const TRawLevelInfo& source) {
     return info;
 }
 
+
+namespace CAnimation_Info {
+static constexpr char DefaultActionIndex = "defaultActionIndex";
+static constexpr char DefaultSpeed = "defaultSpeed";
+static constexpr char ResourceID = "resourceId";
+} // namespace CAnimation_Info
+template <>
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<CAnimation::Parameters>(const TRawLevelInfo& source) {
+    auto info = std::unique_ptr<CAnimation::Parameters>(
+        new CAnimation::Parameters);
+    info->defaultActionIndex = std::stoi(
+        source[CAnimation_Info::DefaultActionIndex]);
+    info->defaultSpeed = std::stoi(source[CAnimation_Info::DefaultSpeed]);
+    info->repeats = std::stoi(source[CAnimation_Info::Reepeats]);
+    info->resource = source[CAnimation_Info::ResourceID];
+
+    return { std::move(info) };
+}
+
+
 using ComponentInfoReader = std::function<
     std::unique_ptr<GE::TComponentCreateArgs>(const TRawLevelInfo& source)
 >;
 static const std::map<GE::ComponentIDs, ComponentInfoReader>
 componentInfoReaders = {
     // list of pairs {id, reader}
+    {GE::ComponentIDs::Animation, readComponentInfo<CAnimation::Parameters>},
+    {GE::ComponentIDs::Position2d, readComponentInfo<CPosition2d::Parameters>},
+
+    {GE::ComponentIDs::Health, readComponentInfo<CHealth::Parameters>},
+
 //    {GE::ComponentIDs::PlayerStatistics,},
 //    {GE::ComponentIDs::PlayerProgress,},
 //    {GE::ComponentIDs::PlayerQuests,},

@@ -32,13 +32,13 @@ void TGameState_Initial::setUpGameEngine(GE::TGameEngine& engine) {
 
 void TGameState_Initial::setUpComponentSystems(GE::TComponentSystems& manager) {
     manager.AddSystem<GE::CSInputSystem>(GE::ComponentSystem::input);
-    manager.AddSystem<GE::CSMovementSystem>(GE::ComponentSystem::movement);
+    manager.AddSystem<GE::CSMovementSystem>(GE::ComponentSystem::Movement);
     manager.AddSystem<GE::CSDataSystem>(GE::ComponentSystem::data);
-    manager.AddSystem<GE::CSLogicsSystem>(GE::ComponentSystem::logics);
-    manager.AddSystem<GE::CSGraphicsSystem>(GE::ComponentSystem::graphics);
-    manager.AddSystem<GE::CSSoundSystem>(GE::ComponentSystem::sound);
+    manager.AddSystem<GE::CSLogicsSystem>(GE::ComponentSystem::Logics);
+    manager.AddSystem<GE::CSGraphicsSystem>(GE::ComponentSystem::Graphics);
+    manager.AddSystem<GE::CSSoundSystem>(GE::ComponentSystem::Sound);
 
-    auto* ui = manager.AddSystem<GE::CSUiSystem>(GE::ComponentSystem::ui);
+    auto* ui = manager.AddSystem<GE::CSUiSystem>(GE::ComponentSystem::UI);
     ui->SetApplicationUI(&app->getUI());
 }
 

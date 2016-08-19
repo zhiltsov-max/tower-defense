@@ -1,12 +1,5 @@
 #include "Game/Components/position_component.h"
-#include "Game/Components/components_list.h"
 
-
-const GE::ComponentIDs GE::ComponentID<TD::CPosition2d>::value =
-    GE::ComponentIDs::Position2d;
-
-const GE::ComponentSystem GE::ComponentClass<TD::CPosition2d>::value =
-    GE::ComponentSystem::data;
 
 namespace TD {
 
@@ -29,26 +22,4 @@ CPosition2d::CPosition2d(const Parameters* args) :
     }
 }
 
-void CPosition2d::HandleMessage(const GE::TMessage& message, Context& context) {
-    //TODO: ...
-}
-
-const CPosition2d::Position& CPosition2d::GetPosition() const {
-    return position;
-}
-
-void CPosition2d::SetPosition(const Position& value) {
-    position = value;
-}
-
-const CPosition2d::Rotation& CPosition2d::GetRotation() const {
-    return rotation;
-}
-
-void CPosition2d::SetRotation(const Rotation& value) {
-    rotation = value;
-}
-
 } // namespace TD
-
-TD::CS::RegisterComponentClass<CPosition2d>();

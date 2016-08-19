@@ -7,13 +7,11 @@
 enum class GE::ComponentSystem : GE::TComponentSystemTypeId {
     _min = 0,
 
-    input = 0,
-    data,
-    movement,
-    logics,
-    ui,
-    graphics,
-    sound,
+    Movement = 0,
+    Logics,
+    UI,
+    Graphics,
+    Sound,
 
     _count,
     _undefined = _count
