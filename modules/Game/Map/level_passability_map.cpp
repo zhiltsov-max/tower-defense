@@ -13,7 +13,7 @@ CLevelPassabilityMap::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CLevelPassabilityMap::CLevelPassabilityMap(const Parameters* source) :
-    parent_type(GE::ComponentID<CLevelPassabilityMap>::value)
+    parent_type(GE::ComponentID<CLevelPassabilityMap>::value())
 {
     if (source != nullptr) {
         size = source->size;

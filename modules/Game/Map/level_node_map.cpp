@@ -131,7 +131,7 @@ CLevelNodeMap::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CLevelNodeMap::CLevelNodeMap(const Parameters* source) :
-    parent_type(GE::ComponentID<CLevelNodeMap>::value),
+    parent_type(GE::ComponentID<CLevelNodeMap>::value()),
     nodeMap((source != nullptr) ? source->nodeMap : NodeMap::Parameters())
 {}
 
@@ -146,7 +146,7 @@ CLevelNodeMapView::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CLevelNodeMapView::CLevelNodeMapView(const Parameters* source) :
-    parent_type(GE::ComponentID<CLevelNodeMapView>::value)
+    parent_type(GE::ComponentID<CLevelNodeMapView>::value())
 {}
 
 } // namespace TD

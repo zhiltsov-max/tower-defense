@@ -19,6 +19,7 @@ public:
     using Path = vector<Node>;
     using Index = size_t;
 
+    TLevelNodeMap() = default;
     TLevelNodeMap(const Parameters& parameters);
 
     void AddPath(const Path& path);

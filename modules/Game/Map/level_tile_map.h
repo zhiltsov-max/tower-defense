@@ -39,7 +39,8 @@ public:
     struct LayerParameters;
     using TileParameters = TLevelTileMap::Tile;
 
-    TLevelTileMap(const Parameters& source = Parameters());
+    TLevelTileMap() = default;
+    TLevelTileMap(const Parameters& source);
 
     const Size& GetSize() const;
     void SetSize(const Size& value);
@@ -84,7 +85,7 @@ TD_DECLARE_COMPONENT_CLASS(CLevelTileMap,
 
 namespace TD {
 
-struct CLevelTileMap : GE::CDataComponent
+struct CLevelTileMap : GE::TComponent
 {
     using TileMap = TLevelTileMap;
     struct Parameters;

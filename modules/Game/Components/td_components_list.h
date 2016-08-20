@@ -38,21 +38,18 @@ enum class GE::ComponentIDs : GE::TComponentID {
 #define TD_DECLARE_COMPONENT_CLASS(CLASS_NAME, COMPONENT_ID, SYSTEM_ID) \
     namespace TD { \
     class CLASS_NAME; \
-    }; \ // namepsace TD
+    }; \
     namespace GE { \
     template<> \
     struct ComponentID< ::TD::CLASS_NAME > \
     { \
-        static const ComponentIDs value; \
+        inline static constexpr ComponentIDs value() { return COMPONENT_ID; } \
     }; \
-    const ComponentIDs ComponentID< ::TD::CLASS_NAME >::value = COMPONENT_ID; \
-    \
     template<> \
     struct ComponentClass< ::TD::CLASS_NAME > \
     { \
-        static const ComponentSystem value; \
+        inline static constexpr ComponentSystem value() { return SYSTEM_ID; } \
     }; \
-    const ComponentSystem ComponentClass< ::TD::CLASS_NAME >::value = SYSTEM_ID; \
-    } // namespace GE
+    }
 
 #endif // TD_COMPONENTS_LIST_H

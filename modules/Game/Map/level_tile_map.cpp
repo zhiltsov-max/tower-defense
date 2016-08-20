@@ -3,24 +3,23 @@
 
 namespace TD {
 
-TLevelTileMap::TLevelTileMap(const TLevelTileMap::Parameters& source) :
+TLevelTileMap::TLevelTileMap(const Parameters& source) :
     size(),
     tilesets(),
     layers()
 {
-    if (source == nullptr) {
+    if ((source.size.x == 0) || (source.size.y == 0)) {
         return;
     }
+    SetSize(source.size);
 
-    SetSize(source->size);
-
-    ASSERT(source->layers.size() == static_cast<size_t>(Layer::_count),
+    ASSERT(source.layers.size() == static_cast<size_t>(Layer::_count),
         "Unable to load levelTileMap: unexpected layers count.");
-    for (uchar i = 0; i != source->layers.size(); ++i) {
-        ASSERT(source->layers[i].tiles.size() == source->size.x * source->size.y,
+    for (uchar i = 0; i != source.layers.size(); ++i) {
+        ASSERT(source.layers[i].tiles.size() == source.size.x * source.size.y,
             "Unexpected source layer size, layer #" + std::to_string(i));
     }
-    loadTiles(*source);
+    loadTiles(source);
     loadTilesets();
 }
 
@@ -104,7 +103,7 @@ CLevelTileMap::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CLevelTileMap::CLevelTileMap(const Parameters* source) :
-    parent_type(GE::ComponentID<CLevelTileMap>::value),
+    parent_type(GE::ComponentID<CLevelTileMap>::value()),
     tileMap((source != nullptr) ? source->map : TLevelTileMap::Parameters())
 {}
 
@@ -119,7 +118,7 @@ CLevelTileMapView::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CLevelTileMapView::CLevelTileMapView(const Parameters* source) :
-    parent_type(GE::ComponentID<CLevelTileMapView>::value)
+    parent_type(GE::ComponentID<CLevelTileMapView>::value())
 {
     UNUSED(source);
 }

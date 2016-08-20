@@ -13,6 +13,7 @@ CHealth::Create(const GE::TComponentCreateArgs* args) {
 }
 
 CHealth::CHealth(const CHealth::Parameters* args) :
+    parent_type(GE::ComponentID<CHealth>::value()),
     actualHealth(0),
     maxHealth(0)
 {

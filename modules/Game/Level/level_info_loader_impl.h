@@ -24,7 +24,7 @@
 
 #include "Game/Components/health_component.h"
 
-#include "Game/Buildings/building.h"
+//#include "Game/Buildings/building.h"
 
 
 namespace TD {
@@ -72,6 +72,12 @@ template <>
 Vec2ui readFromString(const string& source);
 
 template <>
+Vec2f readFromRawLevelInfo(const TRawLevelInfo& source);
+
+template <>
+Vec2f readFromString(const string& source);
+
+template <>
 TLevel::Parameters::Common
 readFromRawLevelInfo<TLevel::Parameters::Common>(const TRawLevelInfo& source);
 
@@ -105,8 +111,20 @@ std::unique_ptr<GE::TComponentCreateArgs>
 readComponentInfo<CLevelNodeMap::Parameters>(const TRawLevelInfo& source);
 
 template <>
-CLevelTileMap::LayerParameters
-readFromRawLevelInfo<CLevelTileMap::LayerParameters>(
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<CHealth::Parameters>(const TRawLevelInfo& source);
+
+template <>
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<CAnimation::Parameters>(const TRawLevelInfo& source);
+
+template <>
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<CPosition2d::Parameters>(const TRawLevelInfo& source);
+
+template <>
+TLevelTileMap::LayerParameters
+readFromRawLevelInfo<TLevelTileMap::LayerParameters>(
     const TRawLevelInfo& source);
 
 template <>
@@ -273,6 +291,22 @@ Vec2ui readFromString(const string& source) {
 }
 
 template <>
+Vec2f readFromRawLevelInfo(const TRawLevelInfo& source) {
+    Vec2f info;
+    info.x = std::stof(source["x"]);
+    info.y = std::stof(source["y"]);
+    return info;
+}
+
+template <>
+Vec2f readFromString(const string& source) {
+    const auto coordinates = readSequence<float>(source,
+        [] (const string& s) { return static_cast<float>(std::stof(s)); } );
+    ASSERT(coordinates.size() == 2, "Expected 2 coordinates.");
+    return {coordinates[0], coordinates[1]};
+}
+
+template <>
 TLevelScene::ComponentPath
 readFromString<TLevelScene::ComponentPath>(const string& source) {
     TLevelScene::ComponentPath path;
@@ -415,12 +449,12 @@ std::unique_ptr<GE::TComponentCreateArgs>
 readComponentInfo<CLevelNodeMap::Parameters>(const TRawLevelInfo& source) {
     auto info = std::unique_ptr<CLevelNodeMap::Parameters>(
         new CLevelNodeMap::Parameters);
-    info->pathes = readArray<vector<Vec2ui>>(source.slice(NodeMapInfo::Pathes),
-        readArray<Vec2ui>);
-    info->enters = readArray<Vec2ui>(source.slice(NodeMapInfo::Enters),
-        readFromString<Vec2ui>);
-    info->exits = readArray<Vec2ui>(source.slice(NodeMapInfo::Exits),
-        readFromString<Vec2ui>);
+    info->nodeMap.pathes = readArray<vector<Vec2ui>>(
+        source.slice(NodeMapInfo::Pathes), readArray<Vec2ui>);
+    info->nodeMap.enters = readArray<Vec2ui>(
+        source.slice(NodeMapInfo::Enters), readFromString<Vec2ui>);
+    info->nodeMap.exits = readArray<Vec2ui>(
+        source.slice(NodeMapInfo::Exits), readFromString<Vec2ui>);
     return { std::move(info) };
 }
 
@@ -429,15 +463,15 @@ static constexpr char Tiles[] = "tiles";
 } // namespace TileMapLayerInfo
 
 template <>
-CLevelTileMap::LayerParameters
-readFromRawLevelInfo<CLevelTileMap::LayerParameters>(
+TLevelTileMap::LayerParameters
+readFromRawLevelInfo<TLevelTileMap::LayerParameters>(
     const TRawLevelInfo& source)
 {
-    CLevelTileMap::LayerParameters info;
-    info.tiles = readSequence<CLevelTileMap::Tile>(
+    TLevelTileMap::LayerParameters info;
+    info.tiles = readSequence<TLevelTileMap::Tile>(
         source[TileMapLayerInfo::Tiles],
         [] (const string& s) {
-            CLevelTileMap::Tile tile;
+            TLevelTileMap::Tile tile;
             tile.index = static_cast<uint>(std::stoul(s));
             return tile;
         }
@@ -455,14 +489,13 @@ std::unique_ptr<GE::TComponentCreateArgs>
 readComponentInfo<CLevelTileMap::Parameters>(const TRawLevelInfo& source) {
     auto info = std::unique_ptr<CLevelTileMap::Parameters>(
         new CLevelTileMap::Parameters);
-    info->size = readFromString<Vec2ui>(source[TileMapInfo::Size]);
-    info->layers = readArray<CLevelTileMap::LayerParameters>(
+    info->map.size = readFromString<Vec2ui>(source[TileMapInfo::Size]);
+    info->map.layers = readArray<TLevelTileMap::LayerParameters>(
         source.slice(TileMapInfo::Layers));
     return { std::move(info) };
 }
 
 namespace TileMapViewInfo {
-static constexpr char TileMap[] = "tileMap";
 } // namespace TileMapView
 
 template <>
@@ -470,8 +503,7 @@ std::unique_ptr<GE::TComponentCreateArgs>
 readComponentInfo<CLevelTileMapView::Parameters>(const TRawLevelInfo& source) {
     auto info = std::unique_ptr<CLevelTileMapView::Parameters>(
         new CLevelTileMapView::Parameters);
-    info->tileMapComponent = readFromString<TLevelScene::ComponentPath>(
-        source[TileMapViewInfo::TileMap]);
+    // TODO: ...
     return { std::move(info) };
 }
 
@@ -496,9 +528,10 @@ readFromRawLevelInfo<TLevel::Parameters::Stage>(const TRawLevelInfo& source) {
 
 
 namespace CAnimation_Info {
-static constexpr char DefaultActionIndex = "defaultActionIndex";
-static constexpr char DefaultSpeed = "defaultSpeed";
-static constexpr char ResourceID = "resourceId";
+static constexpr char DefaultActionIndex[] = "defaultActionIndex";
+static constexpr char DefaultSpeed[] = "defaultSpeed";
+static constexpr char ResourceID[] = "resourceId";
+static constexpr char Repeats[] = "repeats";
 } // namespace CAnimation_Info
 template <>
 std::unique_ptr<GE::TComponentCreateArgs>
@@ -508,9 +541,39 @@ readComponentInfo<CAnimation::Parameters>(const TRawLevelInfo& source) {
     info->defaultActionIndex = std::stoi(
         source[CAnimation_Info::DefaultActionIndex]);
     info->defaultSpeed = std::stoi(source[CAnimation_Info::DefaultSpeed]);
-    info->repeats = std::stoi(source[CAnimation_Info::Reepeats]);
+    info->repeats = std::stoi(source[CAnimation_Info::Repeats]);
     info->resource = source[CAnimation_Info::ResourceID];
 
+    return { std::move(info) };
+}
+
+
+namespace CHealth_Info {
+static constexpr char ActualHealth[] = "actualHealth";
+static constexpr char MaxHealth[] = "maxHealth";
+} // namespace CHealth_Info
+template <>
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<CHealth::Parameters>(const TRawLevelInfo& source) {
+    auto info = std::unique_ptr<CHealth::Parameters>(
+        new CHealth::Parameters);
+    info->actualHealth = std::stoi(source[CHealth_Info::ActualHealth]);
+    info->maxHealth = std::stoi(source[CHealth_Info::MaxHealth]);
+    return { std::move(info) };
+}
+
+
+namespace CPosition2d_Info {
+static constexpr char Position[] = "position";
+static constexpr char Rotation[] = "rotation";
+} // namespace CPosition2d_Info
+template <>
+std::unique_ptr<GE::TComponentCreateArgs>
+readComponentInfo<CPosition2d::Parameters>(const TRawLevelInfo& source) {
+    auto info = std::unique_ptr<CPosition2d::Parameters>(
+        new CPosition2d::Parameters);
+    info->position = readFromString<Vec2f>(source[CPosition2d_Info::Position]);
+    info->rotation = std::stof(source[CPosition2d_Info::Rotation]);
     return { std::move(info) };
 }
 

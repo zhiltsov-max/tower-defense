@@ -2,7 +2,6 @@
 #include "GameEngine/game_engine.h"
 #include "Game/Level/level.h"
 #include "Game/Level/level_scene.h"
-#include "GameEngine/ComponentSystems/component_system_data.h"
 
 
 using namespace GE;
@@ -93,7 +92,7 @@ TEST_F(TestLevel, update_max_tick) {
 enum class GE::ComponentSystem : GE::TComponentSystemTypeId {
     _min = 0,
 
-    Data = _min,
+    Custom = _min,
 
     _max,
     _count = _max - _min,
@@ -104,14 +103,14 @@ enum class GE::ComponentSystem : GE::TComponentSystemTypeId {
 enum class GE::ComponentIDs : TComponentID {
     _min = 0,
 
-    CustomComponent = _min,
+    Custom = _min,
 
     _max,
     _count = _max - _min
 };
 
 class CustomComponent :
-    public GE::CDataComponent
+    public GE::TComponent
 {
 public:
     struct Parameters : GE::TComponentCreateArgs
@@ -128,39 +127,39 @@ public:
 
     CustomComponent(const Parameters* parameters);
 
-    virtual void HandleMessage(const TMessage& message,
-        Context& context) override { /* none */ }
 
-    int GetValue() const {
-        return value;
-    }
-
-    void SetValue(int value) {
-        this->value = value;
-    }
-
-protected:
     int value;
 };
 
 namespace GE {
 template<>
 struct ComponentID< CustomComponent > {
-    static const ComponentIDs value;
+    inline static const ComponentIDs value() { return ComponentIDs::Custom; }
 };
-const ComponentIDs ComponentID<CustomComponent>::value =
-    ComponentIDs::CustomComponent;
 
 template<>
 struct ComponentClass< CustomComponent > {
-    static const ComponentSystem value;
+    inline static const ComponentSystem value() {
+        return ComponentSystem::Custom;
+    }
 };
-const ComponentSystem ComponentClass<CustomComponent>::value =
-    ComponentSystem::Data;
-} //namespace GE
+} // namespace GE
 
-CustomComponent::CustomComponent(const CustomComponent::Parameters* parameters) :
-    GE::CDataComponent(ComponentID<CustomComponent>::value),
+class CSCustom :
+    public GE::TComponentSystem
+{
+public:
+    virtual void Update(const GE::TTime& step, Context& context) override
+    { /*none*/ }
+
+    virtual void HandleMessage(const GE::TMessage& message,
+        const GE::TComponentHandle& sender, Context& context) override
+    { /*none*/ }
+};
+
+
+CustomComponent::CustomComponent(const Parameters* parameters) :
+    GE::TComponent(ComponentID<CustomComponent>::value()),
     value(0)
 {
     if (parameters != nullptr) {
@@ -182,13 +181,13 @@ public:
     virtual void SetUp() override {
         engine.reset(new GE::TGameEngine());
         engine->GetComponentSystemsManager().
-            AddSystem<GE::CSDataSystem>(GE::ComponentSystem::Data);
+            AddSystem<CSCustom>(GE::ComponentSystem::Custom);
 
         GE::TComponentRegistry::Entry entry;
         entry.create = &CustomComponent::Create;
-        entry.system = GE::ComponentClass<CustomComponent>::value;
+        entry.system = GE::ComponentClass<CustomComponent>::value();
         engine->GetComponentSystemsManager().GetComponentRegistry().
-            Register(GE::ComponentID<CustomComponent>::value, entry);
+            Register(GE::ComponentID<CustomComponent>::value(), entry);
 
         scene.reset(new TD::TLevelScene(generateInfo(), engine.get()));
     }
@@ -213,7 +212,7 @@ TEST(LevelSceneTest, ctor_with_null_engine_correct) {
 
 TEST_F(TestLevelScene, create_component_with_default_args_correct) {
     ASSERT_NO_THROW(scene->CreateComponent(
-        GE::ComponentID<CustomComponent>::value, nullptr));
+        GE::ComponentID<CustomComponent>::value(), nullptr));
 }
 
 TEST_F(TestLevelScene, create_component_with_custom_args_correct) {
@@ -222,11 +221,11 @@ TEST_F(TestLevelScene, create_component_with_custom_args_correct) {
 
     TLevelScene::ComponentHandle handle;
     ASSERT_NO_THROW(handle = scene->CreateComponent(
-        GE::ComponentID<CustomComponent>::value, &parameters));
+        GE::ComponentID<CustomComponent>::value(), &parameters));
 
     const auto* component = scene->GetComponent<CustomComponent>(handle);
     EXPECT_NE(nullptr, component);
-    EXPECT_EQ(parameters.value, component->GetValue());
+    EXPECT_EQ(parameters.value, component->value);
 }
 
 TEST_F(TestLevelScene, create_component_unregistered_incorrect) {
@@ -247,12 +246,12 @@ TEST_F(TestLevelScene, create_component_by_template_with_custom_args_correct) {
 
     const auto* component = scene->GetComponent<CustomComponent>(handle);
     EXPECT_NE(nullptr, component);
-    EXPECT_EQ(parameters.value, component->GetValue());
+    EXPECT_EQ(parameters.value, component->value);
 }
 
 TEST_F(TestLevelScene, remove_component_existing_component) {
     const auto handle = scene->CreateComponent(
-        GE::ComponentID<CustomComponent>::value, nullptr);
+        GE::ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_NO_THROW(scene->RemoveComponent(handle));
     EXPECT_FALSE(scene->HasComponent(handle));
@@ -277,12 +276,9 @@ TEST_F(TestLevelScene, get_component_and_cast_unexisting_handle) {
 }
 
 TEST_F(TestLevelScene, get_component_and_cast_wrong_class) {
-    class OtherComponent : GE::TComponent {
-        virtual void HandleMessage(const GE::TMessage& message,
-            Context& context) override {}
-    };
+    struct OtherComponent : GE::TComponent {};
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_EQ(nullptr, scene->GetComponent<OtherComponent>(handle));
 }
@@ -301,7 +297,7 @@ TEST_F(TestLevelScene, get_component_unexisting_handle) {
 
 TEST_F(TestLevelScene, find_component_existing) {
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
     const TLevelScene::ComponentPath path{"object1", "component1"};
     TLevelScene::Object object;
     object.AddComponent(path.second, handle);
@@ -419,7 +415,7 @@ TEST_F(TestLevelScene, remove_scene_object_by_name_unexisting) {
 }
 
 TEST_F(TestLevelScene, clear_clears) {
-    scene->CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    scene->CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
     scene->AddSceneObject("object", TLevelScene::Object());
 
     scene->Clear();
@@ -438,7 +434,7 @@ TEST_F(TestLevelScene, is_empty_not_empty_when_has_object) {
 }
 
 TEST_F(TestLevelScene, is_empty_not_empty_when_has_component) {
-    scene->CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    scene->CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_FALSE(scene->IsEmpty());
 }

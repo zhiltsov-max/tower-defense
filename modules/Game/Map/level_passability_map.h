@@ -32,7 +32,7 @@ struct CLevelPassabilityMap : GE::TComponent
     Size size;
 
 private:
-    using parent_type = GE::CDataComponent;
+    using parent_type = GE::TComponent;
 };
 
 struct CLevelPassabilityMap::Parameters : GE::TComponentCreateArgs

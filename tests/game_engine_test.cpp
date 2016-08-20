@@ -159,29 +159,158 @@ TEST_F(TestMessage, get_id) {
     EXPECT_EQ(MessageID::TestMessage, GetID());
 }
 
+// === MessageSystem Tests ===
+
+class TestMessageSystem :
+    public ::testing::Test,
+    protected TMessageSystem
+{
+protected:
+    bool HasSubscription(const ComponentHandle& source,
+        const ComponentHandle& listener) const
+    {
+        return (routingTable.count(source) != 0) &&
+            (FindListener(routingTable.at(source), listener)
+                != routingTable.at(source).cend());
+    }
+
+    bool HasSubscription(const ComponentHandle& source,
+        const ComponentHandle& listener, const MessageID& messageId) const
+    {
+        if (HasSubscription(source, listener) == false) {
+            return false;
+        } else {
+            const auto& subscriptions = FindListener(
+                routingTable.at(source), listener)->second;
+            return subscriptions.cend() !=
+                FindSubscription(subscriptions, messageId);
+        }
+    }
+};
+
+TEST_F(TestMessageSystem, subscribe_component_to_other) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender(10, ComponentSystem::Custom);
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+
+    Subscribe(sender, listener, message, handler);
+
+    EXPECT_TRUE(HasSubscription(sender, listener, message));
+}
+
+TEST_F(TestMessageSystem, subscribe_component_to_other_without_callback_failure) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender(10, ComponentSystem::Custom);
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    MessageCallback handler;
+
+    ASSERT_ANY_THROW(Subscribe(sender, listener, message, handler));
+}
+
+TEST_F(TestMessageSystem, subscribe_component_to_global) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender = ComponentHandle::Undefined;
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+
+    Subscribe(sender, listener, message, handler);
+
+    EXPECT_TRUE(HasSubscription(sender, listener, message));
+}
+
+TEST_F(TestMessageSystem, unsubscribe_component_from_other_message) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender(10, ComponentSystem::Custom);
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    Subscribe(sender, listener, message, handler);
+
+    Unsubscribe(sender, listener, message);
+
+    EXPECT_FALSE(HasSubscription(sender, listener, message));
+}
+
+TEST_F(TestMessageSystem, unsubscribe_component_from_other) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender(10, ComponentSystem::Custom);
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    Subscribe(sender, listener, message, handler);
+
+    Unsubscribe(sender, listener);
+
+    EXPECT_FALSE(HasSubscription(sender, listener));
+}
+
+TEST_F(TestMessageSystem, unsubscribe_component_from_all) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender1(10, ComponentSystem::Custom);
+    const ComponentHandle sender2(15, ComponentSystem::Custom);
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    Subscribe(sender1, listener, message, handler);
+    Subscribe(sender2, listener, message, handler);
+
+    Unsubscribe(listener);
+
+    EXPECT_FALSE(HasSubscription(sender1, listener));
+    EXPECT_FALSE(HasSubscription(sender2, listener));
+}
+
+TEST_F(TestMessageSystem, unsubscribe_all_from_component) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender(10, ComponentSystem::Custom);
+    const ComponentHandle listener(20, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    Subscribe(sender, listener, message, handler);
+
+    UnsubscribeFrom(sender);
+
+    EXPECT_FALSE(HasSubscription(sender, listener));
+}
+
 // === Component Tests ===
+
+struct TestComponent : TComponent
+{
+    TestComponent();
+};
+
+namespace GE {
+template <>
+struct ComponentID<TestComponent>
+{
+    inline static constexpr ComponentIDs value() {
+        return ComponentIDs::TestComponent;
+    }
+};
+} // namespace GE
+TestComponent::TestComponent() :
+    TComponent(ComponentID<TestComponent>::value())
+{}
+
 
 TEST(ComponentTest, ctor) {
     const auto id = ComponentIDs::TestComponent;
 
-    const TComponent component(id);
+    const TestComponent component;
 
     EXPECT_EQ(id, component.GetID());
 }
 
 TEST(ComponentTest, get_id) {
     const auto id = ComponentIDs::TestComponent;
-    const TComponent component(id);
+    const TestComponent component;
 
     ASSERT_EQ(id, component.GetID());
 }
 
 TEST(ComponentTest, operator_print_to_stream) {
-    const auto id = ComponentIDs::TestComponent;
-    const TComponent component(id);
+    const ComponentIDs id = ComponentIDs::TestComponent;
     std::stringstream ss;
 
-    ss << component;
+    ss << id;
 
     ASSERT_FALSE(ss.str().empty());
 }
@@ -204,27 +333,28 @@ struct CustomComponent : TComponent
 
     CustomComponent(const Parameters* parameters);
 
+
     int value;
 };
 
 namespace GE {
 template<>
 struct ComponentID< CustomComponent > {
-    static const ComponentIDs value;
+    inline static const ComponentIDs value() {
+        return ComponentIDs::CustomComponent;
+    }
 };
-const ComponentIDs ComponentID<CustomComponent>::value =
-    ComponentIDs::CustomComponent;
 
 template<>
 struct ComponentClass< CustomComponent > {
-    static const ComponentSystem value;
+    inline static const ComponentSystem value() {
+        return ComponentSystem::Custom;
+    }
 };
-const ComponentSystem ComponentClass<CustomComponent>::value =
-    ComponentSystem::Custom;
-} //namespace GE
+} // namespace GE
 
 CustomComponent::CustomComponent(const Parameters* parameters) :
-    TComponent(ComponentID<CustomComponent>::value),
+    TComponent(ComponentID<CustomComponent>::value()),
     value(0)
 {
     if (parameters != nullptr) {
@@ -245,21 +375,17 @@ protected:
 
         TComponentRegistry::Entry customComponentEntry;
         customComponentEntry.create = &CustomComponent::Create;
-        customComponentEntry.system = ComponentClass<CustomComponent>::value;
+        customComponentEntry.system = ComponentClass<CustomComponent>::value();
         testRegistry.Register(ComponentIDs::CustomComponent,
             customComponentEntry);
 
         SetComponentRegistry(&testRegistry);
     }
 
-    bool HasSubscription(const Handle& source, const Handle& listener) const {
-        return (listeners.count(source) != 0) &&
-            (std::find(listeners.at(source).cbegin(),
-                listeners.at(source).cend(), listener)
-             != listeners.at(source).cend());
-    }
-
-    virtual void Update(const TTime& step, Context& context) override { /*none*/ }
+    virtual void Update(const TTime& step,
+        Context& context) override { /*none*/ }
+    virtual void HandleMessage(const TMessage& message,
+        const TComponentHandle& sender, Context& context) override { /*none*/ }
 
 private:
     TComponentRegistry testRegistry;
@@ -268,7 +394,7 @@ private:
 
 TEST_F(TestComponentSystem, create_component_positive) {
     ASSERT_NO_THROW(CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr));
+        ComponentID<CustomComponent>::value(), nullptr));
 }
 
 TEST_F(TestComponentSystem, create_component_negative) {
@@ -277,7 +403,7 @@ TEST_F(TestComponentSystem, create_component_negative) {
 
 TEST_F(TestComponentSystem, has_component_existing) {
     const auto handle = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_TRUE(HasComponent(handle));
 }
@@ -288,7 +414,7 @@ TEST_F(TestComponentSystem, has_component_unexisting) {
 
 TEST_F(TestComponentSystem, remove_component_existing) {
     const auto handle = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_NO_THROW(RemoveComponent(handle));
 
@@ -301,7 +427,7 @@ TEST_F(TestComponentSystem, remove_component_unexisting) {
 
 TEST_F(TestComponentSystem, get_component_existing) {
     const auto handle = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_NE(nullptr, GetComponent(handle));
 }
@@ -310,67 +436,8 @@ TEST_F(TestComponentSystem, get_component_unexisting) {
     ASSERT_EQ(nullptr, GetComponent(HandleUndefined));
 }
 
-TEST_F(TestComponentSystem, subscribe_component_to_other) {
-    const auto source = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    const auto listener = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-
-    Subscribe(source, listener);
-
-    EXPECT_TRUE(HasSubscription(source, listener));
-}
-
-TEST_F(TestComponentSystem, subscribe_component_to_global) {
-    const auto source = HandleUndefined;
-    const auto listener = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-
-    Subscribe(source, listener);
-
-    EXPECT_TRUE(HasSubscription(source, listener));
-}
-
-TEST_F(TestComponentSystem, unsubscribe_component_from_other) {
-    const auto source = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    const auto listener = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    Subscribe(source, listener);
-
-    Unsubscribe(source, listener);
-
-    EXPECT_FALSE(HasSubscription(source, listener));
-}
-
-TEST_F(TestComponentSystem, unsubscribe_component_from_all) {
-    const auto source = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    const auto listener = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    Subscribe(source, listener);
-    Subscribe(HandleUndefined, listener);
-
-    Unsubscribe(listener);
-
-    EXPECT_FALSE(HasSubscription(source, listener));
-    EXPECT_FALSE(HasSubscription(HandleUndefined, listener));
-}
-
-TEST_F(TestComponentSystem, unsubscribe_all_from_component) {
-    const auto source = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    const auto listener = CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
-    Subscribe(source, listener);
-
-    UnsubscribeFrom(source);
-
-    EXPECT_FALSE(HasSubscription(source, listener));
-}
-
 TEST_F(TestComponentSystem, clear_clears) {
-    CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
 
     Clear();
 
@@ -382,7 +449,7 @@ TEST_F(TestComponentSystem, is_empty_empty_when_empty) {
 }
 
 TEST_F(TestComponentSystem, is_empty_not_empty_when_not_empty) {
-    CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
     ASSERT_FALSE(IsEmpty());
 }
 
@@ -391,7 +458,9 @@ TEST_F(TestComponentSystem, is_empty_not_empty_when_not_empty) {
 class CustomComponentSystem : public TComponentSystem
 {
 public:
-    virtual void Update(const TTime& step, Context& context) {}
+    virtual void Update(const TTime& step, Context& context) { /*none*/ }
+    virtual void HandleMessage(const TMessage& message,
+        const TComponentHandle& sender, Context& context) override { /*none*/ }
 };
 
 
@@ -459,21 +528,23 @@ TEST(ComponentSystemsManagerTest, find_system_unexisting_failure) {
 }
 
 TEST(ComponentSystemsManagerTest, send_message_with_sender) {
-    class CustomMessage : TMessage {
+    class CustomMessage : public TMessage {
+    public:
         CustomMessage() : TMessage(MessageID::CustomMessage) {}
     };
     CustomMessage message;
     TGameEngine engine;
     TScene scene;
     TGameEngineContext context{&engine, &scene};
-    TComponentSystemsManager::ComponentHandle sender{10};
+    TComponentSystemsManager::ComponentHandle sender{10, ComponentSystem::Custom};
     TComponentSystemsManager systems;
 
     ASSERT_NO_THROW(systems.SendMessage(message, context, sender));
 }
 
 TEST(ComponentSystemsManagerTest, send_message_without_sender) {
-    class CustomMessage : TMessage {
+    class CustomMessage : public TMessage {
+    public:
         CustomMessage() : TMessage(MessageID::CustomMessage) {}
     };
     CustomMessage message;
@@ -865,9 +936,9 @@ public:
 
         TComponentRegistry::Entry entry;
         entry.create = &CustomComponent::Create;
-        entry.system = ComponentClass<CustomComponent>::value;
+        entry.system = ComponentClass<CustomComponent>::value();
         engine->GetComponentSystemsManager().GetComponentRegistry().
-            Register(ComponentID<CustomComponent>::value, entry);
+            Register(ComponentID<CustomComponent>::value(), entry);
 
         scene.reset(new TScene());
         scene->SetGameEngine(engine.get());
@@ -884,7 +955,7 @@ TEST(SceneTest, ctor_correct) {
 
 TEST_F(TestScene, create_component_with_default_args_correct) {
     ASSERT_NO_THROW(scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr));
+        ComponentID<CustomComponent>::value(), nullptr));
 }
 
 TEST_F(TestScene, create_component_with_custom_args_correct) {
@@ -893,11 +964,11 @@ TEST_F(TestScene, create_component_with_custom_args_correct) {
 
     TScene::ComponentHandle handle;
     ASSERT_NO_THROW(handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, &parameters));
+        ComponentID<CustomComponent>::value(), &parameters));
 
     const auto* component = scene->GetComponent<CustomComponent>(handle);
     EXPECT_NE(nullptr, component);
-    EXPECT_EQ(parameters.value, component->GetValue());
+    EXPECT_EQ(parameters.value, component->value);
 }
 
 TEST_F(TestScene, create_component_unregistered_incorrect) {
@@ -906,7 +977,7 @@ TEST_F(TestScene, create_component_unregistered_incorrect) {
 
 TEST_F(TestScene, remove_component_existing_component) {
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_NO_THROW(scene->RemoveComponent(handle));
     EXPECT_FALSE(scene->HasComponent(handle));
@@ -920,7 +991,7 @@ TEST_F(TestScene, remove_component_unexisting_component) {
 
 TEST_F(TestScene, get_component_and_cast_existing) {
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_NE(nullptr, scene->GetComponent<CustomComponent>(handle));
 }
@@ -934,14 +1005,14 @@ TEST_F(TestScene, get_component_and_cast_unexisting_handle) {
 TEST_F(TestScene, get_component_and_cast_wrong_class) {
     struct OtherComponent : TComponent {};
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_EQ(nullptr, scene->GetComponent<OtherComponent>(handle));
 }
 
 TEST_F(TestScene, get_component_existing) {
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_NE(nullptr, scene->GetComponent(handle));
 }
@@ -954,7 +1025,7 @@ TEST_F(TestScene, get_component_unexisting_handle) {
 
 TEST_F(TestScene, find_component_existing) {
     const auto handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value, nullptr);
+        ComponentID<CustomComponent>::value(), nullptr);
     const TScene::ComponentPath path{"object1", "component1"};
     TSceneObject object;
     object.AddComponent(path.second, handle);
@@ -1069,7 +1140,7 @@ TEST_F(TestScene, remove_scene_object_by_name_unexisting) {
 }
 
 TEST_F(TestScene, clear_clears) {
-    scene->CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    scene->CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
     scene->AddSceneObject("object", TSceneObject());
 
     scene->Clear();
@@ -1088,7 +1159,7 @@ TEST_F(TestScene, is_empty_not_empty_when_has_object) {
 }
 
 TEST_F(TestScene, is_empty_not_empty_when_has_component) {
-    scene->CreateComponent(ComponentID<CustomComponent>::value, nullptr);
+    scene->CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
 
     ASSERT_FALSE(scene->IsEmpty());
 }

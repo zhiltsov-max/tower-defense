@@ -13,6 +13,7 @@ CPosition2d::Create(const GE::TComponentCreateArgs* args_) {
 }
 
 CPosition2d::CPosition2d(const Parameters* args) :
+    parent_type(GE::ComponentID<CPosition2d>::value()),
     position(0, 0),
     rotation(0)
 {
