@@ -75,6 +75,6 @@ private:
     Value handle;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // SCENE_OBJECT_CONTAINER_H

@@ -14,18 +14,18 @@ public:
     virtual ~CSLogicsSystem() = default;
 
     virtual void Update(const TTime& step, Context& context) override;
+    virtual void HandleMessage(const TMessage& message,
+        const TComponentHandle& sender, Context& context) override;
 };
 
-class CLogicsComponent : /*Abstract*/
+class CLogicsComponent :
     public TComponent
 {
 public:
     CLogicsComponent(const ID& id);
     virtual ~CLogicsComponent() = default;
-
-    virtual void Update(const TTime& step, Context& context) = 0;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_SYSTEM_LOGICS_H

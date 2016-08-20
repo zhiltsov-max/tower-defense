@@ -13,7 +13,7 @@ public:
     using Handle = size_t;
     static const Handle HandleUndefined;
 
-    class ComponentHandle;
+    using ComponentHandle = TComponentHandle;
 
     using ComponentName = string;
     struct Entry;
@@ -51,31 +51,6 @@ private:
     void checkSize();
 };
 
-class TSceneObject::ComponentHandle
-{
-public:
-    static const ComponentHandle Undefined;
-
-    ComponentHandle(size_t handle = -1u,
-        const ComponentSystem& system = static_cast<ComponentSystem>(0));
-
-    operator size_t() const;
-    const ComponentSystem& GetSystem() const;
-    const TComponentSystem::Handle& GetValue() const;
-
-    bool operator==(const ComponentHandle& other) const;
-    bool operator!=(const ComponentHandle& other) const;
-
-    bool IsNull() const;
-
-private:
-    using Value = TComponentSystem::Handle;
-    using System = ComponentSystem;
-
-    Value value;
-    System system;
-};
-
 struct TSceneObject::Entry
 {
     ComponentName name;
@@ -86,6 +61,6 @@ struct TSceneObject::Entry
     );
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // SCENE_OBJECT_H

@@ -3,6 +3,50 @@
 
 namespace GE {
 
+const TComponentHandle TComponentHandle::Undefined{};
+
+TComponentHandle::TComponentHandle() :
+    value(TComponentSystem::HandleUndefined),
+    system()
+{}
+
+TComponentHandle::TComponentHandle(const Handle& handle,
+    const ComponentSystem& system
+) :
+    value(handle),
+    system(system)
+{}
+
+const ComponentSystem& TComponentHandle::GetSystem() const {
+    return system;
+}
+
+const TComponentSystem::Handle&
+TComponentHandle::GetValue() const {
+    return value;
+}
+
+bool TComponentHandle::operator == (
+    const TComponentHandle& other) const
+{
+    return (system == other.system) &&
+        (value == other.value);
+}
+
+bool TComponentHandle::operator != (const TComponentHandle& other) const
+{
+    return !operator==(other);
+}
+
+bool TComponentHandle::IsNull() const {
+    return operator==(Undefined);
+}
+
+TComponentHandle::operator size_t() const {
+    return value;
+}
+
+
 void TComponentSystemsManager::Update(const TTime& step, Context& context) {
     for (auto& system : systems) {
         system.second->Update(step, context);
@@ -51,7 +95,7 @@ void TComponentSystemsManager::SendMessage(const Message& message,
     Context& context, const ComponentHandle& sender)
 {
     for (auto& system : systems) {
-        system.second->HandleMessage(message, context, sender);
+        system.second->HandleMessage(message, sender, context);
     }
 }
 
@@ -74,4 +118,4 @@ TComponentSystemsManager::Systems& TComponentSystemsManager::GetSystems() {
     return systems;
 }
 
-} //namespace GE
+} // namespace GE

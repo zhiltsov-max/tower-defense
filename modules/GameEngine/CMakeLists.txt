@@ -4,6 +4,7 @@ set(game_engine_headers
     component.h
     component_registry.h
     component_system.h
+    component_system_type.h
     component_systems_manager.h
     ComponentSystems/component_system_graphics.h
     ComponentSystems/component_system_logics.h
@@ -16,6 +17,7 @@ set(game_engine_headers
     engine_messages.h
     game_engine.h
     game_engine_context.h
+    message_system.h
     registry.h
     scene.h
     scene_component_manager.h
@@ -38,6 +40,7 @@ set(game_engine_sources
     engine_message.cpp
     engine_messages.cpp
     game_engine.cpp
+    message_system.cpp
     scene.cpp
     scene_component_manager.cpp
     scene_object.cpp

@@ -54,6 +54,6 @@ private:
     Registry registry;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif //SCENE_RESOURCES_H

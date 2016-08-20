@@ -16,4 +16,4 @@ const TComponent::ID& TComponent::GetID() const {
     return id;
 }
 
-} //namespace GE
+} // namespace GE

@@ -88,6 +88,6 @@ T* TScene::GetComponent(const ComponentHandle& handle) {
     return dynamic_cast<T*>(GetComponent(handle));
 }
 
-} //namespace GE
+} // namespace GE
 
 #endif // SCENE_H

@@ -15,4 +15,4 @@ TSceneResource::TSceneResource(const TypeID& type) :
     type(type)
 {}
 
-} //namespace GE
+} // namespace GE

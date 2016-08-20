@@ -14,8 +14,10 @@ public:
 
     virtual void Update(const TTime& step, Context& context) override;
     virtual void Render(Graphics::TRenderTarget& target);
+    virtual void HandleMessage(const TMessage& message,
+        const TComponentHandle& sender, Context& context) override;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_SYSTEM_GRAPHICS_H

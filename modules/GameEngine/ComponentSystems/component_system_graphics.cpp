@@ -11,4 +11,10 @@ void CSGraphicsSystem::Render(Graphics::TRenderTarget& target) {
     // TODO: ...
 }
 
+void CSGraphicsSystem::HandleMessage(const TMessage& message,
+    const TComponentHandle& sender, Context& context)
+{
+    // TODO: ...
+}
+
 } // namespace GE

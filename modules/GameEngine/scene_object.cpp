@@ -3,8 +3,6 @@
 
 namespace GE {
 
-const TSceneObject::ComponentHandle TSceneObject::ComponentHandle::Undefined{}; //keep it before TSceneObject::ComponentHandleUndefined
-
 const TSceneObject::Handle TSceneObject::HandleUndefined = -1u;
 
 const TSceneObject::ComponentHandle&
@@ -111,43 +109,6 @@ void TSceneObject::checkSize() {
 }
 
 
-TSceneObject::ComponentHandle::ComponentHandle(
-    size_t handle, const ComponentSystem& system
-) :
-    value(handle),
-    system(system)
-{}
-
-const ComponentSystem& TSceneObject::ComponentHandle::GetSystem() const {
-    return system;
-}
-
-const TComponentSystem::Handle&
-TSceneObject::ComponentHandle::GetValue() const {
-    return value;
-}
-
-bool TSceneObject::ComponentHandle::operator == (
-    const ComponentHandle& other) const
-{
-    return (system == other.system) &&
-        (value == other.value);
-}
-
-bool TSceneObject::ComponentHandle::operator != (
-    const ComponentHandle& other) const
-{
-    return !operator==(other);
-}
-
-bool TSceneObject::ComponentHandle::IsNull() const {
-    return operator==(Undefined);
-}
-
-TSceneObject::ComponentHandle::operator size_t() const {
-    return value;
-}
-
 TSceneObject::Entry::Entry(
     const ComponentName& name, const ComponentHandle& handle
 ) :
@@ -155,4 +116,4 @@ TSceneObject::Entry::Entry(
     component(handle)
 {}
 
-} //namespace GE
+} // namespace GE

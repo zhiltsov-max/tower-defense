@@ -30,6 +30,6 @@ private:
     const ID id;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // ENGINE_MESSAGE_H

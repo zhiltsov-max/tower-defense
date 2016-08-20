@@ -176,4 +176,4 @@ bool TSceneObjectContainer::ObjectHandle::IsNull() const {
     return operator==(Undefined);
 }
 
-} //namespace GE
+} // namespace GE

@@ -116,4 +116,4 @@ TScene::ResourceManager& TScene::GetResourceManager() {
     return resourceManager;
 }
 
-} //namespace GE
+} // namespace GE

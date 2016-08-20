@@ -42,4 +42,4 @@ CUiComponent::CUiComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
 
-} //namespace GE
+} // namespace GE

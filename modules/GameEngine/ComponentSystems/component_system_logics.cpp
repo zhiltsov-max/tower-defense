@@ -4,13 +4,17 @@
 namespace GE {
 
 void CSLogicsSystem::Update(const TTime& step, Context& context) {
-    for (auto& component : components) {
-        static_cast<CLogicsComponent*>(component.get())->Update(step, context);
-    }
+    // TODO: ...
+}
+
+void CSLogicsSystem::HandleMessage(const TMessage& message,
+    const TComponentHandle& sender, Context& context)
+{
+    // TODO: ...
 }
 
 CLogicsComponent::CLogicsComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
 
-} //namespace GE
+} // namespace GE

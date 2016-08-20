@@ -63,6 +63,8 @@ void TSceneComponentManager::RemoveComponent(const ComponentHandle& handle) {
     ASSERT(system != nullptr, "Unexpected system requested for component.");
 
     system->RemoveComponent(handle);
+    engine->GetMessageSystem().Unsubscribe(handle);
+    engine->GetMessageSystem().UnsubscribeFrom(handle);
 }
 
 const TComponent*
@@ -91,4 +93,4 @@ TSceneComponentManager::GetComponent(const ComponentHandle& handle) {
     }
 }
 
-} //namespace GE
+} // namespace GE

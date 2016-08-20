@@ -52,6 +52,6 @@ T* TSceneComponentManager::GetComponent(
     return dynamic_cast<T*>(GetComponent(handle));
 }
 
-} //namespace GE
+} // namespace GE
 
 #endif // SCENE_COMPONENT_MANAGER_H

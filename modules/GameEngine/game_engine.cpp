@@ -4,14 +4,23 @@
 
 namespace GE {
 
+TGameEngine::TGameEngine() :
+    componentSystemsManager(),
+    messageSystem(),
+    scriptEngine()
+{
+    messageSystem.SetComponentSystemsManager(&componentSystemsManager);
+}
+
 void TGameEngine::Update(const TTime& step, Context& context) {
-    componentSystems.Update(step, context);
+    componentSystemsManager.Update(step, context);
 }
 
 void TGameEngine::SendMessage(const Message& message, Context& context,
-    const ComponentHandle& handle)
+    const ComponentHandle& sender)
 {
-    componentSystems.SendMessage(message, context, handle);
+    messageSystem.SendMessage(message, context, sender);
+    componentSystemsManager.SendMessage(message, context, sender);
 }
 
 const TGameEngine::ScriptEngine&
@@ -26,12 +35,20 @@ TGameEngine::GetScriptEngine() {
 
 const TGameEngine::ComponentSystemsManager&
 TGameEngine::GetComponentSystemsManager() const {
-    return componentSystems;
+    return componentSystemsManager;
 }
 
 TGameEngine::ComponentSystemsManager&
 TGameEngine::GetComponentSystemsManager() {
-    return componentSystems;
+    return componentSystemsManager;
 }
 
-} //namespace GE
+const TGameEngine::MessageSystem& TGameEngine::GetMessageSystem() const {
+    return messageSystem;
+}
+
+TGameEngine::MessageSystem& TGameEngine::GetMessageSystem() {
+    return messageSystem;
+}
+
+} // namespace GE

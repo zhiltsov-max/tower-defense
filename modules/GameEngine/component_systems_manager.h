@@ -3,12 +3,36 @@
 
 #include "GameEngine/engine_message.h"
 #include "GameEngine/component_system.h"
+#include "GameEngine/component_system_type.h"
 #include "GameEngine/component_registry.h"
 #include "GameEngine/game_engine_context.h"
-#include "GameEngine/scene_component_manager.h"
 
 
 namespace GE {
+
+class TComponentHandle
+{
+public:
+    using Handle = TComponentSystem::Handle;
+
+    static const TComponentHandle Undefined;
+
+    TComponentHandle();
+    TComponentHandle(const Handle& handle, const ComponentSystem& system);
+
+    operator Handle() const;
+    const ComponentSystem& GetSystem() const;
+    const Handle& GetValue() const;
+
+    bool operator == (const TComponentHandle& other) const;
+    bool operator != (const TComponentHandle& other) const;
+
+    bool IsNull() const;
+
+private:
+    Handle value;
+    ComponentSystem system;
+};
 
 class TComponentSystemsManager
 {
@@ -18,7 +42,7 @@ public:
     using Context = TGameEngineContext;
     using ComponentRegistry = TComponentRegistry;
     using PSystem = std::unique_ptr<TComponentSystem>;
-    using ComponentHandle = TSceneComponentManager::ComponentHandle;
+    using ComponentHandle = TComponentHandle;
 
     void Update(const TTime& step, Context& context);
 
@@ -56,6 +80,6 @@ C* TComponentSystemsManager::AddSystem(const ID& id) {
     return dynamic_cast<C*>(AddSystem(id, std::move(PSystem(new C()))));
 }
 
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_SYSTEMS_MANAGER_H
