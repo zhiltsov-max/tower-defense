@@ -12,12 +12,12 @@ namespace TD {
 
 using TBuildingClassId = TGameObjectClassId;
 
-class CMouseInput : public GE::CInputComponent
+
+
+struct CPlayerInput : GE::TComponent
 {
-public:
-    virtual void HandleMessage(const GE::TMessage& message,
-        Context& context) override;
-    virtual Update(Context& context) override;
+    // Listens to MouseInput and KeyboardInput components
+    // Have to filter scene interaction and GUI interaction
 };
 
 struct CConstructibleMouseInput : GE::TComponent

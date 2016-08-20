@@ -13,6 +13,10 @@ enum class GE::ComponentSystem : GE::TComponentSystemTypeId {
     Graphics,
     Sound,
 
+    Map,
+    Explosions,
+    Buildings,
+
     _count,
     _undefined = _count
 };
