@@ -45,4 +45,4 @@ TGraphicsDevice* TDeviceController::getGraphicsDevice() {
     return graphicsDevice.get();
 }
 
-} //namespace IO
+} // namespace IO

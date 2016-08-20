@@ -42,6 +42,6 @@ private:
     Graphics graphicsDevice;
 };
 
-} //namespace IO
+} // namespace IO
 
 #endif // CORE_DEVICECONTROLLER_H

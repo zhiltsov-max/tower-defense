@@ -618,4 +618,4 @@ void TSFMLMouse::pressKey(KeyCode code, int x, int y) {
 #endif //SFML
 
 
-} //namespace IO
+} // namespace IO

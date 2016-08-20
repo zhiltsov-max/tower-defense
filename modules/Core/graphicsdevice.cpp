@@ -140,4 +140,4 @@ sf::RenderTarget* TSFMLGraphicsDevice::operator->() {
 
 #endif //SFML
 
-} //namespace IO
+} // namespace IO

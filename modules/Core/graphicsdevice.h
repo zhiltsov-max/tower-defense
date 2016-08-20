@@ -12,7 +12,7 @@ public:
     virtual ~TGraphicsDevice() = default;
 };
 
-} //namespace IO
+} // namespace IO
 
 
 #if defined(WINDOWS)
@@ -38,7 +38,7 @@ public:
         void release();
     };
 
-    } //namespace IO
+    } // namespace IO
 #endif //WINDOWS
 
 
@@ -67,7 +67,7 @@ public:
         TargetRef target;
     };
 
-    } //namespace IO
+    } // namespace IO
 #endif //SFML
 
 #endif // GRAPHICSDEVICE_H

@@ -20,6 +20,6 @@ using TImage = sf::Image;
 using TTexture = sf::Texture;
 using TSprite = sf::Sprite;
 
-} //namespace Graphics
+} // namespace Graphics
 
 #endif // CORE_IMAGE_H

@@ -25,7 +25,7 @@ public:
     virtual TMouseInfo& getInfo() = 0;
 };
 
-} //namespace IO
+} // namespace IO
 
 
 #if defined(WINDOWS)
@@ -159,7 +159,7 @@ public:
             void pressKey(KeyCode code);
         };
 
-        } //namespace IO
+        } // namespace IO
     #endif //WINDOWS_DIRECTINPUT
 #endif //WINDOWS
 
@@ -208,7 +208,7 @@ public:
         void pressKey(KeyCode code, int x, int y);
     };
 
-    } //namespace IO
+    } // namespace IO
 #endif //SFML
 
 #endif //CORE_IO_H

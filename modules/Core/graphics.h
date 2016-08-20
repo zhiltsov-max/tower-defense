@@ -66,6 +66,6 @@ using TRenderTarget = sf::RenderTarget;
 using TFont = sf::Font;
 using TText = sf::Text;
 
-} //namespace Graphics
+} // namespace Graphics
 
 #endif // CORE_GRAPHICS_H
