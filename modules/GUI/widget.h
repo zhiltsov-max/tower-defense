@@ -70,7 +70,7 @@ public:
     /*
     True if has child with given name and child's parent is this.
     */
-    virtual bool HasChild(const Child& child) const;
+    virtual bool HasChild(const ChildRef& child) const;
 
     virtual void RemoveChildren();
     virtual bool HasChildren() const;
@@ -190,27 +190,27 @@ public:
     This form is requires explicitly specified signal and slot owners.
     Usage example can be found in tests.
     */
-    static void Connect(const TWidgetRef& signalOwner,
-        Signal& signal, const TWidgetRef& slotOwner, const Slot& slot);
+    static void Connect(const TWidgetWeakRef& signalOwner,
+        Signal& signal, const TWidgetWeakRef& slotOwner, const Slot& slot);
 
     /*
     Disconnect previously connected widget's signal and slot pair.
     */
-    static void Disconnect(const TWidgetRef& signalOwner,
-        Signal& signal, const TWidgetRef& slotOwner, const Slot& slot);
+    static void Disconnect(const TWidgetWeakRef& signalOwner,
+        Signal& signal, const TWidgetWeakRef& slotOwner, const Slot& slot);
 
     /*
     Connect widget's signal with an arbitary "slot" function.
     This form does not require existance of owner.
     Usage example can be found in tests.
     */
-    static void Connect(const TWidgetRef& signalOwner,
+    static void Connect(const TWidgetWeakRef& signalOwner,
         Signal& signal, const Slot& slot);
 
     /*
     Disconnect previously connected signal and slot pair.
     */
-    static void Disconnect(const TWidgetRef& signalOwner,
+    static void Disconnect(const TWidgetWeakRef& signalOwner,
         Signal& signal, const Slot& slot);
 
 private:
