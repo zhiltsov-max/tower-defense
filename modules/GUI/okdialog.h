@@ -36,7 +36,7 @@ protected:
     */
     virtual std::list<Slot> _enumSlots() const override;
 
-    static void slot_OkButtonClicked(TWidget* this_, const void* args);
+    static void slot_OkButtonClicked(TWidget* widget, const void* args);
 
     TPushButton& GetOkButton();
 };
