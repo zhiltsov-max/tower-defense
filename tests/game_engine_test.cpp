@@ -5,6 +5,7 @@
 #include "GameEngine/component.h"
 #include "GameEngine/component_systems_manager.h"
 #include "GameEngine/engine_messages.h"
+#include "GameEngine/free_list_allocator.h"
 #include "GameEngine/scene_object.h"
 #include "GameEngine/scene_object_container.h"
 #include "GameEngine/scene_resources.h"
@@ -12,6 +13,77 @@
 
 
 using namespace GE;
+
+// ### AUXILARY ###
+
+TEST(FreelistAllocatorTest, construction_with_zero_elements) {
+    FreelistAllocator<int> allocator(0);
+
+    UNUSED(allocator);
+}
+
+TEST(FreelistAllocatorTest, construction_with_some_elements) {
+    FreelistAllocator<int> allocator(10);
+
+    UNUSED(allocator);
+}
+
+TEST(FreelistAllocatorTest, allocate_one_element) {
+    FreelistAllocator<int> allocator;
+
+    const auto index = allocator.Allocate();
+
+    EXPECT_TRUE(allocator.Owns(index));
+}
+
+TEST(FreelistAllocatorTest, multiple_allocations) {
+    constexpr int count = 20;
+    constexpr int preallocatedCount = 5;
+    FreelistAllocator<int> allocator(preallocatedCount);
+    std::array<int, count> allocated;
+    allocated.fill(allocator.UndefinedIndex);
+
+    for (int repeat = 0; repeat < 2; ++repeat) {
+        for (int i = 0; i < count; ++i) {
+            allocated[i] = allocator.Allocate();
+        }
+        for (int i = 1; i < count; ++i) {
+            EXPECT_NE(allocated[i - 1], allocated[i]);
+        }
+        for (int i = 0; i < count; ++i) {
+            EXPECT_TRUE(allocator.Owns(allocated[i]));
+            allocator.Deallocate(allocated[i]);
+            allocated[i] = allocator.UndefinedIndex;
+        }
+    }
+}
+
+TEST(FreelistAllocatorTest, deallocate_existing_element) {
+    FreelistAllocator<int> allocator;
+    auto index = allocator.Allocate();
+
+    allocator.Deallocate(index);
+}
+
+TEST(FreelistAllocatorTest, deallocate_unexisting_element) {
+    FreelistAllocator<int> allocator;
+
+    allocator.Deallocate(0);
+}
+
+TEST(FreelistAllocatorTest, owns_allocated_element_true) {
+    FreelistAllocator<int> allocator;
+
+    const auto index = allocator.Allocate();
+
+    ASSERT_TRUE(allocator.Owns(index));
+}
+
+TEST(FreelistAllocatorTest, owns_not_allocated_element_false) {
+    FreelistAllocator<int> allocator;
+
+    ASSERT_FALSE(allocator.Owns(0));
+}
 
 // ### REGISTRY TESTS ###
 
@@ -192,11 +264,21 @@ TEST_F(TestMessageSystem, subscribe_component_to_other) {
     const auto message = MessageID::TestMessage;
     const ComponentHandle sender(10, ComponentSystem::Custom);
     const ComponentHandle listener(20, ComponentSystem::Custom);
-    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
 
     Subscribe(sender, listener, message, handler);
 
     EXPECT_TRUE(HasSubscription(sender, listener, message));
+}
+
+TEST_F(TestMessageSystem, subscribe_component_to_self_failure) {
+    const auto message = MessageID::TestMessage;
+    const ComponentHandle sender(10, ComponentSystem::Custom);
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
+
+    ASSERT_ANY_THROW(Subscribe(sender, sender, message, handler));
 }
 
 TEST_F(TestMessageSystem, subscribe_component_to_other_without_callback_failure) {
@@ -212,7 +294,8 @@ TEST_F(TestMessageSystem, subscribe_component_to_global) {
     const auto message = MessageID::TestMessage;
     const ComponentHandle sender = ComponentHandle::Undefined;
     const ComponentHandle listener(20, ComponentSystem::Custom);
-    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
 
     Subscribe(sender, listener, message, handler);
 
@@ -223,7 +306,8 @@ TEST_F(TestMessageSystem, unsubscribe_component_from_other_message) {
     const auto message = MessageID::TestMessage;
     const ComponentHandle sender(10, ComponentSystem::Custom);
     const ComponentHandle listener(20, ComponentSystem::Custom);
-    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
     Subscribe(sender, listener, message, handler);
 
     Unsubscribe(sender, listener, message);
@@ -235,7 +319,8 @@ TEST_F(TestMessageSystem, unsubscribe_component_from_other) {
     const auto message = MessageID::TestMessage;
     const ComponentHandle sender(10, ComponentSystem::Custom);
     const ComponentHandle listener(20, ComponentSystem::Custom);
-    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
     Subscribe(sender, listener, message, handler);
 
     Unsubscribe(sender, listener);
@@ -248,7 +333,8 @@ TEST_F(TestMessageSystem, unsubscribe_component_from_all) {
     const ComponentHandle sender1(10, ComponentSystem::Custom);
     const ComponentHandle sender2(15, ComponentSystem::Custom);
     const ComponentHandle listener(20, ComponentSystem::Custom);
-    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
     Subscribe(sender1, listener, message, handler);
     Subscribe(sender2, listener, message, handler);
 
@@ -262,7 +348,8 @@ TEST_F(TestMessageSystem, unsubscribe_all_from_component) {
     const auto message = MessageID::TestMessage;
     const ComponentHandle sender(10, ComponentSystem::Custom);
     const ComponentHandle listener(20, ComponentSystem::Custom);
-    auto handler = [] (const ComponentHandle&, const TMessage&, Context&) {};
+    auto handler = [] (const ComponentHandle&, const ComponentHandle&,
+        const TMessage&, EngineContext&) {};
     Subscribe(sender, listener, message, handler);
 
     UnsubscribeFrom(sender);

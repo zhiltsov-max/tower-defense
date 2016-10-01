@@ -15,6 +15,7 @@ set(game_engine_headers
     engine_lua_binding.h
     engine_message.h
     engine_messages.h
+    free_list_allocator.h
     game_engine.h
     game_engine_context.h
     message_system.h
