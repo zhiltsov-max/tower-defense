@@ -25,8 +25,7 @@ public:
     using ComponentPath = std::pair<ObjectName, ComponentName>;
 
     ComponentHandle CreateComponent(const TComponent::ID& id,
-        const TComponentCreateArgs* args = nullptr
-    );
+        const TComponentCreateArgs* args = nullptr);
 
     void RemoveComponent(const ComponentHandle& handle);
 

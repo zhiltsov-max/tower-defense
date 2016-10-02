@@ -1,7 +1,7 @@
 #ifndef SCENE_OBJECT_H
 #define SCENE_OBJECT_H
 
-#include <stack>
+#include "GameEngine/free_list_allocator.h"
 #include "GameEngine/component_systems_manager.h"
 
 
@@ -9,23 +9,25 @@ namespace GE {
 
 class TSceneObject
 {
+private:
+    struct Entry;
+    using ComponentsAllocator = FreelistAllocator<Entry>;
+
 public:
-    using Handle = size_t;
+    using Handle = ComponentsAllocator::Handle;
     static const Handle HandleUndefined;
 
     using ComponentHandle = TComponentHandle;
-
     using ComponentName = string;
-    struct Entry;
-    using Components = vector<Entry>;
 
     const ComponentHandle& operator [] (const ComponentName& name) const;
     ComponentHandle& operator [] (const ComponentName& name);
 
     const ComponentHandle& operator [] (const Handle& handle) const;
-    ComponentHandle& operator [](const Handle& handle);
+    ComponentHandle& operator [] (const Handle& handle);
 
     const Handle& GetHandle(const ComponentName& name) const;
+    Handle GetHandle(const ComponentName& name);
 
     Handle AddComponent(const ComponentName& name,
         const ComponentHandle& component);
@@ -38,17 +40,11 @@ public:
 
     bool HasComponents() const;
 
-    const Components& GetComponents() const;
-
 private:
     using NameMapping = std::map<ComponentName, Handle>;
-    using FreeHandles = std::stack<Handle>;
-
     NameMapping nameMapping;
-    Components components;
-    FreeHandles freeHandles;
 
-    void checkSize();
+    ComponentsAllocator componentsAllocator;
 };
 
 struct TSceneObject::Entry
@@ -57,8 +53,7 @@ struct TSceneObject::Entry
     ComponentHandle component;
 
     Entry(const ComponentName& name = ComponentName(),
-        const ComponentHandle& handle = ComponentHandle::Undefined
-    );
+        const ComponentHandle& handle = ComponentHandle::Undefined);
 };
 
 } // namespace GE

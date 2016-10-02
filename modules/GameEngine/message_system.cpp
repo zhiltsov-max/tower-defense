@@ -17,6 +17,7 @@ void TMessageSystem::Subscribe(const ComponentHandle& source,
     const MessageCallback& callback)
 {
     ASSERT(static_cast<bool>(callback) != false, "Wrong callback function.");
+    ASSERT(source != listener, "Can not subscribe component to himself.");
 
     auto& listeners = routingTable[source];
     const auto it = FindListener(listeners, listener);
@@ -30,13 +31,15 @@ void TMessageSystem::Subscribe(const ComponentHandle& source,
 
 void
 TMessageSystem::Unsubscribe(const ComponentHandle& listener) {
-    for (auto it = routingTable.begin(); it != routingTable.end(); ++it) {
+    for (auto it = routingTable.begin(); it != routingTable.end();) {
         const auto listenerIt = FindListener(it->second, listener);
         if (listenerIt != it->second.end()) {
             it->second.erase(listenerIt);
         }
         if (it->second.empty() == true) {
-            routingTable.erase(it);
+            it = routingTable.erase(it);
+        } else {
+            ++it;
         }
     }
 }
@@ -94,7 +97,7 @@ TMessageSystem::UnsubscribeFrom(const ComponentHandle& source) {
     routingTable.erase(source);
 }
 
-void TMessageSystem::SendMessage(const Message& message, Context& context,
+void TMessageSystem::SendMessage(const Message& message, EngineContext& context,
     const ComponentHandle& sender)
 {
     auto it = routingTable.find(sender);
@@ -109,7 +112,7 @@ void TMessageSystem::SendMessage(const Message& message, Context& context,
         if (subIt != subscriptions.end()) {
             const auto& listenerHandle = listener.first;
             const auto& callback = subIt->second;
-            callback(listenerHandle, message, context);
+            callback(listenerHandle, sender, message, context);
         }
     }
 }

@@ -16,46 +16,88 @@ using namespace GE;
 
 // ### AUXILARY ###
 
-TEST(FreelistAllocatorTest, construction_with_zero_elements) {
-    FreelistAllocator<int> allocator(0);
+TEST(FreelistAllocatorTest, construction_with_zero_elements_no_leaks) {
+    static int instancesCount = 0;
+    struct Logger {
+        Logger() { instancesCount++; }
+        Logger(const Logger&) { instancesCount++; }
+        Logger& operator = (const Logger& other) {
+            instancesCount += (this != &other);
+            return *this;
+        }
+        ~Logger() { instancesCount--; }
+    };
 
-    UNUSED(allocator);
+    std::unique_ptr<FreelistAllocator<Logger>> allocator(
+        new FreelistAllocator<Logger>(0));
+    allocator.reset();
+
+    ASSERT_EQ(0, instancesCount);
 }
 
-TEST(FreelistAllocatorTest, construction_with_some_elements) {
-    FreelistAllocator<int> allocator(10);
+TEST(FreelistAllocatorTest, construction_with_some_elements_no_leaks) {
+    static int instancesCount = 0;
+    struct Logger {
+        Logger() { instancesCount++; }
+        Logger(const Logger&) { instancesCount++; }
+        Logger& operator = (const Logger& other) {
+            instancesCount += (this != &other);
+            return *this;
+        }
+        ~Logger() { instancesCount--; }
+    };
 
-    UNUSED(allocator);
+    std::unique_ptr<FreelistAllocator<Logger>> allocator(
+        new FreelistAllocator<Logger>(10));
+    allocator.reset();
+
+    ASSERT_EQ(0, instancesCount);
 }
 
 TEST(FreelistAllocatorTest, allocate_one_element) {
     FreelistAllocator<int> allocator;
 
-    const auto index = allocator.Allocate();
+    auto index = allocator.Allocate();
 
     EXPECT_TRUE(allocator.Owns(index));
 }
 
-TEST(FreelistAllocatorTest, multiple_allocations) {
+TEST(FreelistAllocatorTest, multiple_allocations_no_leaks) {
+    static int instancesCount = 0;
+    struct Logger {
+        Logger() { instancesCount++; }
+        Logger(const Logger&) { instancesCount++; }
+        Logger& operator = (const Logger& other) {
+            instancesCount += (this != &other);
+            return *this;
+        }
+        ~Logger() { instancesCount--; }
+    };
+
     constexpr int count = 20;
     constexpr int preallocatedCount = 5;
-    FreelistAllocator<int> allocator(preallocatedCount);
-    std::array<int, count> allocated;
-    allocated.fill(allocator.UndefinedIndex);
+    std::unique_ptr<FreelistAllocator<Logger>> allocator(
+        new FreelistAllocator<Logger>(preallocatedCount));
+    std::array<size_t, count> allocated;
+    allocated.fill(allocator->HandleUndefined);
 
     for (int repeat = 0; repeat < 2; ++repeat) {
         for (int i = 0; i < count; ++i) {
-            allocated[i] = allocator.Allocate();
+            allocated[i] = allocator->Allocate();
         }
         for (int i = 1; i < count; ++i) {
             EXPECT_NE(allocated[i - 1], allocated[i]);
         }
         for (int i = 0; i < count; ++i) {
-            EXPECT_TRUE(allocator.Owns(allocated[i]));
-            allocator.Deallocate(allocated[i]);
-            allocated[i] = allocator.UndefinedIndex;
+            EXPECT_TRUE(allocator->Owns(allocated[i]));
+            allocator->Deallocate(allocated[i]);
+            allocated[i] = allocator->HandleUndefined;
         }
     }
+
+    allocator.reset();
+
+    ASSERT_EQ(0, instancesCount);
 }
 
 TEST(FreelistAllocatorTest, deallocate_existing_element) {
@@ -101,7 +143,7 @@ TEST_F(TestRegistry, register_unexisting_item) {
     ID id = 4;
     Entry entry = -10;
 
-    ASSERT_NO_THROW(registry.Register(id, entry));
+    registry.Register(id, entry);
 
     EXPECT_TRUE(registry.IsRegistered(id));
     EXPECT_EQ(entry, registry[id]);
@@ -122,9 +164,9 @@ TEST_F(TestRegistry, unregister_existing_item) {
     Entry entry = -10;
     registry.Register(id, entry);
 
-    ASSERT_NO_THROW(registry.Unregister(id));
+    registry.Unregister(id);
 
-    EXPECT_FALSE(registry.IsRegistered(id));
+    ASSERT_FALSE(registry.IsRegistered(id));
 }
 
 TEST_F(TestRegistry, unregister_unexisting_item) {
@@ -177,7 +219,7 @@ TEST_F(TestRegistry, clear_clears) {
 
     registry.Clear();
 
-    EXPECT_TRUE(registry.IsEmpty());
+    ASSERT_TRUE(registry.IsEmpty());
 }
 
 // ### COMPONENT SYSTEM TESTS ###
@@ -228,7 +270,7 @@ public:
 };
 
 TEST_F(TestMessage, get_id) {
-    EXPECT_EQ(MessageID::TestMessage, GetID());
+    ASSERT_EQ(MessageID::TestMessage, GetID());
 }
 
 // === MessageSystem Tests ===
@@ -269,7 +311,7 @@ TEST_F(TestMessageSystem, subscribe_component_to_other) {
 
     Subscribe(sender, listener, message, handler);
 
-    EXPECT_TRUE(HasSubscription(sender, listener, message));
+    ASSERT_TRUE(HasSubscription(sender, listener, message));
 }
 
 TEST_F(TestMessageSystem, subscribe_component_to_self_failure) {
@@ -299,7 +341,7 @@ TEST_F(TestMessageSystem, subscribe_component_to_global) {
 
     Subscribe(sender, listener, message, handler);
 
-    EXPECT_TRUE(HasSubscription(sender, listener, message));
+    ASSERT_TRUE(HasSubscription(sender, listener, message));
 }
 
 TEST_F(TestMessageSystem, unsubscribe_component_from_other_message) {
@@ -312,7 +354,7 @@ TEST_F(TestMessageSystem, unsubscribe_component_from_other_message) {
 
     Unsubscribe(sender, listener, message);
 
-    EXPECT_FALSE(HasSubscription(sender, listener, message));
+    ASSERT_FALSE(HasSubscription(sender, listener, message));
 }
 
 TEST_F(TestMessageSystem, unsubscribe_component_from_other) {
@@ -325,7 +367,7 @@ TEST_F(TestMessageSystem, unsubscribe_component_from_other) {
 
     Unsubscribe(sender, listener);
 
-    EXPECT_FALSE(HasSubscription(sender, listener));
+    ASSERT_FALSE(HasSubscription(sender, listener));
 }
 
 TEST_F(TestMessageSystem, unsubscribe_component_from_all) {
@@ -340,8 +382,8 @@ TEST_F(TestMessageSystem, unsubscribe_component_from_all) {
 
     Unsubscribe(listener);
 
-    EXPECT_FALSE(HasSubscription(sender1, listener));
-    EXPECT_FALSE(HasSubscription(sender2, listener));
+    ASSERT_FALSE(HasSubscription(sender1, listener));
+    ASSERT_FALSE(HasSubscription(sender2, listener));
 }
 
 TEST_F(TestMessageSystem, unsubscribe_all_from_component) {
@@ -354,7 +396,7 @@ TEST_F(TestMessageSystem, unsubscribe_all_from_component) {
 
     UnsubscribeFrom(sender);
 
-    EXPECT_FALSE(HasSubscription(sender, listener));
+    ASSERT_FALSE(HasSubscription(sender, listener));
 }
 
 // === Component Tests ===
@@ -653,7 +695,7 @@ TEST(SceneObjectTest, add_component_success) {
 
     const auto handle = sceneObject.AddComponent(name, fakeHandle);
 
-    EXPECT_TRUE(sceneObject.HasComponent(handle));
+    ASSERT_TRUE(sceneObject.HasComponent(handle));
 }
 
 TEST(SceneObjectTest, add_component_failure_empty_name) {
@@ -687,7 +729,7 @@ TEST(SceneObjectTest, has_component_with_handle_positive) {
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeHandle);
 
-    EXPECT_TRUE(sceneObject.HasComponent(handle));
+    ASSERT_TRUE(sceneObject.HasComponent(handle));
 }
 
 TEST(SceneObjectTest, has_component_with_handle_negative_unknown_handle) {
@@ -696,31 +738,38 @@ TEST(SceneObjectTest, has_component_with_handle_negative_unknown_handle) {
     TSceneObject sceneObject;
     sceneObject.AddComponent(name, fakeHandle);
 
-    EXPECT_FALSE(sceneObject.HasComponent(100));
+    ASSERT_FALSE(sceneObject.HasComponent(100));
 }
 
-TEST(SceneObjectTest, has_component_with_name) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
+TEST(SceneObjectTest, has_component_with_name_false_when_has_not) {
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
 
-    EXPECT_FALSE(sceneObject.HasComponent(name));
-
-    sceneObject.AddComponent(name, handle);
-
-    EXPECT_TRUE(sceneObject.HasComponent(name));
+    ASSERT_FALSE(sceneObject.HasComponent(name));
 }
 
-TEST(SceneObjectTest, has_components) {
+TEST(SceneObjectTest, has_component_with_name_true_when_has) {
     const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
-
-    EXPECT_FALSE(sceneObject.HasComponents());
-
     sceneObject.AddComponent(name, handle);
 
-    EXPECT_TRUE(sceneObject.HasComponents());
+    ASSERT_TRUE(sceneObject.HasComponent(name));
+}
+
+TEST(SceneObjectTest, has_components_true_when_has) {
+    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
+    const TSceneObject::ComponentName name = "component";
+    TSceneObject sceneObject;
+    sceneObject.AddComponent(name, handle);
+
+    ASSERT_TRUE(sceneObject.HasComponents());
+}
+
+TEST(SceneObjectTest, has_components_false_when_has_not) {
+    TSceneObject sceneObject;
+
+    ASSERT_FALSE(sceneObject.HasComponents());
 }
 
 TEST(SceneObjectTest, remove_component_with_handle_success) {
@@ -731,7 +780,7 @@ TEST(SceneObjectTest, remove_component_with_handle_success) {
 
     sceneObject.RemoveComponent(handle);
 
-    EXPECT_FALSE(sceneObject.HasComponent(handle));
+    ASSERT_FALSE(sceneObject.HasComponent(handle));
 }
 
 TEST(SceneObjectTest, remove_component_with_name_success) {
@@ -742,11 +791,10 @@ TEST(SceneObjectTest, remove_component_with_name_success) {
 
     sceneObject.RemoveComponent(name);
 
-    EXPECT_FALSE(sceneObject.HasComponent(name));
+    ASSERT_FALSE(sceneObject.HasComponent(name));
 }
 
 TEST(SceneObjectTest, remove_component_with_name_failure_unknown_component) {
-    const TSceneObject::ComponentHandle handle(1, ComponentSystem::Custom);
     const TSceneObject::ComponentName name = "component";
     TSceneObject sceneObject;
 
@@ -776,7 +824,7 @@ TEST(SceneObjectTest, get_component_handle_by_handle) {
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeComponentHandle);
 
-    EXPECT_EQ(fakeComponentHandle, sceneObject[handle]);
+    ASSERT_EQ(fakeComponentHandle, sceneObject[handle]);
 }
 
 TEST(SceneObjectTest, get_component_handle_by_name) {
@@ -785,7 +833,7 @@ TEST(SceneObjectTest, get_component_handle_by_name) {
     TSceneObject sceneObject;
     sceneObject.AddComponent(name, fakeHandle);
 
-    EXPECT_EQ(fakeHandle, sceneObject[name]);
+    ASSERT_EQ(fakeHandle, sceneObject[name]);
 }
 
 TEST(SceneObjectTest, get_handle_by_name) {
@@ -794,16 +842,15 @@ TEST(SceneObjectTest, get_handle_by_name) {
     TSceneObject sceneObject;
     const auto handle = sceneObject.AddComponent(name, fakeHandle);
 
-    EXPECT_EQ(handle, sceneObject.GetHandle(name));
+    ASSERT_EQ(handle, sceneObject.GetHandle(name));
 }
-
 
 TEST(SceneObject_ComponentHandleTest, get_value) {
     const size_t handleValue = 1;
     const auto handleSystem = ComponentSystem::Custom;
     const TSceneObject::ComponentHandle handle(handleValue, handleSystem);
 
-    EXPECT_EQ(handleValue, handle.GetValue());
+    ASSERT_EQ(handleValue, handle.GetValue());
 }
 
 TEST(SceneObject_ComponentHandleTest, get_system) {
@@ -811,7 +858,7 @@ TEST(SceneObject_ComponentHandleTest, get_system) {
     const auto handleSystem = ComponentSystem::Custom;
     const TSceneObject::ComponentHandle handle(handleValue, handleSystem);
 
-    EXPECT_EQ(handleSystem, handle.GetSystem());
+    ASSERT_EQ(handleSystem, handle.GetSystem());
 }
 
 TEST(SceneObject_ComponentHandleTest, explicit_conversion_to_handle) {
@@ -819,41 +866,41 @@ TEST(SceneObject_ComponentHandleTest, explicit_conversion_to_handle) {
     const auto handleSystem = ComponentSystem::Custom;
     const TSceneObject::ComponentHandle handle(handleValue, handleSystem);
 
-    EXPECT_EQ(handleValue, static_cast<size_t>(handle));
+    ASSERT_EQ(handleValue, static_cast<size_t>(handle));
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_equals_positive) {
     const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
     const TSceneObject::ComponentHandle handle2(0, ComponentSystem::Custom);
 
-    EXPECT_TRUE(handle1 == handle2);
+    ASSERT_TRUE(handle1 == handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_equals_negative) {
     const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
     const TSceneObject::ComponentHandle handle2(1, ComponentSystem::Custom);
 
-    EXPECT_FALSE(handle1 == handle2);
+    ASSERT_FALSE(handle1 == handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_not_equals_positive) {
     const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
     const TSceneObject::ComponentHandle handle2(1, ComponentSystem::Custom);
 
-    EXPECT_TRUE(handle1 != handle2);
+    ASSERT_TRUE(handle1 != handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, operator_not_equals_negative) {
     const TSceneObject::ComponentHandle handle1(0, ComponentSystem::Custom);
     const TSceneObject::ComponentHandle handle2(0, ComponentSystem::Custom);
 
-    EXPECT_FALSE(handle1 != handle2);
+    ASSERT_FALSE(handle1 != handle2);
 }
 
 TEST(SceneObject_ComponentHandleTest, initial_value_is_undefined) {
     const TSceneObject::ComponentHandle handle;
 
-    EXPECT_EQ(TSceneObject::ComponentHandle::Undefined, handle);
+    ASSERT_EQ(TSceneObject::ComponentHandle::Undefined, handle);
 }
 
 
@@ -865,7 +912,7 @@ TEST(SceneObjectContainerTest, add_object_success) {
 
     const auto handle = container.AddSceneObject(name, TSceneObject());
 
-    EXPECT_TRUE(container.HasObject(handle));
+    ASSERT_TRUE(container.HasObject(handle));
 }
 
 TEST(SceneObjectContainerTest, add_object_rvalue_success) {
@@ -874,7 +921,7 @@ TEST(SceneObjectContainerTest, add_object_rvalue_success) {
 
     const auto handle = container.AddSceneObject(name, std::move(TSceneObject()));
 
-    EXPECT_TRUE(container.HasObject(handle));
+    ASSERT_TRUE(container.HasObject(handle));
 }
 
 TEST(SceneObjectContainerTest, add_object_failure_empty_name) {
@@ -887,8 +934,8 @@ TEST(SceneObjectContainerTest, add_object_failure_empty_name) {
 TEST(SceneObjectContainerTest, add_object_failure_duplicate) {
     const TSceneObjectContainer::SceneObjectName name = "object";
     TSceneObjectContainer container;
-
     container.AddSceneObject(name, TSceneObject());
+
     ASSERT_ANY_THROW(container.AddSceneObject(name, TSceneObject()));
 }
 
@@ -897,7 +944,7 @@ TEST(SceneObjectContainerTest, has_object_with_handle_positive) {
     TSceneObjectContainer container;
     const auto handle = container.AddSceneObject(name, TSceneObject());
 
-    EXPECT_TRUE(container.HasObject(handle));
+    ASSERT_TRUE(container.HasObject(handle));
 }
 
 TEST(SceneObjectContainerTest, has_object_with_handle_negative_unknown_handle) {
@@ -905,18 +952,23 @@ TEST(SceneObjectContainerTest, has_object_with_handle_negative_unknown_handle) {
     TSceneObjectContainer container;
     container.AddSceneObject(name, TSceneObject());
 
-    EXPECT_FALSE(container.HasObject(100));
+    ASSERT_FALSE(container.HasObject(100));
 }
 
-TEST(SceneObjectContainerTest, has_object_with_name) {
+TEST(SceneObjectContainerTest, has_object_with_name_true_when_has) {
     const TSceneObjectContainer::SceneObjectName name = "object";
     TSceneObjectContainer container;
 
-    EXPECT_FALSE(container.HasObject(name));
-
     container.AddSceneObject(name, TSceneObject());
 
-    EXPECT_TRUE(container.HasObject(name));
+    ASSERT_TRUE(container.HasObject(name));
+}
+
+TEST(SceneObjectContainerTest, has_object_with_name_false_when_empty) {
+    const TSceneObjectContainer::SceneObjectName name = "object";
+    TSceneObjectContainer container;
+
+    ASSERT_FALSE(container.HasObject(name));
 }
 
 TEST(SceneObjectContainerTest, remove_object_with_handle_success) {
@@ -926,7 +978,7 @@ TEST(SceneObjectContainerTest, remove_object_with_handle_success) {
 
     container.RemoveSceneObject(handle);
 
-    EXPECT_FALSE(container.HasObject(handle));
+    ASSERT_FALSE(container.HasObject(handle));
 }
 
 TEST(SceneObjectContainerTest, remove_object_with_name_success) {
@@ -936,24 +988,24 @@ TEST(SceneObjectContainerTest, remove_object_with_name_success) {
 
     container.RemoveSceneObject(name);
 
-    EXPECT_FALSE(container.HasObject(name));
+    ASSERT_FALSE(container.HasObject(name));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_name_failure_empty_name) {
+TEST(SceneObjectContainerTest, remove_object_with_name_no_failure_empty_name) {
     const TSceneObjectContainer::SceneObjectName name;
     TSceneObjectContainer container;
 
     ASSERT_NO_THROW(container.RemoveSceneObject(name));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_handle_failure_unknown_handle) {
+TEST(SceneObjectContainerTest, remove_object_with_handle_no_failure_unknown_handle) {
     const TSceneObjectContainer::ObjectHandle handle = 42;
     TSceneObjectContainer container;
 
     ASSERT_NO_THROW(container.RemoveSceneObject(handle));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_handle_failure_undefined_handle) {
+TEST(SceneObjectContainerTest, remove_object_with_handle_no_failure_undefined_handle) {
     const auto handle = TSceneObjectContainer::ObjectHandle::Undefined;
     TSceneObjectContainer container;
 
@@ -965,7 +1017,9 @@ TEST(SceneObjectContainerTest, get_object_by_handle_positive) {
     TSceneObjectContainer container;
     const auto handle = container.AddSceneObject(name, TSceneObject());
 
-    ASSERT_NO_THROW(container[handle]);
+    const TSceneObject object = container[handle];
+
+    UNUSED(object);
 }
 
 TEST(SceneObjectContainerTest, get_object_by_name) {
@@ -973,7 +1027,9 @@ TEST(SceneObjectContainerTest, get_object_by_name) {
     TSceneObjectContainer container;
     container.AddSceneObject(name, TSceneObject());
 
-    ASSERT_NO_THROW(container[name]);
+    const TSceneObject object = container[name];
+
+    UNUSED(object);
 }
 
 TEST(SceneObjectContainerTest, get_handle_by_name) {
@@ -981,18 +1037,18 @@ TEST(SceneObjectContainerTest, get_handle_by_name) {
     TSceneObjectContainer container;
     const auto handle = container.AddSceneObject(name, TSceneObject());
 
-    EXPECT_EQ(handle, container.GetHandle(name));
+    ASSERT_EQ(handle, container.GetHandle(name));
 }
 
 TEST(SceneObjectContainerTest, is_empty) {
     const TSceneObjectContainer::SceneObjectName name = "object";
     TSceneObjectContainer container;
 
-    EXPECT_TRUE(container.IsEmpty());
+    ASSERT_TRUE(container.IsEmpty());
 
     container.AddSceneObject(name, TSceneObject());
 
-    EXPECT_FALSE(container.IsEmpty());
+    ASSERT_FALSE(container.IsEmpty());
 }
 
 TEST(SceneObjectContainerTest, clear) {
@@ -1002,7 +1058,7 @@ TEST(SceneObjectContainerTest, clear) {
 
     container.Clear();
 
-    EXPECT_TRUE(container.IsEmpty());
+    ASSERT_TRUE(container.IsEmpty());
 }
 
 // === Scene Tests ===
@@ -1049,13 +1105,12 @@ TEST_F(TestScene, create_component_with_custom_args_correct) {
     CustomComponent::Parameters parameters;
     parameters.value = 10;
 
-    TScene::ComponentHandle handle;
-    ASSERT_NO_THROW(handle = scene->CreateComponent(
-        ComponentID<CustomComponent>::value(), &parameters));
+    TScene::ComponentHandle handle = scene->CreateComponent(
+        ComponentID<CustomComponent>::value(), &parameters);
 
     const auto* component = scene->GetComponent<CustomComponent>(handle);
-    EXPECT_NE(nullptr, component);
-    EXPECT_EQ(parameters.value, component->value);
+    ASSERT_NE(nullptr, component);
+    ASSERT_EQ(parameters.value, component->value);
 }
 
 TEST_F(TestScene, create_component_unregistered_incorrect) {
@@ -1066,14 +1121,13 @@ TEST_F(TestScene, remove_component_existing_component) {
     const auto handle = scene->CreateComponent(
         ComponentID<CustomComponent>::value(), nullptr);
 
-    ASSERT_NO_THROW(scene->RemoveComponent(handle));
-    EXPECT_FALSE(scene->HasComponent(handle));
+    scene->RemoveComponent(handle);
+
+    ASSERT_FALSE(scene->HasComponent(handle));
 }
 
 TEST_F(TestScene, remove_component_unexisting_component) {
-    const auto handle = TScene::ComponentHandle::Undefined;
-
-    ASSERT_NO_THROW(scene->RemoveComponent(handle));
+    ASSERT_NO_THROW(scene->RemoveComponent(TScene::ComponentHandle::Undefined));
 }
 
 TEST_F(TestScene, get_component_and_cast_existing) {
@@ -1179,9 +1233,9 @@ TEST_F(TestScene, add_scene_object_with_unexisting_name) {
     TSceneObject object;
     TScene::ObjectHandle handle;
 
-    ASSERT_NO_THROW(handle = scene->AddSceneObject(name, object));
+    handle = scene->AddSceneObject(name, object);
 
-    EXPECT_TRUE(scene->HasObject(handle));
+    ASSERT_TRUE(scene->HasObject(handle));
 }
 
 TEST_F(TestScene, add_scene_object_with_existing_name_is_failure) {
@@ -1204,8 +1258,9 @@ TEST_F(TestScene, remove_scene_object_by_handle_existing) {
     TSceneObject object;
     TScene::ObjectHandle handle = scene->AddSceneObject(name, object);
 
-    ASSERT_NO_THROW(scene->RemoveSceneObject(handle));
-    EXPECT_FALSE(scene->HasObject(handle));
+    scene->RemoveSceneObject(handle);
+
+    ASSERT_FALSE(scene->HasObject(handle));
 }
 
 TEST_F(TestScene, remove_scene_object_by_handle_unexisting) {
@@ -1217,8 +1272,9 @@ TEST_F(TestScene, remove_scene_object_by_name_existing) {
     TSceneObject object;
     TScene::ObjectHandle handle = scene->AddSceneObject(name, object);
 
-    ASSERT_NO_THROW(scene->RemoveSceneObject(handle));
-    EXPECT_FALSE(scene->HasObject(handle));
+    scene->RemoveSceneObject(handle);
+
+    ASSERT_FALSE(scene->HasObject(handle));
 }
 
 TEST_F(TestScene, remove_scene_object_by_name_unexisting) {

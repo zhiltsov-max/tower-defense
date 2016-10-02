@@ -60,7 +60,7 @@ TSceneObjectContainer::AddSceneObject(const SceneObjectName& name,
     const TSceneObject& sceneObject)
 {
     ASSERT(name.empty() == false,
-        "Attempt to add an unnamed component.");
+        "Attempt to add an unnamed object.");
     ASSERT(HasObject(name) == false,
         "Object with this name already exists.");
 
@@ -84,7 +84,7 @@ TSceneObjectContainer::AddSceneObject(const SceneObjectName& name,
     TSceneObject&& sceneObject)
 {
     ASSERT(name.empty() == false,
-        "Attempt to add an unnamed component.");
+        "Attempt to add an unnamed object.");
     ASSERT(HasObject(name) == false,
         "Object with this name already exists.");
 

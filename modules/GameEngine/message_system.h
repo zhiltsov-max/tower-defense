@@ -12,10 +12,11 @@ class TMessageSystem
 {
 public:
     using ComponentHandle = TComponentHandle;
-    using Context = TGameEngineContext;
+    using EngineContext = TGameEngineContext;
     using Message = TMessage;
-    using MessageCallback = std::function<void (const ComponentHandle& listener,
-        const Message& message, Context& context)>;
+    using MessageCallback = std::function<void (const ComponentHandle& reciever,
+        const ComponentHandle& sender, const Message& message,
+        EngineContext& context)>;
 
     TMessageSystem();
 
@@ -32,7 +33,7 @@ public:
 
     void ClearSubscriptions();
 
-    void SendMessage(const Message& message, Context& context,
+    void SendMessage(const Message& message, EngineContext& context,
         const ComponentHandle& sender = ComponentHandle::Undefined);
 
     void SetComponentSystemsManager(TComponentSystemsManager* instance);

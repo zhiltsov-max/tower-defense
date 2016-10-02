@@ -1,6 +1,7 @@
 #ifndef SCENE_OBJECT_CONTAINER_H
 #define SCENE_OBJECT_CONTAINER_H
 
+#include <stack>
 #include "GameEngine/scene_object.h"
 
 
@@ -45,7 +46,7 @@ public:
 private:
     using NameMapping = std::map<SceneObjectName, ObjectHandle>;
     using Entry = std::pair<SceneObjectName, SceneObject>;
-    using Objects = vector<Entry>;
+    using Objects = std::vector<Entry>;
     using FreeHandles = std::stack<ObjectHandle>;
 
     NameMapping nameMapping;

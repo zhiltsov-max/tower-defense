@@ -3,18 +3,30 @@
 
 namespace GE {
 
-const TSceneObject::Handle TSceneObject::HandleUndefined = -1u;
+const TSceneObject::Handle TSceneObject::HandleUndefined =
+    TSceneObject::ComponentsAllocator::HandleUndefined;
 
 const TSceneObject::ComponentHandle&
 TSceneObject::operator [] (const ComponentName& name) const {
-    return components.at(GetHandle(name)).component;
+    return operator [] (GetHandle(name));
 }
 
-TSceneObject::ComponentHandle& TSceneObject::operator [] (const ComponentName& name) {
-    return components.at(GetHandle(name)).component;
+TSceneObject::ComponentHandle&
+TSceneObject::operator [] (const ComponentName& name) {
+    return operator [] (GetHandle(name));
 }
 
-const TSceneObject::Handle& TSceneObject::GetHandle(const ComponentName& name) const {
+const TSceneObject::Handle&
+TSceneObject::GetHandle(const ComponentName& name) const {
+    if (nameMapping.count(name) != 0) {
+        return nameMapping.at(name);
+    } else {
+        return HandleUndefined;
+    }
+}
+
+TSceneObject::Handle
+TSceneObject::GetHandle(const ComponentName& name) {
     if (nameMapping.count(name) != 0) {
         return nameMapping.at(name);
     } else {
@@ -24,12 +36,16 @@ const TSceneObject::Handle& TSceneObject::GetHandle(const ComponentName& name) c
 
 const TSceneObject::ComponentHandle&
 TSceneObject::operator [] (const Handle& handle) const {
-    return components.at(handle).component;
+    ASSERT(componentsAllocator.Owns(handle) == true,
+        "Attempt to get an unexisting component.")
+    return componentsAllocator[handle].component;
 }
 
 TSceneObject::ComponentHandle&
 TSceneObject::operator [] (const Handle& handle) {
-    return components.at(handle).component;
+    ASSERT(componentsAllocator.Owns(handle) == true,
+        "Attempt to get an unexisting component.")
+    return componentsAllocator[handle].component;
 }
 
 TSceneObject::Handle TSceneObject::AddComponent(const ComponentName& name,
@@ -42,42 +58,34 @@ TSceneObject::Handle TSceneObject::AddComponent(const ComponentName& name,
     ASSERT(HasComponent(name) == false,
         "Component with this name already exists.");
 
-    Handle handle = HandleUndefined;
-    if (freeHandles.empty() == false) {
-        handle = freeHandles.top();
-        freeHandles.pop();
-
-        components[handle] = Entry(name, component);
-    } else {
-        handle = components.size();
-        components.emplace_back(name, component);
+    Handle handle = componentsAllocator.Allocate();
+    try {
+        ::new (componentsAllocator.GetElementPointer(handle)) Entry(name, component);
+    } catch (...) {
+        componentsAllocator.Deallocate(handle);
+        throw;
     }
     nameMapping[name] = handle;
 
     return handle;
 }
 
-TSceneObject::ComponentHandle TSceneObject::RemoveComponent(const ComponentName& name) {
-    Handle handle = GetHandle(name);
-    return RemoveComponent(handle);
+TSceneObject::ComponentHandle
+TSceneObject::RemoveComponent(const ComponentName& name) {
+    return RemoveComponent(GetHandle(name));
 }
 
 TSceneObject::ComponentHandle
 TSceneObject::RemoveComponent(const Handle& handle) {
-    ASSERT(handle != HandleUndefined,
-        "Attempt to remove an unexisting component")
-    ASSERT(components.at(handle).name.empty() == false,
+    ASSERT(componentsAllocator.Owns(handle) == true,
         "Attempt to remove an unexisting component")
 
-    auto& entry = components.at(handle);
+    auto& entry = componentsAllocator[handle];
+    const auto componentHandle = entry.component;
+
     nameMapping.erase(entry.name);
-    entry.name.clear();
-
-    auto componentHandle = entry.component;
-    entry.component = ComponentHandle::Undefined;
-
-    freeHandles.push(handle);
-    checkSize();
+    entry.~Entry();
+    componentsAllocator.Deallocate(handle);
 
     return componentHandle;
 }
@@ -87,25 +95,13 @@ bool TSceneObject::HasComponent(const ComponentName& name) const {
 }
 
 bool TSceneObject::HasComponent(const Handle& handle) const {
-    return (handle < components.size()) &&
-        (components.at(handle).component != ComponentHandle::Undefined);
+    const auto* entry = componentsAllocator.GetElementPointer(handle);
+    return (entry != nullptr) &&
+        (entry->component != ComponentHandle::Undefined);
 }
 
 bool TSceneObject::HasComponents() const {
-    return components.empty() == false;
-}
-
-const TSceneObject::Components& TSceneObject::GetComponents() const {
-    return components;
-}
-
-void TSceneObject::checkSize() {
-    if (components.size() == freeHandles.size()) {
-        components.clear();
-        components.shrink_to_fit();
-        freeHandles = FreeHandles();
-        nameMapping.clear();
-    }
+    return nameMapping.empty() == false;
 }
 
 

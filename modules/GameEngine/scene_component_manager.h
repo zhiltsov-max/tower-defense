@@ -13,8 +13,7 @@ public:
     using ComponentHandle = TSceneObject::ComponentHandle;
 
     ComponentHandle CreateComponent(const TComponent::ID& id,
-        const TComponentCreateArgs* args = nullptr
-    );
+        const TComponentCreateArgs* args = nullptr);
 
     bool HasComponent(const ComponentHandle& handle) const;
 
