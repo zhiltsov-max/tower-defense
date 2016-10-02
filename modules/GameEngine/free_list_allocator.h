@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstddef>
 
+
 namespace GE {
 
 template<class T>
@@ -11,15 +12,16 @@ class FreelistAllocator
 {
 public:
     using Size = std::size_t;
-    using Difference = std::ptrdiff_t;
-    using Index = std::size_t;
+    using Handle = std::size_t;
     using Pointer = T*;
     using ConstPointer = const T*;
-    static constexpr Index UndefinedIndex { -1u };
+    using Reference = T&;
+    using ConstReference = const T&;
+    static constexpr Handle HandleUndefined { -1u };
 
     FreelistAllocator(Size initialCapacity = 0) :
         blockPool(),
-        firstFreeBlockIndex(UndefinedIndex)
+        firstFreeBlockIndex(HandleUndefined)
     {
         if (initialCapacity == 0) {
             return;
@@ -32,98 +34,144 @@ public:
         const auto iend = --blockPool.end();
         for (; it != iend; ++it) {
             it->used = false;
-            it->data.nextAvailableBlockIndex = it - blockPool.begin() + 1;
+            it->nextAvailableBlockIndex = it - blockPool.begin() + 1;
         }
         it->used = false;
-        it->data.nextAvailableBlockIndex = UndefinedIndex;
+        it->nextAvailableBlockIndex = HandleUndefined;
     }
-    FreelistAllocator(const FreelistAllocator& other) = delete;
-    FreelistAllocator(FreelistAllocator&& other) = default;
-    FreelistAllocator& operator = (const FreelistAllocator& other) = delete;
-    FreelistAllocator& operator = (FreelistAllocator&& other) = default;
 
-    Index Allocate() {
-        if (firstFreeBlockIndex == UndefinedIndex) {
+    Handle Allocate() {
+        if (firstFreeBlockIndex == HandleUndefined) {
             blockPool.emplace_back();
-            blockPool.back().used = false;
-            blockPool.back().data.nextAvailableBlockIndex = UndefinedIndex;
             firstFreeBlockIndex = blockPool.size() - 1;
         }
 
-        Block& block = blockPool[firstFreeBlockIndex];
+        auto& block = blockPool[firstFreeBlockIndex];
         const auto blockIndex = firstFreeBlockIndex;
-        firstFreeBlockIndex = block.data.nextAvailableBlockIndex;
+        firstFreeBlockIndex = block.nextAvailableBlockIndex;
         block.used = true;
         return blockIndex;
     }
 
-    void Deallocate(Index index) {
+    void Deallocate(Handle index) {
         if (Owns(index) == false) {
             return;
         }
-        Block* block = GetOwningBlock(index);
-        block->used = false;
-        block->data.nextAvailableBlockIndex = firstFreeBlockIndex;
+        auto& block = blockPool[index];
+        block.used = false;
+        block.nextAvailableBlockIndex = firstFreeBlockIndex;
         firstFreeBlockIndex = index;
     }
 
-    bool Owns(Index index) const {
+    bool Owns(Handle index) const {
         return (0 <= index) && (index < blockPool.size()) &&
-            (GetOwningBlock(index)->used == true);
+            (blockPool[index].used == true);
     }
 
-    ConstPointer GetElementDataPointer(Index index) const {
+    ConstPointer GetElementPointer(Handle index) const {
         if (Owns(index) == false) {
             return nullptr;
         }
-        return &blockPool[index].data.userData;
+        return &(operator [](index));
     }
 
-    Pointer GetElementDataPointer(Index index) {
+    Pointer GetElementPointer(Handle index) {
         if (Owns(index) == false) {
             return nullptr;
         }
-        return &blockPool[index].data.userData;
+        return &(operator [](index));
+    }
+
+    ConstReference operator [] (Handle index) const {
+        return blockPool[index].userData;
+    }
+
+    Reference operator [] (Handle index) {
+        return blockPool[index].userData;
     }
 
 private:
-
     struct Block {
-        union BlockData {
-            Index nextAvailableBlockIndex;
-            T userData;
+        bool used;
 
-            constexpr BlockData() : nextAvailableBlockIndex(UndefinedIndex) {}
+        union {
+            Handle nextAvailableBlockIndex;
+            T userData;
         };
 
-        bool used;
-        BlockData data;
 
-        constexpr Block() : used(false), data() {}
+        Block() :
+            used(false),
+            nextAvailableBlockIndex(HandleUndefined)
+        {}
+
+        Block(const Block& other) :
+            used(other.used)
+        {
+            if (other.used == true) {
+                ::new (&userData) T(other.userData);
+            } else {
+                nextAvailableBlockIndex =
+                    other.nextAvailableBlockIndex;
+            }
+        }
+
+        Block(Block&& other) :
+            used(std::move(other.used))
+        {
+            if (other.used == true) {
+                ::new (&userData) T(std::move(other.userData));
+            } else {
+                nextAvailableBlockIndex = std::move(
+                    other.nextAvailableBlockIndex);
+            }
+        }
+
+        Block& operator = (const Block& other) {
+            if (this != &other) {
+                if (other.used == true) {
+                    if (used == false) {
+                        ::new (&userData) T(other.userData);
+                    } else {
+                        userData = other.userData;
+                    }
+                } else {
+                    nextAvailableBlockIndex =
+                        other.nextAvailableBlockIndex;
+                }
+                used = other.used;
+            }
+            return *this;
+        }
+
+        Block& operator = (Block&& other) {
+            if (this != &other) {
+                if (other.used == true) {
+                    if (used == false) {
+                        ::new (&userData) T(std::move(other.userData));
+                    } else {
+                        userData = std::move(other.userData);
+                    }
+                } else {
+                    nextAvailableBlockIndex = std::move(
+                        other.nextAvailableBlockIndex);
+                }
+                used = std::move(other.used);
+            }
+            return *this;
+        }
+
+        ~Block() {
+            if (used == true) {
+                userData.~T();
+            }
+        }
     };
     using BlockPool = std::vector<Block>;
 
     BlockPool blockPool;
-    Index firstFreeBlockIndex;
-
-    const Block* GetOwningBlock(Index index) const {
-        return &blockPool[index];
-    }
-
-    Block* GetOwningBlock(Index index) {
-        return &blockPool[index];
-    }
+    Handle firstFreeBlockIndex;
 };
-
-template <class T, class U>
-bool operator == (const FreelistAllocator<T>&, const FreelistAllocator<U>&) {
-    return false;
-}
-
-template <class T, class U>
-bool operator != (const FreelistAllocator<T>&, const FreelistAllocator<U>&) {
-    return false;
-}
 
 } // namespace GE
 
