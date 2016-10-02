@@ -4,7 +4,7 @@
 #include "Core/core.h"
 #include "GameEngine/game_engine.h"
 #include "GameEngine/scene_component_manager.h"
-#include "GameEngine/scene_object_container.h"
+#include "GameEngine/scene_object_manager.h"
 #include "GameEngine/scene_resources.h"
 
 
@@ -14,7 +14,7 @@ class TScene
 {
 public:
     using ComponentManager = TSceneComponentManager;
-    using ObjectManager = TSceneObjectContainer;
+    using ObjectManager = TSceneObjectManager;
     using ResourceManager = TSceneResources;
 
     using Object = ObjectManager::SceneObject;

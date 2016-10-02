@@ -2,6 +2,7 @@
 #define SCENE_COMPONENT_MANAGER_H
 
 #include "Core/core.h"
+#include "GameEngine/observable_interface.h"
 #include "GameEngine/scene_object.h"
 
 

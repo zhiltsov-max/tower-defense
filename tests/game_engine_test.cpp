@@ -7,7 +7,7 @@
 #include "GameEngine/engine_messages.h"
 #include "GameEngine/free_list_allocator.h"
 #include "GameEngine/scene_object.h"
-#include "GameEngine/scene_object_container.h"
+#include "GameEngine/scene_object_manager.h"
 #include "GameEngine/scene_resources.h"
 #include "GameEngine/scene.h"
 
@@ -125,6 +125,19 @@ TEST(FreelistAllocatorTest, owns_not_allocated_element_false) {
     FreelistAllocator<int> allocator;
 
     ASSERT_FALSE(allocator.Owns(0));
+}
+
+TEST(FreelistAllocatorTest, capacity) {
+    const size_t capacity = 10;
+    FreelistAllocator<int> allocator(capacity);
+
+    ASSERT_EQ(capacity, allocator.Capacity());
+}
+
+TEST(FreelistAllocatorTest, get_element_pointer_returns_nullptr_when_not_owns) {
+    FreelistAllocator<int> allocator;
+
+    ASSERT_EQ(nullptr, allocator.GetElementPointer(10));
 }
 
 // ### REGISTRY TESTS ###
@@ -845,6 +858,37 @@ TEST(SceneObjectTest, get_handle_by_name) {
     ASSERT_EQ(handle, sceneObject.GetHandle(name));
 }
 
+TEST(SceneObjectTest, iobservable_notify_notifies_on_component_addition) {
+    TSceneObject sceneObject;
+    bool notified = false;
+    sceneObject.SetObserver([&](const TSceneObjectMessage& message) {
+        if (message.type == TSceneObjectMessage::Type::ComponentAdded) {
+            notified = true;
+        }
+    });
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
+
+    sceneObject.AddComponent("name", fakeHandle);
+
+    ASSERT_TRUE(notified);
+}
+
+TEST(SceneObjectTest, iobservable_notify_notifies_on_component_removal) {
+    TSceneObject sceneObject;
+    bool notified = false;
+    sceneObject.SetObserver([&](const TSceneObjectMessage& message) {
+        if (message.type == TSceneObjectMessage::Type::ComponentRemoved) {
+            notified = true;
+        }
+    });
+    const TSceneObject::ComponentHandle fakeHandle(1, ComponentSystem::Custom);
+    auto entryHandle = sceneObject.AddComponent("name", fakeHandle);
+
+    sceneObject.RemoveComponent(entryHandle);
+
+    ASSERT_TRUE(notified);
+}
+
 TEST(SceneObject_ComponentHandleTest, get_value) {
     const size_t handleValue = 1;
     const auto handleSystem = ComponentSystem::Custom;
@@ -904,161 +948,161 @@ TEST(SceneObject_ComponentHandleTest, initial_value_is_undefined) {
 }
 
 
-// === SceneObjectContainer Tests ===
+// === SceneObjectManager Tests ===
 
-TEST(SceneObjectContainerTest, add_object_success) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, add_object_success) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
 
-    const auto handle = container.AddSceneObject(name, TSceneObject());
+    const auto handle = manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_TRUE(container.HasObject(handle));
+    ASSERT_TRUE(manager.HasObject(handle));
 }
 
-TEST(SceneObjectContainerTest, add_object_rvalue_success) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, add_object_rvalue_success) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
 
-    const auto handle = container.AddSceneObject(name, std::move(TSceneObject()));
+    const auto handle = manager.AddSceneObject(name, std::move(TSceneObject()));
 
-    ASSERT_TRUE(container.HasObject(handle));
+    ASSERT_TRUE(manager.HasObject(handle));
 }
 
-TEST(SceneObjectContainerTest, add_object_failure_empty_name) {
-    const TSceneObjectContainer::SceneObjectName name;
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, add_object_failure_empty_name) {
+    const TSceneObjectManager::SceneObjectName name;
+    TSceneObjectManager manager;
 
-    ASSERT_ANY_THROW(container.AddSceneObject(name, TSceneObject()));
+    ASSERT_ANY_THROW(manager.AddSceneObject(name, TSceneObject()));
 }
 
-TEST(SceneObjectContainerTest, add_object_failure_duplicate) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, add_object_failure_duplicate) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_ANY_THROW(container.AddSceneObject(name, TSceneObject()));
+    ASSERT_ANY_THROW(manager.AddSceneObject(name, TSceneObject()));
 }
 
-TEST(SceneObjectContainerTest, has_object_with_handle_positive) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    const auto handle = container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, has_object_with_handle_positive) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    const auto handle = manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_TRUE(container.HasObject(handle));
+    ASSERT_TRUE(manager.HasObject(handle));
 }
 
-TEST(SceneObjectContainerTest, has_object_with_handle_negative_unknown_handle) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, has_object_with_handle_negative_unknown_handle) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_FALSE(container.HasObject(100));
+    ASSERT_FALSE(manager.HasObject(100));
 }
 
-TEST(SceneObjectContainerTest, has_object_with_name_true_when_has) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, has_object_with_name_true_when_has) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
 
-    container.AddSceneObject(name, TSceneObject());
+    manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_TRUE(container.HasObject(name));
+    ASSERT_TRUE(manager.HasObject(name));
 }
 
-TEST(SceneObjectContainerTest, has_object_with_name_false_when_empty) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, has_object_with_name_false_when_empty) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
 
-    ASSERT_FALSE(container.HasObject(name));
+    ASSERT_FALSE(manager.HasObject(name));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_handle_success) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    const auto handle = container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, remove_object_with_handle_success) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    const auto handle = manager.AddSceneObject(name, TSceneObject());
 
-    container.RemoveSceneObject(handle);
+    manager.RemoveSceneObject(handle);
 
-    ASSERT_FALSE(container.HasObject(handle));
+    ASSERT_FALSE(manager.HasObject(handle));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_name_success) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, remove_object_with_name_success) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    manager.AddSceneObject(name, TSceneObject());
 
-    container.RemoveSceneObject(name);
+    manager.RemoveSceneObject(name);
 
-    ASSERT_FALSE(container.HasObject(name));
+    ASSERT_FALSE(manager.HasObject(name));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_name_no_failure_empty_name) {
-    const TSceneObjectContainer::SceneObjectName name;
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, remove_object_with_name_no_failure_empty_name) {
+    const TSceneObjectManager::SceneObjectName name;
+    TSceneObjectManager manager;
 
-    ASSERT_NO_THROW(container.RemoveSceneObject(name));
+    ASSERT_NO_THROW(manager.RemoveSceneObject(name));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_handle_no_failure_unknown_handle) {
-    const TSceneObjectContainer::ObjectHandle handle = 42;
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, remove_object_with_handle_no_failure_unknown_handle) {
+    const TSceneObjectManager::ObjectHandle handle = 42;
+    TSceneObjectManager manager;
 
-    ASSERT_NO_THROW(container.RemoveSceneObject(handle));
+    ASSERT_NO_THROW(manager.RemoveSceneObject(handle));
 }
 
-TEST(SceneObjectContainerTest, remove_object_with_handle_no_failure_undefined_handle) {
-    const auto handle = TSceneObjectContainer::ObjectHandle::Undefined;
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, remove_object_with_handle_no_failure_undefined_handle) {
+    const auto handle = TSceneObjectManager::ObjectHandle::Undefined;
+    TSceneObjectManager manager;
 
-    ASSERT_NO_THROW(container.RemoveSceneObject(handle));
+    ASSERT_NO_THROW(manager.RemoveSceneObject(handle));
 }
 
-TEST(SceneObjectContainerTest, get_object_by_handle_positive) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    const auto handle = container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, get_object_by_handle_positive) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    const auto handle = manager.AddSceneObject(name, TSceneObject());
 
-    const TSceneObject object = container[handle];
+    const TSceneObject object = manager[handle];
 
     UNUSED(object);
 }
 
-TEST(SceneObjectContainerTest, get_object_by_name) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, get_object_by_name) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    manager.AddSceneObject(name, TSceneObject());
 
-    const TSceneObject object = container[name];
+    const TSceneObject object = manager[name];
 
     UNUSED(object);
 }
 
-TEST(SceneObjectContainerTest, get_handle_by_name) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    const auto handle = container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, get_handle_by_name) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    const auto handle = manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_EQ(handle, container.GetHandle(name));
+    ASSERT_EQ(handle, manager.GetHandle(name));
 }
 
-TEST(SceneObjectContainerTest, is_empty) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
+TEST(SceneObjectManagerTest, is_empty) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
 
-    ASSERT_TRUE(container.IsEmpty());
+    ASSERT_TRUE(manager.IsEmpty());
 
-    container.AddSceneObject(name, TSceneObject());
+    manager.AddSceneObject(name, TSceneObject());
 
-    ASSERT_FALSE(container.IsEmpty());
+    ASSERT_FALSE(manager.IsEmpty());
 }
 
-TEST(SceneObjectContainerTest, clear) {
-    const TSceneObjectContainer::SceneObjectName name = "object";
-    TSceneObjectContainer container;
-    container.AddSceneObject(name, TSceneObject());
+TEST(SceneObjectManagerTest, clear) {
+    const TSceneObjectManager::SceneObjectName name = "object";
+    TSceneObjectManager manager;
+    manager.AddSceneObject(name, TSceneObject());
 
-    container.Clear();
+    manager.Clear();
 
-    ASSERT_TRUE(container.IsEmpty());
+    ASSERT_TRUE(manager.IsEmpty());
 }
 
 // === Scene Tests ===

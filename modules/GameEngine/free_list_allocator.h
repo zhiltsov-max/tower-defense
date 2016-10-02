@@ -17,7 +17,7 @@ public:
     using ConstPointer = const T*;
     using Reference = T&;
     using ConstReference = const T&;
-    static constexpr Handle HandleUndefined { -1u };
+    static const Handle HandleUndefined;
 
     FreelistAllocator(Size initialCapacity = 0) :
         blockPool(),
@@ -88,6 +88,10 @@ public:
 
     Reference operator [] (Handle index) {
         return blockPool[index].userData;
+    }
+
+    Size Capacity() const {
+        return blockPool.capacity();
     }
 
 private:
@@ -172,6 +176,10 @@ private:
     BlockPool blockPool;
     Handle firstFreeBlockIndex;
 };
+
+template<class T>
+const typename FreelistAllocator<T>::Handle
+    FreelistAllocator<T>::HandleUndefined { -1u };
 
 } // namespace GE
 

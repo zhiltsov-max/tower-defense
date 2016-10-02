@@ -19,11 +19,12 @@ set(game_engine_headers
     game_engine.h
     game_engine_context.h
     message_system.h
+    observable_interface.h
     registry.h
     scene.h
     scene_component_manager.h
     scene_object.h
-    scene_object_container.h
+    scene_object_manager.h
     scene_resource.h
     scene_resources.h
     script_engine.h
@@ -45,7 +46,7 @@ set(game_engine_sources
     scene.cpp
     scene_component_manager.cpp
     scene_object.cpp
-    scene_object_container.cpp
+    scene_object_manager.cpp
     scene_resource.cpp
     scene_resources.cpp
     script_engine.cpp
