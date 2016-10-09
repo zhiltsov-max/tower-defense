@@ -1,11 +1,21 @@
 #ifndef FREE_LIST_ALLOCATOR_H
 #define FREE_LIST_ALLOCATOR_H
 
-#include <vector>
 #include <cstddef>
+#include <type_traits>
+#include <vector>
 
 
 namespace GE {
+
+namespace impl {
+template<class T,
+    bool = std::is_copy_constructible<T>::value,
+    bool = std::is_move_constructible<T>::value,
+    bool = std::is_trivially_destructible<T>::value
+>
+struct Block;
+} // namespace impl
 
 template<class T>
 class FreelistAllocator
@@ -95,91 +105,147 @@ public:
     }
 
 private:
-    struct Block {
-        bool used;
-
-        union {
-            Handle nextAvailableBlockIndex;
-            T userData;
-        };
-
-
-        Block() :
-            used(false),
-            nextAvailableBlockIndex(HandleUndefined)
-        {}
-
-        Block(const Block& other) :
-            used(other.used)
-        {
-            if (other.used == true) {
-                ::new (&userData) T(other.userData);
-            } else {
-                nextAvailableBlockIndex =
-                    other.nextAvailableBlockIndex;
-            }
-        }
-
-        Block(Block&& other) :
-            used(std::move(other.used))
-        {
-            if (other.used == true) {
-                ::new (&userData) T(std::move(other.userData));
-            } else {
-                nextAvailableBlockIndex = std::move(
-                    other.nextAvailableBlockIndex);
-            }
-        }
-
-        Block& operator = (const Block& other) {
-            if (this != &other) {
-                if (other.used == true) {
-                    if (used == false) {
-                        ::new (&userData) T(other.userData);
-                    } else {
-                        userData = other.userData;
-                    }
-                } else {
-                    nextAvailableBlockIndex =
-                        other.nextAvailableBlockIndex;
-                }
-                used = other.used;
-            }
-            return *this;
-        }
-
-        Block& operator = (Block&& other) {
-            if (this != &other) {
-                if (other.used == true) {
-                    if (used == false) {
-                        ::new (&userData) T(std::move(other.userData));
-                    } else {
-                        userData = std::move(other.userData);
-                    }
-                } else {
-                    nextAvailableBlockIndex = std::move(
-                        other.nextAvailableBlockIndex);
-                }
-                used = std::move(other.used);
-            }
-            return *this;
-        }
-
-        ~Block() {
-            if (used == true) {
-                userData.~T();
-            }
-        }
-    };
+    using Block = impl::Block<T>;
     using BlockPool = std::vector<Block>;
 
     BlockPool blockPool;
     Handle firstFreeBlockIndex;
 };
 
+
 template<class T>
 const typename FreelistAllocator<T>::Handle
     FreelistAllocator<T>::HandleUndefined { -1u };
+
+
+namespace impl {
+
+/*
+Remember to undef these macros later in file!
+*/
+
+#define GE_impl_GENERATE_FREELIST_BLOCK_DATA(Type) \
+    bool used; \
+    union { \
+        typename FreelistAllocator<Type>::Handle nextAvailableBlockIndex; \
+        Type userData; \
+    };
+
+#define GE_impl_GENERATE_FREELIST_BLOCK_CTOR(Type) \
+    Block() : \
+        used(false), \
+        nextAvailableBlockIndex(FreelistAllocator<T>::HandleUndefined) \
+    {}
+
+#define GE_impl_GENERATE_FREELIST_BLOCK_COPY_CTOR(Type) \
+    Block(const Block& other) : \
+        used(other.used) \
+    { \
+        if (other.used == true) { \
+            ::new (&userData) T(other.userData); \
+        } else { \
+            nextAvailableBlockIndex = other.nextAvailableBlockIndex; \
+        } \
+    }
+
+#define GE_impl_GENERATE_FREELIST_BLOCK_MOVE_CTOR(Type) \
+    Block(Block&& other) : \
+        used(std::move(other.used)) \
+    { \
+        if (other.used == true) { \
+            ::new (&userData) T(std::move(other.userData)); \
+        } else { \
+            nextAvailableBlockIndex = std::move( \
+                other.nextAvailableBlockIndex); \
+        } \
+    }
+
+#define GE_impl_GENERATE_FREELIST_BLOCK_DTOR(Type) \
+    ~Block() { \
+        if (used == true) { \
+            userData.~Type(); \
+        } \
+    }
+
+template<class T>
+struct Block<T, true, true, true> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_COPY_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_MOVE_CTOR(T)
+    ~Block() = default;
+};
+
+template<class T>
+struct Block<T, true, true, false> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_COPY_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_MOVE_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_DTOR(T)
+};
+
+template<class T>
+struct Block<T, true, false, true> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_COPY_CTOR(T)
+    Block(Block&& other) = delete;
+    ~Block() = default;
+};
+
+template<class T>
+struct Block<T, true, false, false> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_COPY_CTOR(T)
+    Block(Block&& other) = delete;
+    GE_impl_GENERATE_FREELIST_BLOCK_DTOR(T)
+};
+
+template<class T>
+struct Block<T, false, true, true> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    Block(const Block& other) = delete;
+    GE_impl_GENERATE_FREELIST_BLOCK_MOVE_CTOR(T)
+    ~Block() = default;
+};
+
+template<class T>
+struct Block<T, false, true, false> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    Block(const Block& other) = delete;
+    GE_impl_GENERATE_FREELIST_BLOCK_MOVE_CTOR(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_DTOR(T)
+};
+
+template<class T>
+struct Block<T, false, false, true> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    Block(const Block& other) = delete;
+    Block(Block&& other) = delete;
+    ~Block() = default;
+};
+
+template<class T>
+struct Block<T, false, false, false> {
+    GE_impl_GENERATE_FREELIST_BLOCK_DATA(T)
+    GE_impl_GENERATE_FREELIST_BLOCK_CTOR(T)
+    Block(const Block& other) = delete;
+    Block(Block&& other) = delete;
+    GE_impl_GENERATE_FREELIST_BLOCK_DTOR(T)
+};
+
+#undef GE_impl_GENERATE_FREELIST_BLOCK_DATA
+#undef GE_impl_GENERATE_FREELIST_BLOCK_CTOR
+#undef GE_impl_GENERATE_FREELIST_BLOCK_COPY_CTOR
+#undef GE_impl_GENERATE_FREELIST_BLOCK_MOVE_CTOR
+#undef GE_impl_GENERATE_FREELIST_BLOCK_DTOR
+
+} // namespace impl
 
 } // namespace GE
 

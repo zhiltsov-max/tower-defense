@@ -6,18 +6,16 @@ namespace GE {
 template<class M>
 class IObservable
 {
-protected:
+public:
     using MessageType = M;
     virtual void Notify(const MessageType& message) = 0;
 };
 
-template<class MT, class MI>
+template<class M>
 class IObserver
 {
-protected:
-    using MessageType = MT;
-    using MessageInfo = MI;
-    virtual void RecieveMessage(const MessageType&, const MessageInfo&) = 0;
+public:
+    using MessageType = M;
 };
 
 } // namespace GE

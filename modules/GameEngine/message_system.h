@@ -14,9 +14,10 @@ public:
     using ComponentHandle = TComponentHandle;
     using EngineContext = TGameEngineContext;
     using Message = TMessage;
-    using MessageCallback = std::function<void (const ComponentHandle& reciever,
-        const ComponentHandle& sender, const Message& message,
-        EngineContext& context)>;
+    using MessageCallback = std::function<
+        void (const ComponentHandle& reciever, const ComponentHandle& sender,
+            const Message& message, EngineContext& context)
+    >;
 
     TMessageSystem();
 

@@ -24,6 +24,12 @@ public:
     using ComponentName = ObjectManager::SceneObject::ComponentName;
     using ComponentPath = std::pair<ObjectName, ComponentName>;
 
+    TScene();
+    TScene(const TScene& other) = delete;
+    TScene& operator = (const TScene& other) = delete;
+    TScene(TScene&& other);
+    TScene& operator = (TScene&& other);
+
     ComponentHandle CreateComponent(const TComponent::ID& id,
         const TComponentCreateArgs* args = nullptr);
 
@@ -49,8 +55,7 @@ public:
     bool HasObject(const ObjectName& name) const;
     bool HasObject(const ObjectHandle& handle) const;
 
-    ObjectHandle AddSceneObject(const ObjectName& name,
-        const Object& sceneObject);
+    ObjectHandle AddSceneObject(const ObjectName& name);
     ObjectHandle AddSceneObject(const ObjectName& name, Object&& sceneObject);
 
     void RemoveSceneObject(const ObjectName& name);

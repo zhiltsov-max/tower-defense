@@ -1,4 +1,5 @@
 #include "GameEngine/scene_object_manager.h"
+#include "GameEngine/scene_component_manager.h"
 
 
 namespace GE {
@@ -6,6 +7,36 @@ namespace GE {
 const TSceneObjectManager::ObjectHandle
 TSceneObjectManager::ObjectHandle::Undefined =
     TSceneObjectManager::ObjectsAllocator::HandleUndefined;
+
+TSceneObjectManager::TSceneObjectManager() :
+    nameMapping(),
+    objectsAllocator(),
+    componentManager(nullptr),
+    sceneObjectMessageObserver(this)
+{}
+
+TSceneObjectManager::TSceneObjectManager(TSceneObjectManager&& other) :
+    nameMapping(std::move(other.nameMapping)),
+    objectsAllocator(std::move(other.objectsAllocator)),
+    componentManager(std::move(other.componentManager)),
+    sceneObjectMessageObserver(std::move(other.sceneObjectMessageObserver))
+{
+    sceneObjectMessageObserver.SetOwner(this);
+}
+
+TSceneObjectManager& TSceneObjectManager::operator = (
+    TSceneObjectManager&& other)
+{
+    if (this != &other) {
+        nameMapping = std::move(other.nameMapping);
+        objectsAllocator = std::move(other.objectsAllocator);
+        componentManager = std::move(other.componentManager);
+        sceneObjectMessageObserver =
+            std::move(other.sceneObjectMessageObserver);
+        sceneObjectMessageObserver.SetOwner(this);
+    }
+    return *this;
+}
 
 const TSceneObjectManager::SceneObject&
 TSceneObjectManager::operator [] (const SceneObjectName& name) const {
@@ -62,58 +93,57 @@ TSceneObjectManager::GetSceneObject(const ObjectHandle& handle) {
     return objectsAllocator[handle].second;
 }
 
-TSceneObjectManager::ObjectHandle
-TSceneObjectManager::AddSceneObject(const SceneObjectName& name,
-    const TSceneObject& sceneObject)
-{
-    ASSERT(name.empty() == false,
-        "Attempt to add an unnamed object.");
-    ASSERT(HasObject(name) == false,
-        "Object with this name already exists.");
+std::pair<TSceneObjectManager::ObjectHandle, TSceneObjectManager::SceneObject&>
+TSceneObjectManager::CreateSceneObject(const SceneObjectName& name) {
+    ASSERT(name.empty() == false, "Attempt to add an unnamed object.");
+    ASSERT(HasObject(name) == false, "Object with this name already exists.");
 
+    auto holderDeleter = [this, &name] (ObjectsAllocator::Handle* handle) {
+        objectsAllocator.Deallocate(*handle);
+        nameMapping.erase(name);
+    };
     auto handle = objectsAllocator.Allocate();
-    try {
-        auto* entry = ::new (&objectsAllocator[handle])
-            Entry(name, sceneObject);
-        entry->second.SetObserver(
-            [this, handle] (const TSceneObjectMessage& message) {
-                this->RecieveMessage(message, handle);
-            }
-        );
-        nameMapping[name] = handle;
-    } catch (...) {
-        objectsAllocator.Deallocate(handle);
-        throw;
-    }
+    std::unique_ptr<decltype(handle), decltype(holderDeleter)>
+        handleHolder {&handle, std::move(holderDeleter)};
 
-    return handle;
+    auto* entry = ::new (&objectsAllocator[handle]) Entry(name, SceneObject());
+    entry->second.AsObservable().SetObserver(
+        [this, handle] (const TSceneObjectMessage& message) {
+            sceneObjectMessageObserver.RecieveMessage(message, handle);
+        }
+    );
+    nameMapping[name] = handle;
+
+    handleHolder.release();
+    return {ObjectHandle(handle), entry->second};
 }
 
-TSceneObjectManager::ObjectHandle
-TSceneObjectManager::AddSceneObject(const SceneObjectName& name,
-    TSceneObject&& sceneObject)
+std::pair<TSceneObjectManager::ObjectHandle, TSceneObjectManager::SceneObject&>
+TSceneObjectManager::CreateSceneObject(const SceneObjectName& name,
+    TSceneObject&& object)
 {
-    ASSERT(name.empty() == false,
-        "Attempt to add an unnamed object.");
-    ASSERT(HasObject(name) == false,
-        "Object with this name already exists.");
+    ASSERT(name.empty() == false, "Attempt to add an unnamed object.");
+    ASSERT(HasObject(name) == false, "Object with this name already exists.");
 
+    auto holderDeleter = [this, &name] (ObjectsAllocator::Handle* handle) {
+        objectsAllocator.Deallocate(*handle);
+        nameMapping.erase(name);
+    };
     auto handle = objectsAllocator.Allocate();
-    try {
-        auto* entry = ::new (&objectsAllocator[handle])
-            Entry(name, std::move(sceneObject));
-        entry->second.SetObserver(
-            [this, handle] (const TSceneObjectMessage& message) {
-                this->RecieveMessage(message, handle);
-            }
-        );
-        nameMapping[name] = handle;
-    } catch (...) {
-        objectsAllocator.Deallocate(handle);
-        throw;
-    }
+    std::unique_ptr<decltype(handle), decltype(holderDeleter)>
+        handleHolder {&handle, std::move(holderDeleter)};
 
-    return handle;
+    object.AsObservable().SetObserver(
+        [this, handle] (const TSceneObjectMessage& message) {
+            sceneObjectMessageObserver.RecieveMessage(message, handle);
+        }
+    );
+    auto* entry = ::new (&objectsAllocator[handle])
+        Entry(name, std::move(object));
+    nameMapping[name] = handle;
+
+    handleHolder.release();
+    return {ObjectHandle(handle), entry->second};
 }
 
 void TSceneObjectManager::RemoveSceneObject(const SceneObjectName& name) {
@@ -148,36 +178,73 @@ bool TSceneObjectManager::IsEmpty() const {
     return nameMapping.empty();
 }
 
-void TSceneObjectManager::RecieveMessage(const TSceneObjectMessage& message,
-    const ObjectHandle& source)
+void TSceneObjectManager::SetSceneComponentManager(
+    TSceneComponentManager* instance)
+{
+    componentManager = instance;
+}
+
+TSceneObjectManager::EntriesConstRange
+TSceneObjectManager::EnumerateEntries() const {
+    return {nameMapping.begin(), nameMapping.end()};
+}
+
+TSceneObjectManager::EntriesRange
+TSceneObjectManager::EnumerateEntries() {
+    return {nameMapping.begin(), nameMapping.end()};
+}
+
+
+TSceneObjectManager::SceneObjectMessageObserver::SceneObjectMessageObserver(
+        TSceneObjectManager* owner) :
+    owner(owner)
+{}
+
+void TSceneObjectManager::SceneObjectMessageObserver::SetOwner(
+    TSceneObjectManager* instance)
+{
+    owner = instance;
+}
+
+void TSceneObjectManager::SceneObjectMessageObserver::RecieveMessage(
+    const TSceneObjectMessage& message, const ObjectHandle& source)
 {
     switch (message.type) {
     case TSceneObjectMessage::Type::ComponentAdded:
-        handleMessage_SceneObjectComponentAdded(message.componentAdded,
-            source);
+        handleMessage_ComponentAdded(message.componentAdded, source);
         break;
 
     case TSceneObjectMessage::Type::ComponentRemoved:
-        handleMessage_SceneObjectComponentRemoved(message.componentRemoved,
-            source);
+        handleMessage_ComponentRemoved(message.componentRemoved, source);
         break;
 
     default: /*none*/;
     }
 }
 
-void TSceneObjectManager::handleMessage_SceneObjectComponentAdded(
+void TSceneObjectManager::SceneObjectMessageObserver::
+        handleMessage_ComponentAdded(
     const TSceneObjectMessage::ComponentAddedMessage& message,
     const ObjectHandle& source)
 {
-    //TODO: notify subscribers
+    ASSERT(owner != nullptr, "Owner must be set")
+    ASSERT(owner->componentManager != nullptr, "Component manager is expected.")
+
+    owner->componentManager->BindComponent(message.component,
+        TSceneComponentManager::ComponentPath{source, message.entry});
 }
 
-void TSceneObjectManager::handleMessage_SceneObjectComponentRemoved(
+void TSceneObjectManager::SceneObjectMessageObserver::
+        handleMessage_ComponentRemoved(
     const TSceneObjectMessage::ComponentRemovedMessage& message,
     const ObjectHandle& source)
 {
-    //TODO: notify subscribers
+    ASSERT(owner != nullptr, "Owner must be set")
+    ASSERT(owner->componentManager != nullptr, "Component manager is expected.")
+
+    owner->componentManager->UnbindComponent(message.component);
+
+    UNUSED(source);
 }
 
 
