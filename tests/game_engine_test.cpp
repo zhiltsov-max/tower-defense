@@ -1229,6 +1229,290 @@ TEST(SceneObjectManagerTest, enumerate_entries_correct) {
     ASSERT_EQ(1u, count);
 }
 
+// === Scene Component Manager Test ===
+
+class TestSceneComponentManager :
+    public ::testing::Test
+{
+public:
+    TestSceneComponentManager() :
+        ::testing::Test(),
+        engine(nullptr)
+    {}
+
+    virtual void SetUp() override {
+        engine.reset(new GE::TGameEngine());
+        engine->GetComponentSystemsManager().
+            AddSystem<CustomComponentSystem>(GE::ComponentSystem::Custom);
+
+        TComponentRegistry::Entry entry;
+        entry.create = &CustomComponent::Create;
+        entry.system = ComponentClass<CustomComponent>::value();
+        engine->GetComponentSystemsManager().GetComponentRegistry().
+            Register(ComponentID<CustomComponent>::value(), entry);
+    }
+
+protected:
+    std::unique_ptr<TGameEngine> engine;
+};
+
+TEST_F(TestSceneComponentManager, create_component_success) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+
+    ASSERT_FALSE(componentHandle.IsNull());
+}
+
+TEST_F(TestSceneComponentManager, create_component_failure_no_engine) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(nullptr);
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+
+    ASSERT_ANY_THROW(manager.CreateComponent(id, nullptr));
+}
+
+TEST_F(TestSceneComponentManager, create_component_failure_unexpected_system) {
+    TGameEngine engine;
+    TSceneComponentManager manager;
+    manager.SetGameEngine(&engine);
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+
+    ASSERT_ANY_THROW(manager.CreateComponent(id, nullptr));
+}
+
+TEST_F(TestSceneComponentManager, has_component_true_when_true) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+
+    ASSERT_TRUE(manager.HasComponent(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, has_component_false_when_false) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const auto componentHandle = TSceneComponentManager::
+        ComponentHandle::Undefined;
+
+    ASSERT_FALSE(manager.HasComponent(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, remove_component_success) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    auto componentHandle = manager.CreateComponent(id, nullptr);
+
+    manager.RemoveComponent(componentHandle);
+
+    ASSERT_FALSE(manager.HasComponent(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, remove_component_unbinds_component) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    auto componentHandle = manager.CreateComponent(id, nullptr);
+
+    manager.RemoveComponent(componentHandle);
+
+    ASSERT_FALSE(manager.IsComponentBound(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, remove_component_failure_no_engine) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    auto componentHandle = manager.CreateComponent(id, nullptr);
+    manager.SetGameEngine(nullptr);
+
+    ASSERT_ANY_THROW(manager.RemoveComponent(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, remove_component_failure_unexpected_system) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    TSceneComponentManager::ComponentHandle componentHandle{
+        TComponentSystem::HandleUndefined,
+        ComponentSystem::_undefined
+    };
+
+    ASSERT_ANY_THROW(manager.RemoveComponent(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, get_component) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+
+    auto* component = manager.GetComponent(componentHandle);
+
+    ASSERT_NE(nullptr, component);
+}
+
+TEST_F(TestSceneComponentManager, get_component_and_cast) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+
+    auto* component = manager.GetComponent<CustomComponent>(componentHandle);
+
+    ASSERT_NE(nullptr, component);
+}
+
+TEST_F(TestSceneComponentManager, is_empty_true_when_empty) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+
+    ASSERT_TRUE(manager.IsEmpty());
+}
+
+TEST_F(TestSceneComponentManager, is_empty_false_when_not_empty) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    manager.CreateComponent(id, nullptr);
+
+    ASSERT_FALSE(manager.IsEmpty());
+}
+
+TEST_F(TestSceneComponentManager, clear_clears) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    manager.CreateComponent(id, nullptr);
+
+    manager.Clear();
+
+    ASSERT_TRUE(manager.IsEmpty());
+}
+
+TEST_F(TestSceneComponentManager, bind_component_binds) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    const TSceneComponentManager::ComponentPath path{
+        TSceneComponentManager::SceneObjectHandle(42),
+        TSceneObject::EntryHandle(42)
+    };
+
+    manager.BindComponent(componentHandle, path);
+
+    ASSERT_TRUE(manager.IsComponentBound(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, bind_component_failure_already_bound) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    const TSceneComponentManager::ComponentPath path1{
+        TSceneComponentManager::SceneObjectHandle(42),
+        TSceneObject::EntryHandle(42)
+    };
+    manager.BindComponent(componentHandle, path1);
+
+    const TSceneComponentManager::ComponentPath path2{
+        TSceneComponentManager::SceneObjectHandle(24),
+        TSceneObject::EntryHandle(24)
+    };
+    ASSERT_ANY_THROW(manager.BindComponent(componentHandle, path2));
+}
+
+TEST_F(TestSceneComponentManager, bind_component_success_if_bound_with_null) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    const TSceneComponentManager::ComponentPath pathEmpty{
+        TSceneComponentManager::SceneObjectHandle::Undefined,
+        TSceneObject::HandleUndefined
+    };
+    manager.BindComponent(componentHandle, pathEmpty);
+
+    const TSceneComponentManager::ComponentPath path2{
+        TSceneComponentManager::SceneObjectHandle(42),
+        TSceneObject::EntryHandle(42)
+    };
+    ASSERT_NO_THROW(manager.BindComponent(componentHandle, path2));
+}
+
+TEST_F(TestSceneComponentManager, is_component_bound_true_when_bound) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    const TSceneComponentManager::ComponentPath path{
+        TSceneComponentManager::SceneObjectHandle(42),
+        TSceneObject::EntryHandle(42)
+    };
+    manager.BindComponent(componentHandle, path);
+
+    ASSERT_TRUE(manager.IsComponentBound(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, is_component_bound_false_when_not_bound) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    manager.UnbindComponent(componentHandle);
+
+    ASSERT_FALSE(manager.IsComponentBound(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, unbind_component_unbinds) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    const TSceneComponentManager::ComponentPath path{
+        TSceneComponentManager::SceneObjectHandle(42),
+        TSceneObject::EntryHandle(42)
+    };
+    manager.BindComponent(componentHandle, path);
+
+    manager.UnbindComponent(componentHandle);
+
+    ASSERT_FALSE(manager.IsComponentBound(componentHandle));
+}
+
+TEST_F(TestSceneComponentManager, get_component_binding_success) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    const auto componentHandle = manager.CreateComponent(id, nullptr);
+    const TSceneComponentManager::ComponentPath path{
+        TSceneComponentManager::SceneObjectHandle(42),
+        TSceneObject::EntryHandle(42)
+    };
+    manager.BindComponent(componentHandle, path);
+
+    const auto binding = manager.GetComponentBinding(componentHandle);
+
+    ASSERT_EQ(path, binding);
+}
+
+TEST_F(TestSceneComponentManager, enumerate_entries_enumerates) {
+    TSceneComponentManager manager;
+    manager.SetGameEngine(engine.get());
+    const TComponent::ID id = ComponentIDs::CustomComponent;
+    manager.CreateComponent(id, nullptr);
+
+    const auto& range = manager.EnumerateEntries();
+
+    const auto count = std::distance(range.first, range.second);
+    ASSERT_EQ(1, count);
+}
+
 // === Scene Tests ===
 class TestScene :
     public ::testing::Test

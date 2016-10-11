@@ -1,5 +1,4 @@
 #include "GameEngine/scene_object.h"
-#include <iostream>
 
 
 namespace GE {
@@ -38,9 +37,7 @@ TSceneObject::~TSceneObject() {
             const auto handle = (*this)[entry.second];
             notifyComponentHandleDeleted(handle);
         }
-    } catch (...) {
-        std::cout << "some exception in dtor catched" << std::endl;
-    }
+    } catch (...) {}
 }
 
 const TSceneObject::ComponentHandle&

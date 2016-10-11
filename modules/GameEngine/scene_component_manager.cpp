@@ -58,7 +58,11 @@ void TSceneComponentManager::BindComponent(
     const ComponentHandle& componentHandle,
     const ComponentPath& componentPath)
 {
-    componentBindingsTable.emplace(componentHandle, componentPath);
+    ASSERT((IsComponentBound(componentHandle) == false) ||
+        ((IsComponentBound(componentHandle) == true) &&
+        (componentBindingsTable[componentHandle].first.IsNull() == true)),
+        "Component is already bound.")
+    componentBindingsTable[componentHandle] = componentPath;
 }
 
 void TSceneComponentManager::UnbindComponent(
@@ -70,7 +74,8 @@ void TSceneComponentManager::UnbindComponent(
 bool TSceneComponentManager::IsComponentBound(
     const ComponentHandle& componentHandle)
 {
-    return componentBindingsTable.count(componentHandle) != 0;
+    return (componentBindingsTable.count(componentHandle) != 0) &&
+        (componentBindingsTable[componentHandle].first.IsNull() == false);
 }
 
 const TSceneComponentManager::ComponentPath&
@@ -116,7 +121,8 @@ TSceneComponentManager::CreateComponent(const TComponent::ID& id,
     ASSERT(system != nullptr, "Unexpected system requested for component.");
 
     ComponentHandle handle(system->CreateComponent(id, args), componentClass);
-    BindComponent(handle, ComponentPath());
+    BindComponent(handle, ComponentPath(
+        SceneObjectHandle::Undefined, TSceneObject::HandleUndefined));
 
     return handle;
 }
@@ -136,6 +142,9 @@ bool TSceneComponentManager::HasComponent(const ComponentHandle& handle) const {
 void TSceneComponentManager::RemoveComponent(const ComponentHandle& handle) {
     ASSERT(engine != nullptr, "Game engine must be set.");
 
+    if (handle.IsNull() == true) {
+        return;
+    }
     auto* system = engine->GetComponentSystemsManager().
         FindSystem(handle.GetSystem());
     ASSERT(system != nullptr, "Unexpected system requested for component.");
