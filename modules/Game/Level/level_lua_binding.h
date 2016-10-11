@@ -22,10 +22,10 @@ using TSceneComponentHandle = TD::TLevelScene::ComponentHandle;
 using TSceneComponentPath = TD::TLevelScene::ComponentPath;
 using TSceneComponentName = TD::TLevelScene::ComponentName;
 
-using TSceneObject = TD::TLevelScene::Object;
+using TSceneObject = TD::TLevelScene::Object *;
 using TSceneObjectHandle = TD::TLevelScene::ObjectHandle;
 using TSceneObjectName = TD::TLevelScene::ObjectName;
-
+using TSceneObjectEntryHandle = TD::TLevelScene::Object::EntryHandle;
 
 void loadLevel(lua::State& state, TLevel level);
 void loadStage(lua::State& state, TLevel level);

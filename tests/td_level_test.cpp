@@ -51,16 +51,8 @@ TEST_F(TestLevel, get_clock) {
     ASSERT_NO_THROW(level->GetClock());
 }
 
-TEST_F(TestLevel, get_clock_const) {
-    ASSERT_NO_THROW(const_cast<const TD::TLevel*>(level.get())->GetClock());
-}
-
 TEST_F(TestLevel, get_scene) {
     ASSERT_NO_THROW(level->GetScene());
-}
-
-TEST_F(TestLevel, get_clock_scene) {
-    ASSERT_NO_THROW(const_cast<const TD::TLevel*>(level.get())->GetScene());
 }
 
 TEST_F(TestLevel, set_game_engine) {
@@ -73,16 +65,19 @@ TEST_F(TestLevel, set_game_engine_with_null) {
 
 TEST_F(TestLevel, update_0_tick) {
     level->GetClock().SetRate(TLevelClock::Rate::Pause);
+
     ASSERT_NO_THROW(level->Update());
 }
 
 TEST_F(TestLevel, update_1_tick) {
     level->GetClock().SetRate(TLevelClock::Rate::First);
+
     ASSERT_NO_THROW(level->Update());
 }
 
 TEST_F(TestLevel, update_max_tick) {
     level->GetClock().SetRate(TLevelClock::Rate::_max);
+
     ASSERT_NO_THROW(level->Update());
 }
 
@@ -203,6 +198,7 @@ protected:
 
 TEST(LevelSceneTest, ctor_correct) {
     GE::TGameEngine engine;
+
     ASSERT_NO_THROW(TD::TLevelScene(TLevelScene::Parameters(), &engine));
 }
 
@@ -219,13 +215,13 @@ TEST_F(TestLevelScene, create_component_with_custom_args_correct) {
     CustomComponent::Parameters parameters;
     parameters.value = 10;
 
-    TLevelScene::ComponentHandle handle;
-    ASSERT_NO_THROW(handle = scene->CreateComponent(
-        GE::ComponentID<CustomComponent>::value(), &parameters));
+    const auto handle = scene->CreateComponent(
+        GE::ComponentID<CustomComponent>::value(), &parameters);
 
+    ASSERT_FALSE(handle.IsNull());
     const auto* component = scene->GetComponent<CustomComponent>(handle);
-    EXPECT_NE(nullptr, component);
-    EXPECT_EQ(parameters.value, component->value);
+    ASSERT_NE(nullptr, component);
+    ASSERT_EQ(parameters.value, component->value);
 }
 
 TEST_F(TestLevelScene, create_component_unregistered_incorrect) {
@@ -240,24 +236,24 @@ TEST_F(TestLevelScene, create_component_by_template_with_custom_args_correct) {
     CustomComponent::Parameters parameters;
     parameters.value = 10;
 
-    TLevelScene::ComponentHandle handle;
-    ASSERT_NO_THROW(
-        handle = scene->CreateComponent<CustomComponent>(&parameters));
+    const auto handle = scene->CreateComponent<CustomComponent>(&parameters);
 
+    ASSERT_FALSE(handle.IsNull());
     const auto* component = scene->GetComponent<CustomComponent>(handle);
-    EXPECT_NE(nullptr, component);
-    EXPECT_EQ(parameters.value, component->value);
+    ASSERT_NE(nullptr, component);
+    ASSERT_EQ(parameters.value, component->value);
 }
 
 TEST_F(TestLevelScene, remove_component_existing_component) {
-    const auto handle = scene->CreateComponent(
+    auto handle = scene->CreateComponent(
         GE::ComponentID<CustomComponent>::value(), nullptr);
 
-    ASSERT_NO_THROW(scene->RemoveComponent(handle));
-    EXPECT_FALSE(scene->HasComponent(handle));
+    scene->RemoveComponent(handle);
+
+    ASSERT_FALSE(scene->HasComponent(handle));
 }
 
-TEST_F(TestLevelScene, remove_component_unexisting_component) {
+TEST_F(TestLevelScene, remove_component_unexisting_component_success) {
     const auto handle = TLevelScene::ComponentHandle::Undefined;
 
     ASSERT_NO_THROW(scene->RemoveComponent(handle));
@@ -301,7 +297,7 @@ TEST_F(TestLevelScene, find_component_existing) {
     const TLevelScene::ComponentPath path{"object1", "component1"};
     TLevelScene::Object object;
     object.AddComponent(path.second, handle);
-    scene->AddSceneObject(path.first, object);
+    scene->AddSceneObject(path.first, std::move(object));
 
     ASSERT_EQ(handle, scene->FindComponent(path));
 }
@@ -315,8 +311,7 @@ TEST_F(TestLevelScene, find_component_unexisting) {
 
 TEST_F(TestLevelScene, find_scene_object_existing) {
     const auto name = "object1";
-    TLevelScene::Object object;
-    const auto handle = scene->AddSceneObject(name, object);
+    const auto handle = scene->AddSceneObject(name);
 
     ASSERT_EQ(handle, scene->FindSceneObject(name));
 }
@@ -327,8 +322,7 @@ TEST_F(TestLevelScene, find_scene_object_unexisting) {
 }
 
 TEST_F(TestLevelScene, get_scene_object_existing) {
-    TLevelScene::Object object;
-    const auto handle = scene->AddSceneObject("object1", object);
+    const auto handle = scene->AddSceneObject("object1");
 
     ASSERT_NO_THROW(scene->GetSceneObject(handle));
 }
@@ -340,8 +334,7 @@ TEST_F(TestLevelScene, get_scene_object_unexisting) {
 
 TEST_F(TestLevelScene, find_scene_object_with_name_existing) {
     const auto name = "object1";
-    TLevelScene::Object object;
-    scene->AddSceneObject(name, object);
+    scene->AddSceneObject(name);
 
     ASSERT_TRUE(scene->HasObject(name));
 }
@@ -352,8 +345,7 @@ TEST_F(TestLevelScene, find_scene_object_with_name_unexisting) {
 
 TEST_F(TestLevelScene, find_scene_object_with_handle_existing) {
     const auto name = "object1";
-    TLevelScene::Object object;
-    const auto handle = scene->AddSceneObject(name, object);
+    const auto handle = scene->AddSceneObject(name);
 
     ASSERT_TRUE(scene->HasObject(handle));
 }
@@ -364,36 +356,33 @@ TEST_F(TestLevelScene, find_scene_object_with_handle_unexisting) {
 
 TEST_F(TestLevelScene, add_scene_object_with_unexisting_name) {
     const auto name = "object";
-    TLevelScene::Object object;
-    TLevelScene::ObjectHandle handle;
 
-    ASSERT_NO_THROW(handle = scene->AddSceneObject(name, object));
+    const auto handle = scene->AddSceneObject(name);
 
-    EXPECT_TRUE(scene->HasObject(handle));
+    ASSERT_FALSE(handle.IsNull());
 }
 
 TEST_F(TestLevelScene, add_scene_object_with_existing_name_is_failure) {
     const auto name = "object";
-    TLevelScene::Object object;
+    scene->AddSceneObject(name);
 
-    scene->AddSceneObject(name, object);
-    ASSERT_ANY_THROW(scene->AddSceneObject(name, object));
+    ASSERT_ANY_THROW(scene->AddSceneObject(name));
 }
 
-TEST_F(TestLevelScene, add_scene_object_by_rvalue) {
+TEST_F(TestLevelScene, add_scene_object_by_rvalue_success) {
     const auto name = "object";
-    TLevelScene::Object object;
 
-    ASSERT_NO_THROW(scene->AddSceneObject(name, std::move(object)));
+    TLevelScene::Object object;
+    scene->AddSceneObject(name, std::move(object));
 }
 
 TEST_F(TestLevelScene, remove_scene_object_by_handle_existing) {
     const auto name = "object";
-    TLevelScene::Object object;
-    const auto handle = scene->AddSceneObject(name, object);
+    const auto handle = scene->AddSceneObject(name);
 
-    ASSERT_NO_THROW(scene->RemoveSceneObject(handle));
-    EXPECT_FALSE(scene->HasObject(handle));
+    scene->RemoveSceneObject(handle);
+
+    ASSERT_FALSE(scene->HasObject(handle));
 }
 
 TEST_F(TestLevelScene, remove_scene_object_by_handle_unexisting) {
@@ -403,11 +392,11 @@ TEST_F(TestLevelScene, remove_scene_object_by_handle_unexisting) {
 
 TEST_F(TestLevelScene, remove_scene_object_by_name_existing) {
     const auto name = "object";
-    TLevelScene::Object object;
-    const auto handle = scene->AddSceneObject(name, object);
+    const auto handle = scene->AddSceneObject(name);
 
-    ASSERT_NO_THROW(scene->RemoveSceneObject(handle));
-    EXPECT_FALSE(scene->HasObject(handle));
+    scene->RemoveSceneObject(handle);
+
+    ASSERT_FALSE(scene->HasObject(handle));
 }
 
 TEST_F(TestLevelScene, remove_scene_object_by_name_unexisting) {
@@ -416,7 +405,7 @@ TEST_F(TestLevelScene, remove_scene_object_by_name_unexisting) {
 
 TEST_F(TestLevelScene, clear_clears) {
     scene->CreateComponent(ComponentID<CustomComponent>::value(), nullptr);
-    scene->AddSceneObject("object", TLevelScene::Object());
+    scene->AddSceneObject("object");
 
     scene->Clear();
 
@@ -428,7 +417,7 @@ TEST_F(TestLevelScene, is_empty_empty_when_empty) {
 }
 
 TEST_F(TestLevelScene, is_empty_not_empty_when_has_object) {
-    scene->AddSceneObject("object", TLevelScene::Object());
+    scene->AddSceneObject("object");
 
     ASSERT_FALSE(scene->IsEmpty());
 }
