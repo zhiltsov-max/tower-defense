@@ -1,4 +1,4 @@
-#include "level_scene.h"
+#include "Game/Level/level_scene.h"
 #include "GameEngine/game_engine_context.h"
 
 
@@ -68,8 +68,8 @@ bool TLevelScene::HasObject(const ObjectHandle& handle) const {
 }
 
 TLevelScene::ObjectHandle
-TLevelScene::AddSceneObject(const ObjectName& name, const Object& sceneObject) {
-    return scene.AddSceneObject(name, sceneObject);
+TLevelScene::AddSceneObject(const ObjectName& name) {
+    return scene.AddSceneObject(name);
 }
 
 void TLevelScene::RemoveSceneObject(const ObjectName& name) {
@@ -118,7 +118,7 @@ void TLevelScene::loadObjects(const Parameters& info) {
                 componentInfo.parameters.get());
             object.AddComponent(componentInfo.name, componentHandle);
         }
-        AddSceneObject(objectInfo.name, object);
+        AddSceneObject(objectInfo.name, std::move(object));
     }
 }
 

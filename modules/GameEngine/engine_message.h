@@ -17,11 +17,11 @@ std::ostream& operator << (std::ostream& os, const MessageID& id);
 class TMessage
 {
 public:
-    typedef MessageID ID;
+    using ID = MessageID;
 
     virtual ~TMessage() = default;
 
-    virtual const ID& GetID() const final;
+    const ID& GetID() const;
 
 protected:
     TMessage(const ID& id);
@@ -30,6 +30,6 @@ private:
     const ID id;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // ENGINE_MESSAGE_H

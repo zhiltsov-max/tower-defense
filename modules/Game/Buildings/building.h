@@ -1,124 +1,255 @@
 #ifndef BUILDING_H
 #define BUILDING_H
 
-#include "GameEngine/scene_object.h"
+#include "GameEngine/component_system.h"
+#include "GameEngine/game_engine.h"
+#include "GameEngine/scene.h"
+#include "Game/Buildings/buildings_info.h"
+#include "Game/Components/animation_component.h"
 
 
 namespace TD {
 
-
-using TBuilding = TSceneObject;
 using TBuildingClassId = TGameObjectClassId;
 
 
-class CMouseInput : public CInputComponent
+
+struct CPlayerInput : GE::TComponent
 {
-public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    // Listens to MouseInput and KeyboardInput components
+    // Have to filter scene interaction and GUI interaction
 };
 
-
-class CPosition : public CMovementComponent
+struct CConstructibleMouseInput : GE::TComponent
 {
-public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
 
-private:
-    Point2f position;
-    float rotation;
 };
 
-
-class CSelection : public CGraphicsComponent
+struct CBuilding : GE::TComponent
 {
-public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    using ClassID = TBuildingClassId;
 
-private:
-    bool selected;
-    std::unique_ptr<TBuildingSelection> selection;
+    ClassID classId;
 };
 
+struct CUpgrade : GE::TComponent
+{
+    enum class Type : char {
+        _min = 0,
 
-enum class BuildingAppearance {
-    undefined = 0,
-    Ground = 1,
-    Air = 2
+        Minor = 0,
+        Major,
+
+        _max,
+        _count = _max - _min,
+        _undefined
+    };
+
+    Type type;
 };
 
-
-class TBuildingsController;
-
-class CBuildingBehaviour : public CLogicsComponent
+struct CUpgradable : GE::TComponent
 {
-public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    using Level = uint;
+    using UpgradeId = uint;
+    static const UpgradeId UpgradeIdUndefined = -1u;
 
-private:
-    const TBuildingClassId id;
+    Level level;
+    UpgradeId currentUpgradeId;
+    UpgradeId selectedUpgradeId;
+};
 
-    enum class State {
-
+struct CConstructible : GE::TComponent
+{
+    enum class State : char {
+        Undefined = 0,
+        PositionSelection,
+        RotationSelection,
+        Building,
+        Built
     };
     State state;
-
-    TBuildingsController* controller;
-
-
-    virtual uint getUpgradeCost() const;
-    virtual uint getMajorUpgrade() const;
-    virtual const BuildingAppearance& getAppearance() const;
-    virtual uint getCost() const;
-
-    virtual void sell();
-    virtual void rejectBuilding();
-    virtual void upgradeTo(uint newClass);
-    virtual void explode();
-
-    virtual bool isPlaced() const;
-    virtual bool isBuilt() const;
-    virtual bool isSelected() const;
-    virtual bool isOnTile(const Point2f& tilePos) const;
-    virtual bool canBuildThere(const Point2f& tilePos) const;
-
-    virtual void updateBuildState();
-    virtual void updateSelection();
-    virtual void updateAnimation();
-    virtual void updateBehaviour() = 0;
-
-    virtual void tryBuild();
-    virtual void selectPlace();
-    virtual void selectRotation();
 };
 
+struct CExplodable : GE::TComponent
+{
+    using Power = uint;
 
-class CHealth : public CLogicsComponent
+    Power power;
+};
+
+struct CExplodableImpact : GE::TComponent
+{
+
+};
+
+struct CInteractiveSelectable : GE::TComponent
+{
+    bool selected;
+};
+
+struct CSelectionView : CAnimation { /*none*/ };
+
+class CSBuildings :
+    public GE::TComponentSystem
 {
 public:
-    virtual void Update() override;
-    virtual void HandleMessage(const TMessage& message) override;
-    virtual void Subscribe(TComponentSystem& system) override;
-    virtual void Unsubscribe(TComponentSystem& system) override;
+    using BuildingsRegistry = TBuildingsRegistry;
+    using UpgradesRegistry = TUpgradesRegistry;
+
+    virtual void Update(const GE::TTime& step, Context& context) override {
+        // ...
+    }
+
+    const BuildingsRegistry& GetBuildingsRegistry() const;
+    BuildingsRegistry& GetBuildingsRegistry();
 
 private:
-    int health;
+    BuildingsRegistry buildingsRegistry;
+    UpgradesRegistry upgradesRegistry;
+
+    void UpgradeBuilding(const GE::TScene::ComponentHandle& buildingHandle,
+        Context& context)
+    {
+        auto& object = context.scene->GetSceneObject(objectHandle);
+        auto* upgradable = object.GetComponent<CUpgradable>();
+        ASSERT(upgradable != nullptr, "Upgradable component is expected.");
+
+        const auto& upgrade = upgradesRegistry[upgradable->selectedUpgradeId];
+        switch (upgrade.type) {
+        case CUpgrade::Type::Major:
+            PerformMajorUpgrade(*upgradable, objectHandle, context);
+            break;
+
+        case CUpgrade::Type::Minor:
+            PerformMinorUpgrade(*upgradable, objectHandle, context);
+            break;
+
+        default: /*none*/
+            THROW("Unexpected Upgrade type.");
+            break;
+        }
+    }
+
+    void PerformMinorUpgrade(CUpgradable& upgradable,
+        const GE::TScene::ObjectHandle& objectHandle, Context& context)
+    {
+        upgradable.level += 1;
+        // ...
+
+        MBuildingUpgraded message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
+
+    void PerformMajorUpgrade(CUpgradable& upgradable,
+        const GE::TScene::ObjectHandle& objectHandle, Context& context)
+    {
+        auto& object = context.scene->GetSceneObject(objectHandle);
+        auto* building = object.GetComponent<CBuilding>();
+        ASSERT(building != nullptr, "Expected building object.");
+
+        const auto& upgrade = upgradesRegistry[upgradable.selectedUpgradeId];
+        building->classId = upgrade.nextBuildingTypeId;
+        upgradable.currentUpgradeId = upgradable.selectedUpgradeId;
+        upgradable.selectedUpgradeId = CUpgradable::UpgradeIdUndefined;
+
+        MBuildingUpgraded message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
+
+    void RejectConstruction(
+        const GE::TScene::ComponentHandle& constructionHandle,
+        Context& context)
+    {
+        auto* object = context.scene->FindSceneObjectForComponent(
+            constructionHandle);
+        ASSERT(object != nullptr,
+            "Can not find parent object of constructible component.");
+
+        object->RemoveComponent<CConstructible>();
+
+        MConstructionRejected message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
+
+    void TryConstruct(
+        const GE::TScene::ComponentHandle& constructionHandle,
+        Context& context)
+    {
+        MCheckConstrictionAvailability message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
+
+    void StartConstruction(
+        const GE::TScene::ComponentHandle& constructionHandle,
+        Context& context)
+    {
+        auto* construction = context.scene->GetComponent<CConstructible>(
+            constructionHandle);
+        ASSERT(construction != nullptr, "Expected constructible object.");
+
+        construction->state = CConstructible::State::Building;
+
+        MConstructionStarted message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
+
+    void FinalizeConstruction(
+        const GE::TScene::ComponentHandle& constructionHandle,
+        Context& context)
+    {
+        auto* construction = context.scene->GetComponent<CConstructible>(
+            constructionHandle);
+        ASSERT(construction != nullptr, "Expected constructible object.");
+
+        construction->state = CConstructible::State::Built;
+
+        MConstructionCompleted message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
 };
 
+class CTradable : GE::TComponent
+{
+    using Money = uint;
 
-static void BuildingInfoLoader_Basic(Info& info, std::istream& source);
+    Money price;
+};
 
+class CSPlayerInteraction :
+    public GE::TComponentSystem
+{
+public:
+
+private:
+    void Sell(CTradable& tradable, const GE::TScene::ObjectHandle& objectHandle,
+        const GE::TScene::ObjectHandle& playerHandle, Context& context)
+    {
+        auto& player = context.scene->GetSceneObject(playerHandle);
+        auto* playerInfo = player.GetComponent<CPlayerInfo>();
+        playerInfo.money += tradable.price;
+
+        MSellingCompleted message;
+        // message setup
+        context.engine->SendMessage(message, context);
+    }
+
+};
+
+class CSExplosions :
+    public GE::TComponentSystem
+{
+public:
+    virtual void Update(const GE::TTime& step, Context& context) override {
+        // might be animation & time update
+    }
+};
 
 } // namespace TD
 

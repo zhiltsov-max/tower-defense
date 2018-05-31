@@ -1,19 +1,26 @@
-#include "game_engine.h"
+#include "GameEngine/game_engine.h"
 #include "GameEngine/engine_message.h"
 
 
 namespace GE {
 
 TGameEngine::TGameEngine() :
-    componentSystems(this)
-{}
-
-void TGameEngine::Update(const TTime& step, Context& context) {
-    componentSystems.Update(step, context);
+    componentSystemsManager(),
+    messageSystem(),
+    scriptEngine()
+{
+    messageSystem.SetComponentSystemsManager(&componentSystemsManager);
 }
 
-void TGameEngine::SendMessage(const Message& message, Context& context) {
-    componentSystems.SendMessage(message, context);
+void TGameEngine::Update(const TTime& step, Context& context) {
+    componentSystemsManager.Update(step, context);
+}
+
+void TGameEngine::SendMessage(const Message& message, Context& context,
+    const ComponentHandle& sender)
+{
+    messageSystem.SendMessage(message, context, sender);
+    componentSystemsManager.SendMessage(message, context, sender);
 }
 
 const TGameEngine::ScriptEngine&
@@ -26,24 +33,22 @@ TGameEngine::GetScriptEngine() {
     return scriptEngine;
 }
 
-const TGameEngine::ComponentRegistry&
-TGameEngine::GetComponentRegistry() const {
-    return componentRegistry;
+const TGameEngine::ComponentSystemsManager&
+TGameEngine::GetComponentSystemsManager() const {
+    return componentSystemsManager;
 }
 
-TGameEngine::ComponentRegistry&
-TGameEngine::GetComponentRegistry() {
-    return componentRegistry;
+TGameEngine::ComponentSystemsManager&
+TGameEngine::GetComponentSystemsManager() {
+    return componentSystemsManager;
 }
 
-const TGameEngine::ComponentSystems&
-TGameEngine::GetComponentSystems() const {
-    return componentSystems;
+const TGameEngine::MessageSystem& TGameEngine::GetMessageSystem() const {
+    return messageSystem;
 }
 
-TGameEngine::ComponentSystems&
-TGameEngine::GetComponentSystems() {
-    return componentSystems;
+TGameEngine::MessageSystem& TGameEngine::GetMessageSystem() {
+    return messageSystem;
 }
 
-} //namespace GE
+} // namespace GE

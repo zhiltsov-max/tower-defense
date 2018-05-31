@@ -58,4 +58,4 @@ bool TSceneResources::IsEmpty() const {
     return resources.empty();
 }
 
-} //namespace GE
+} // namespace GE

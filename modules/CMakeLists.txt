@@ -13,8 +13,6 @@ set(td_application_headers
     Game/Application/fpscounter.h
     Game/Application/td_application.h
     Game/Buildings/building.h 
-    Game/Buildings/building_animation.h 
-    Game/Buildings/building_selection.h 
     Game/Buildings/buildings_controller.h 
     Game/Buildings/buildings_info.h 
     Game/Buildings/buildings_list.h 
@@ -27,10 +25,12 @@ set(td_application_headers
     Game/Buildings/turret_animation.h 
     Game/Buildings/turret_bullet.h 
     Game/Buildings/turret_selection.h 
-    Game/Components/animation.h 
-    Game/Components/components_list.h 
-    Game/Components/td_components_registry.h
-    Game/Components/game_objects_info.h 
+    Game/Components/animation_component.h
+    Game/Components/game_objects_info.h
+    Game/Components/health_component.h
+    Game/Components/td_components.h
+    Game/Components/td_components_list.h
+    Game/Components/position_component.h
     Game/ComponentSystems/td_component_systems.h
     Game/ComponentSystems/td_component_systems_list.h
     Game/Level/level.h 
@@ -107,8 +107,6 @@ set(td_application_sources
     Game/Application/td_application.cpp
     Game/Application/fpscounter.cpp
     Game/Buildings/building.cpp 
-    Game/Buildings/building_animation.cpp 
-    Game/Buildings/building_selection.cpp 
     Game/Buildings/buildings_controller.cpp 
     Game/Buildings/buildings_info.cpp 
     Game/Buildings/tb_castle.cpp 
@@ -116,8 +114,10 @@ set(td_application_sources
     Game/Buildings/turret.cpp 
     Game/Buildings/turret_bullet.cpp 
     Game/Buildings/turretselection.cpp 
-    Game/Components/animation.cpp 
-    Game/Components/td_components_registry.cpp
+    Game/Components/animation_component.cpp
+    Game/Components/health_component.cpp
+    Game/Components/position_component.cpp
+    Game/Components/td_components.cpp
     Game/Level/level.cpp 
     Game/Level/level_clock.cpp 
     Game/Level/level_info_loader.cpp 

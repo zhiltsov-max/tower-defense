@@ -4,7 +4,7 @@
 #include "Core/core.h"
 #include "GameEngine/game_engine.h"
 #include "GameEngine/scene_component_manager.h"
-#include "GameEngine/scene_object_container.h"
+#include "GameEngine/scene_object_manager.h"
 #include "GameEngine/scene_resources.h"
 
 
@@ -14,7 +14,7 @@ class TScene
 {
 public:
     using ComponentManager = TSceneComponentManager;
-    using ObjectManager = TSceneObjectContainer;
+    using ObjectManager = TSceneObjectManager;
     using ResourceManager = TSceneResources;
 
     using Object = ObjectManager::SceneObject;
@@ -24,9 +24,14 @@ public:
     using ComponentName = ObjectManager::SceneObject::ComponentName;
     using ComponentPath = std::pair<ObjectName, ComponentName>;
 
+    TScene();
+    TScene(const TScene& other) = delete;
+    TScene& operator = (const TScene& other) = delete;
+    TScene(TScene&& other);
+    TScene& operator = (TScene&& other);
+
     ComponentHandle CreateComponent(const TComponent::ID& id,
-        const TComponentCreateArgs* args = nullptr
-    );
+        const TComponentCreateArgs* args = nullptr);
 
     void RemoveComponent(const ComponentHandle& handle);
 
@@ -50,8 +55,7 @@ public:
     bool HasObject(const ObjectName& name) const;
     bool HasObject(const ObjectHandle& handle) const;
 
-    ObjectHandle AddSceneObject(const ObjectName& name,
-        const Object& sceneObject);
+    ObjectHandle AddSceneObject(const ObjectName& name);
     ObjectHandle AddSceneObject(const ObjectName& name, Object&& sceneObject);
 
     void RemoveSceneObject(const ObjectName& name);
@@ -88,6 +92,6 @@ T* TScene::GetComponent(const ComponentHandle& handle) {
     return dynamic_cast<T*>(GetComponent(handle));
 }
 
-} //namespace GE
+} // namespace GE
 
 #endif // SCENE_H

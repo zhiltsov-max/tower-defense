@@ -44,12 +44,12 @@ TOkDialog::Style TOkDialog::GetStyle() const {
     return Style::OkDialog;
 }
 
-void TOkDialog::slot_OkButtonClicked(TWidget* this__, const void*) {
-    TOkDialog* this_ = dynamic_cast<TOkDialog*>(this__);
-    ASSERT(this_ != nullptr, "Slot owner is not an instance of TOkDialog.")
+void TOkDialog::slot_OkButtonClicked(TWidget* widget, const void* args) {
+    TOkDialog* dialog = dynamic_cast<TOkDialog*>(widget);
+    ASSERT(dialog != nullptr, "Slot owner is not an instance of TOkDialog.")
 
-    this_->Hide();
-    this_->parent.lock()->RemoveChild(this_->GetName());
+    dialog->Hide();
+    dialog->parent.lock()->RemoveChild(dialog->GetName());
 }
 
 TPushButton& TOkDialog::GetOkButton() {

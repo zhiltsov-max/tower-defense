@@ -17,4 +17,4 @@ TMessage_SystemEvent::GetEvent() const {
 }
 
 
-} //namespace GE
+} // namespace GE

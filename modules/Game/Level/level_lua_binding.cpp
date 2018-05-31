@@ -103,69 +103,89 @@ LUAPP_RV_CONVERT(TD::lua_binding::TSceneObjectHandle,
 
 LUAPP_USERDATA(TD::lua_binding::TSceneComponentHandle, "TSceneComponentHandle")
 LUAPP_USERDATA(TD::lua_binding::TSceneComponentPath, "TSceneComponentPath")
-LUAPP_USERDATA(TD::lua_binding::TSceneObject, "TSceneObject")
+
+LUAPP_ARG_CONVERT(TD::lua_binding::TSceneObject,
+    { return static_cast<TD::lua_binding::TSceneObject>(val.cast<LightUserData>()); }
+)
+
+LUAPP_RV_CONVERT(TD::lua_binding::TSceneObject,
+    { return context.ret(static_cast<LightUserData>(val)); }
+)
 
 
 BEGIN_TD_LUA_BINDING
 
-TSceneObject eTSceneObject_Create() {
-    return TSceneObject();
+TSceneComponentHandle
+eTSceneObject_AtName(TSceneObject self, const TSceneComponentName& name) {
+    return (*self)[name];
 }
 
 TSceneComponentHandle
-eTSceneObject_AtName(TSceneObject& self, const TSceneComponentName& name) {
-    return self[name];
-}
-
-TSceneComponentHandle
-eTSceneObject_AtHandle(TSceneObject& self,
+eTSceneObject_AtHandle(TSceneObject self,
     const TSceneComponentHandle& handle)
 {
-    return self[handle];
+    return (*self)[handle];
 }
 
-TSceneComponentHandle
-eTSceneObject_RemoveComponentWithName(TSceneObject& self,
+TSceneObjectEntryHandle
+eTSceneObject_GetHandleForName(TSceneObject self,
     const TSceneComponentName& name)
 {
-    return self.RemoveComponent(name);
+    return self->GetHandle(name);
+}
+
+TSceneObjectEntryHandle
+eTSceneObject_AddComponent(TSceneObject self,
+    const TSceneComponentName& name, const TSceneComponentHandle& component)
+{
+    return self->AddComponent(name, component);
 }
 
 TSceneComponentHandle
-eTSceneObject_RemoveComponentWithHandle(TSceneObject& self,
+eTSceneObject_RemoveComponentWithName(TSceneObject self,
+    const TSceneComponentName& name)
+{
+    return self->RemoveComponent(name);
+}
+
+TSceneComponentHandle
+eTSceneObject_RemoveComponentWithHandle(TSceneObject self,
     const TSceneComponentHandle& handle)
 {
-    return self.RemoveComponent(handle);
+    return self->RemoveComponent(handle);
 }
 
-bool eTSceneObject_HasComponentWithName(TSceneObject& self,
+bool eTSceneObject_HasComponentWithName(TSceneObject self,
     const TSceneComponentName& name)
 {
-    return self.HasComponent(name);
+    return self->HasComponent(name);
 }
 
 bool
-eTSceneObject_HasComponentWithHandle(TSceneObject& self,
+eTSceneObject_HasComponentWithHandle(TSceneObject self,
     const TSceneComponentHandle& handle)
 {
-    return self.HasComponent(handle);
+    return self->HasComponent(handle);
+}
+
+bool
+eTSceneObject_HasComponents(TSceneObject self) {
+    return self->HasComponents();
 }
 
 Retval exportTSceneObject(Context& ctx) {
     ctx.global["TSceneObject"] = Table::records(ctx,
-        "create", eTSceneObject_Create,
         "atName", eTSceneObject_AtName,
         "atHandle", eTSceneObject_AtHandle,
-        "getHandle", GE::TSceneObject::GetHandle,
-        "addComponent", GE::TSceneObject::AddComponent,
+        "getHandleForName", eTSceneObject_GetHandleForName,
+        "addComponent", eTSceneObject_AddComponent,
         "removeComponentWithName", eTSceneObject_RemoveComponentWithName,
         "removeComponentWithHandle", eTSceneObject_RemoveComponentWithHandle,
         "hasComponentWithName", eTSceneObject_HasComponentWithName,
         "hasComponentWithHandle", eTSceneObject_HasComponentWithHandle,
-        "hasComponents", GE::TSceneObject::HasComponents
+        "hasComponents", eTSceneObject_HasComponents
     );
 
-    ctx.global["SceneObject"] = eTSceneObject_Create;
     ctx.global["TSceneObject"]["__index"] = ctx.global["TSceneObject"];
     ctx.global["TSceneObject"].mt() = ctx.global["TSceneObject"];
 
@@ -222,7 +242,7 @@ eTScene_FindSceneObject(TScene self, const TSceneObjectName& name) {
 
 TSceneObject
 eTScene_GetSceneObject(TScene self, const TSceneObjectHandle& handle) {
-    return self->GetSceneObject(handle);
+    return &self->GetSceneObject(handle);
 }
 
 bool eTScene_HasObjectWithName(TScene self, const TSceneObjectName& name) {
@@ -235,10 +255,8 @@ eTScene_HasObjectWithHandle(TScene self, const TSceneObjectHandle& handle) {
 }
 
 TSceneObjectHandle
-eTScene_AddSceneObject(TScene self, const TSceneObjectName& name,
-    const TSceneObject& sceneObject)
-{
-    return self->AddSceneObject(name, sceneObject);
+eTScene_AddSceneObject(TScene self, const TSceneObjectName& name) {
+    return self->AddSceneObject(name);
 }
 
 void
@@ -270,7 +288,7 @@ Retval exportTScene(Context& ctx) {
         "getComponent", eTScene_GetComponent,
         "hasComponentWithPath", eTScene_HasComponentWithPath,
         "hasComponentWithHandle", eTScene_HasComponentWithHandle,
-        "addObject", eTScene_AddSceneObject,
+        "createObject", eTScene_AddSceneObject,
         "removeObjectWithHandle", eTScene_RemoveSceneObjectWithHandle,
         "removeObjectWithName", eTScene_RemoveSceneObjectWithName,
         "findObject", eTScene_FindSceneObject,

@@ -1,5 +1,5 @@
-#ifndef TD_COMPONENTS_REGISTRY_H
-#define TD_COMPONENTS_REGISTRY_H
+#ifndef TD_COMPONENTS_H
+#define TD_COMPONENTS_H
 
 #include "GameEngine/component_registry.h"
 
@@ -15,4 +15,4 @@ const GE::TComponentRegistry& GetComponentRefistry();
 } // namespace TD
 
 
-#endif // TD_COMPONENTS_REGISTRY_H
+#endif // TD_COMPONENTS_H

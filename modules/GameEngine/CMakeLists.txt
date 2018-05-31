@@ -4,10 +4,9 @@ set(game_engine_headers
     component.h
     component_registry.h
     component_system.h
-    component_systems.h
-    ComponentSystems/component_system_data.h
+    component_system_type.h
+    component_systems_manager.h
     ComponentSystems/component_system_graphics.h
-    ComponentSystems/component_system_input.h
     ComponentSystems/component_system_logics.h
     ComponentSystems/component_system_movement.h
     ComponentSystems/component_system_sound.h
@@ -16,13 +15,16 @@ set(game_engine_headers
     engine_lua_binding.h
     engine_message.h
     engine_messages.h
+    free_list_allocator.h
     game_engine.h
     game_engine_context.h
+    message_system.h
+    observable_interface.h
     registry.h
     scene.h
     scene_component_manager.h
     scene_object.h
-    scene_object_container.h
+    scene_object_manager.h
     scene_resource.h
     scene_resources.h
     script_engine.h
@@ -31,10 +33,8 @@ set(game_engine_headers
 set(game_engine_sources
     component.cpp
     component_system.cpp
-    component_systems.cpp
-    ComponentSystems/component_system_data.cpp
+    component_systems_manager.cpp
     ComponentSystems/component_system_graphics.cpp
-    ComponentSystems/component_system_input.cpp
     ComponentSystems/component_system_logics.cpp
     ComponentSystems/component_system_movement.cpp
     ComponentSystems/component_system_sound.cpp
@@ -42,10 +42,11 @@ set(game_engine_sources
     engine_message.cpp
     engine_messages.cpp
     game_engine.cpp
+    message_system.cpp
     scene.cpp
     scene_component_manager.cpp
     scene_object.cpp
-    scene_object_container.cpp
+    scene_object_manager.cpp
     scene_resource.cpp
     scene_resources.cpp
     script_engine.cpp

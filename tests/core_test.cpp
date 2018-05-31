@@ -395,10 +395,11 @@ TEST(toLowerTest, string_regular) {
 #if defined(UNICODE)
 
 TEST(toLowerTest, wstring_regular) {
-    const wstring str = L"ФЫВ";
-    setlocale(LC_ALL, "Russian");
-    const std::locale loc("");
-    EXPECT_EQ(L"фыв", String::toLower(str, loc));
+    const wstring expected { L"asd" };
+    const wstring str { L"ASD" };
+    const std::locale loc { std::locale::classic() };
+
+    ASSERT_EQ(expected, String::toLower(str, loc));
 }
 
 #endif //UNICODE

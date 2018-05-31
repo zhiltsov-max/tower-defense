@@ -48,8 +48,7 @@ public:
     bool HasObject(const ObjectName& name) const;
     bool HasObject(const ObjectHandle& handle) const;
 
-    ObjectHandle AddSceneObject(const ObjectName& name,
-        const Object& sceneObject);
+    ObjectHandle AddSceneObject(const ObjectName& name);
     ObjectHandle AddSceneObject(const ObjectName& name, Object&& sceneObject);
 
     void RemoveSceneObject(const ObjectName& name);
@@ -96,7 +95,7 @@ struct TLevelScene::Parameters::ObjectInfo
 template<class Component>
 TLevelScene::ComponentHandle
 TLevelScene::CreateComponent(const GE::TComponentCreateArgs* args) {
-    return CreateComponent(GE::ComponentID<Component>::value, args);
+    return CreateComponent(GE::ComponentID<Component>::value(), args);
 }
 
 template< class T >

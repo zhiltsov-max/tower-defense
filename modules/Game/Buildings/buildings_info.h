@@ -2,8 +2,6 @@
 #define BUILDINGS_INFO_H
 
 #include "Game/Components/game_objects_info.h"
-#include "Game/Buildings/building.h"
-#include "Game/Level/level_info.h"
 
 
 namespace TD {
@@ -39,6 +37,8 @@ struct TBuildingsRegistryEntry {
 };
 
 using TBuildingsRegistry = TGameObjectsRegistry<TBuildingRegistryEntry>;
+
+static void BuildingInfoLoader_Basic(Info& info, std::istream& source);
 
 } // namespace TD
 

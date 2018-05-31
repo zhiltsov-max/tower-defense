@@ -27,4 +27,4 @@ void TScriptEngine::initialize() {
     }
 }
 
-} //namespace GE
+} // namespace GE

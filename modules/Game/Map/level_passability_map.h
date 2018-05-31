@@ -2,17 +2,22 @@
 #define LEVEL_PASSABILITY_MAP_H
 
 #include "Core/core.h"
-#include "Game/ComponentSystems/td_component_systems.h"
+#include "GameEngine/component.h"
+#include "GameEngine/component_registry.h"
+#include "Game/Components/td_components_list.h"
+#include "Game/ComponentSystems/td_component_systems_list.h"
 #include "Game/Map/level_tile_map_tileset.h"
 #include "Game/Map/level_tile_map_tileset_registry.h"
 
 
+TD_DECLARE_COMPONENT_CLASS(CLevelPassabilityMap,
+    GE::ComponentIDs::LevelPassabilityMap, GE::ComponentSystem::Map)
+
+
 namespace TD {
 
-class CLevelPassabilityMap :
-    public GE::CDataComponent
+struct CLevelPassabilityMap : GE::TComponent
 {
-public:
     using Size = Vec2ui;
     using Passability = uchar;
     using PassabilityMap = vector<Passability>;
@@ -23,14 +28,11 @@ public:
 
     CLevelPassabilityMap(const Parameters* source);
 	
-    const PassabilityMap& GetMap(const Altitude& altitude);
-    const Size& GetSize() const;
-
-private:
-    using parent_type = GE::CDataComponent;
-
     std::array<PassabilityMap, static_cast<TAltitude>(Altitude::_count)> maps;
     Size size;
+
+private:
+    using parent_type = GE::TComponent;
 };
 
 struct CLevelPassabilityMap::Parameters : GE::TComponentCreateArgs
@@ -39,22 +41,5 @@ struct CLevelPassabilityMap::Parameters : GE::TComponentCreateArgs
 };
 
 } // namespace TD
-
-
-namespace GE {
-
-template<>
-struct ComponentID<TD::CLevelPassabilityMap>
-{
-    static const ComponentIDs value;
-};
-
-template<>
-struct ComponentClass<TD::CLevelPassabilityMap>
-{
-    static const ComponentSystem value;
-};
-
-} // namespace GE
 
 #endif // LEVEL_PASSABILITY_MAP_H

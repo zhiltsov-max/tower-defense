@@ -66,7 +66,7 @@ add_test(NAME test_game_engine
 )
 
 add_executable(td_level_test td_level_test.cpp
-    ../modules/Game/Components/components_list.h
+    ../modules/Game/Components/td_components_list.h
     ../modules/Game/Components/game_objects_info.h
     ../modules/Game/Level/level.h
     ../modules/Game/Level/level_clock.h
@@ -93,7 +93,7 @@ add_test(NAME test_td_level
 )
 
 add_executable(td_map_components_test td_map_components_test.cpp
-    ../modules/Game/Components/components_list.h
+    ../modules/Game/Components/td_components_list.h
     ../modules/Game/Components/game_objects_info.h
     ../modules/Game/Level/level.h
     ../modules/Game/Level/level_clock.h
@@ -137,7 +137,7 @@ target_link_libraries(gui_application_test
 )
 
 add_executable(td_level_example examples/td_level_example.cpp
-    ../modules/Game/Components/components_list.h
+    ../modules/Game/Components/td_components_list.h
     ../modules/Game/Components/game_objects_info.h
     ../modules/Game/Level/level.h
     ../modules/Game/Level/level_clock.h

@@ -29,6 +29,6 @@ private:
     TypeID type;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif //SCENE_RESOURCE_H

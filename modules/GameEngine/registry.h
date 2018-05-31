@@ -67,6 +67,6 @@ void TRegistry<Entry, ID>::Unregister(const ID& id) {
     data.erase(it);
 }
 
-} //namespace GE
+} // namespace GE
 
 #endif // REGISTRY_H

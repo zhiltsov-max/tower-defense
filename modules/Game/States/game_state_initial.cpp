@@ -1,7 +1,7 @@
-#include "game_state_initial.h"
+#include "Game/States/game_state_initial.h"
 #include "Game/States/game_state_level_loading.h"
 #include "Game/Level/level_lua_binding.h"
-#include "Game/Components/td_components_registry.h"
+#include "Game/Components/td_components.h"
 #include "Game/ComponentSystems/td_component_systems.h"
 
 
@@ -15,7 +15,6 @@ void TGameState_Initial::Update() {
     ASSERT(game != nullptr, "Game instance must be set")
 
     setUpGameEngine(game->gameEngine);
-
 
     auto* nextState = new TGameState_LevelLoading(game);
     game->setState(nextState);
@@ -33,13 +32,13 @@ void TGameState_Initial::setUpGameEngine(GE::TGameEngine& engine) {
 
 void TGameState_Initial::setUpComponentSystems(GE::TComponentSystems& manager) {
     manager.AddSystem<GE::CSInputSystem>(GE::ComponentSystem::input);
-    manager.AddSystem<GE::CSMovementSystem>(GE::ComponentSystem::movement);
+    manager.AddSystem<GE::CSMovementSystem>(GE::ComponentSystem::Movement);
     manager.AddSystem<GE::CSDataSystem>(GE::ComponentSystem::data);
-    manager.AddSystem<GE::CSLogicsSystem>(GE::ComponentSystem::logics);
-    manager.AddSystem<GE::CSGraphicsSystem>(GE::ComponentSystem::graphics);
-    manager.AddSystem<GE::CSSoundSystem>(GE::ComponentSystem::sound);
+    manager.AddSystem<GE::CSLogicsSystem>(GE::ComponentSystem::Logics);
+    manager.AddSystem<GE::CSGraphicsSystem>(GE::ComponentSystem::Graphics);
+    manager.AddSystem<GE::CSSoundSystem>(GE::ComponentSystem::Sound);
 
-    auto* ui = manager.AddSystem<GE::CSUiSystem>(GE::ComponentSystem::ui);
+    auto* ui = manager.AddSystem<GE::CSUiSystem>(GE::ComponentSystem::UI);
     ui->SetApplicationUI(&app->getUI());
 }
 

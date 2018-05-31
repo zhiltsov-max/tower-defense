@@ -6,6 +6,6 @@ namespace GE {
 
 using TTime = double;
 
-} //namespace GE
+} // namespace GE
 
 #endif // ENGINE_CORE_H

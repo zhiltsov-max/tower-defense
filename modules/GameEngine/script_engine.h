@@ -19,6 +19,6 @@ private:
     void initialize();
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // SCRIPT_ENGINE_H

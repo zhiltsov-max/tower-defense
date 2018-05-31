@@ -24,6 +24,6 @@ struct TComponentRegistryEntry
 
 using TComponentRegistry = TRegistry<TComponentRegistryEntry, TComponent::ID>;
 
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_REGISTRY_H

@@ -194,7 +194,7 @@ TCoordinate MousePos();
 ::IO::TSFMLGraphicsDevice& GetGraphicsDevice();
 void SetGraphicsDevice(::IO::TSFMLGraphicsDevice* value);
 
-} //namespace IO
+} // namespace IO
 
 
 //### Debug ###

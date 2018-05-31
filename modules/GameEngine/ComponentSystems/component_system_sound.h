@@ -12,9 +12,11 @@ public:
     virtual ~CSSoundSystem() = default;
 
     virtual void Update(const TTime& step, Context& context) override;
+    virtual void HandleMessage(const TMessage& message,
+        const TComponentHandle& sender, Context& context) override;
 };
 
-class CSoundComponent : /*Abstract*/
+class CSoundComponent :
     public TComponent
 {
 public:
@@ -22,6 +24,6 @@ public:
     virtual ~CSoundComponent() = default;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_SYSTEM_SOUND_H

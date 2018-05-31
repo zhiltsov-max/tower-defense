@@ -33,12 +33,12 @@ void TGameState_Playing::Draw(Graphics::TRenderTarget& target) {
 
     auto& systems = game->gameEngine.GetComponentSystems();
     auto* graphics = systems.FindSystem<GE::CSGraphicsSystem>(
-        GE::ComponentSystem::graphics);
+        GE::ComponentSystem::Graphics);
     if (graphics != nullptr) {
         graphics->Draw(target);
     }
 
-    auto* ui = systems.FindSystem<GE::CSUiSystem>(GE::ComponentSystem::ui);
+    auto* ui = systems.FindSystem<GE::CSUiSystem>(GE::ComponentSystem::UI);
     if (ui != nullptr) {
         ui->Draw(target);
     }

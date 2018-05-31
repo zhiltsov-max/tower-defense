@@ -1,8 +1,38 @@
-#include "scene.h"
+#include "GameEngine/scene.h"
 #include "GameEngine/game_engine.h"
 
 
 namespace GE {
+
+TScene::TScene() :
+    componentManager(),
+    objectManager(),
+    resourceManager()
+{
+    componentManager.SetSceneObjectManager(&objectManager);
+    objectManager.SetSceneComponentManager(&componentManager);
+}
+
+TScene::TScene(TScene&& other) :
+    componentManager(std::move(other.componentManager)),
+    objectManager(std::move(other.objectManager)),
+    resourceManager(std::move(other.resourceManager))
+{
+    componentManager.SetSceneObjectManager(&objectManager);
+    objectManager.SetSceneComponentManager(&componentManager);
+}
+
+TScene& TScene::operator = (TScene&& other) {
+    if (this != &other) {
+        componentManager = std::move(other.componentManager);
+        objectManager = std::move(other.objectManager);
+        resourceManager = std::move(other.resourceManager);
+
+        componentManager.SetSceneObjectManager(&objectManager);
+        objectManager.SetSceneComponentManager(&componentManager);
+    }
+    return *this;
+}
 
 TScene::ComponentHandle
 TScene::CreateComponent(const TComponent::ID& id,
@@ -61,14 +91,13 @@ bool TScene::HasObject(const ObjectHandle& handle) const {
     return objectManager.HasObject(handle);
 }
 
-TScene::ObjectHandle
-TScene::AddSceneObject(const ObjectName& name, const Object& sceneObject) {
-    return objectManager.AddSceneObject(name, sceneObject);
+TScene::ObjectHandle TScene::AddSceneObject(const ObjectName& name) {
+    return objectManager.CreateSceneObject(name).first;
 }
 
 TScene::ObjectHandle
 TScene::AddSceneObject(const ObjectName& name, Object&& sceneObject) {
-    return objectManager.AddSceneObject(name, std::move(sceneObject));
+    return objectManager.CreateSceneObject(name, std::move(sceneObject)).first;
 }
 
 void TScene::RemoveSceneObject(const ObjectName& name) {
@@ -82,6 +111,7 @@ void TScene::RemoveSceneObject(const ObjectHandle& handle) {
 void TScene::Clear() {
     objectManager.Clear();
     componentManager.Clear();
+    resourceManager.Clear();
 }
 
 bool TScene::IsEmpty() const {
@@ -116,4 +146,4 @@ TScene::ResourceManager& TScene::GetResourceManager() {
     return resourceManager;
 }
 
-} //namespace GE
+} // namespace GE

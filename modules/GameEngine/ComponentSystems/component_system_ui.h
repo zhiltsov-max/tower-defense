@@ -33,7 +33,7 @@ private:
     PUi ui;
 };
 
-class CUiComponent : /*Abstract*/
+class CUiComponent :
     public TComponent
 {
 public:
@@ -41,6 +41,6 @@ public:
     virtual ~CUiComponent() = default;
 };
 
-} //namespace GE
+} // namespace GE
 
 #endif // COMPONENT_SYSTEM_UI_H

@@ -4,4 +4,4 @@
 #define LUAPP_COMPATIBILITY_V52
 #include "luapp/lua.hpp"
 
-#endif
+#endif // LUAWRAPPER_H

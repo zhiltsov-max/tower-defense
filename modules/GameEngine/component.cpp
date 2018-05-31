@@ -1,4 +1,4 @@
-#include "component.h"
+#include "GameEngine/component.h"
 
 
 namespace GE {
@@ -16,4 +16,4 @@ const TComponent::ID& TComponent::GetID() const {
     return id;
 }
 
-} //namespace GE
+} // namespace GE
