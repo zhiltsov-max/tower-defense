@@ -24,37 +24,28 @@ function(add_component_unit_tests CURRENT_COMPONENT_NAME)
 
     # Find C/C++ tests
     file(GLOB test_files
-        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cxx *.cpp *.c
+        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+            *.cxx *.cpp *.c
         )
 
-    # Iterate over all the tests found.
-    # For each test declare an executable and add it to the CTest tests list.
-    set(CURRENT_COMPONENT_unit_tests "")
-    foreach(file_name ${test_files})
-        get_filename_component(test_name ${file_name} NAME_WE)
-        set(test_name ${CURRENT_COMPONENT_NAME}_${test_name})
-        add_executable(${test_name} ${file_name})
-        target_link_libraries(${test_name}
+    set(target ${CURRENT_COMPONENT_NAME}_unit_tests)
+    add_executable(${target} ${test_files})
+    target_link_libraries(${target}
+        PRIVATE
             ${CURRENT_COMPONENT}
             gtest
-            )
-        target_include_directories(${test_name}
+        )
+    target_include_directories(${target}
+        PRIVATE
             ${CURRENT_COMPONENT_INCLUDE_DIR}
             ${CURRENT_COMPONENT_SOURCE_DIR}
             ${GTEST_INCLUDE_DIRS}
-            )
-        add_test(NAME ${test_name} COMMAND ${test_name})
-        set(CURRENT_COMPONENT_unit_tests ${CURRENT_COMPONENT_unit_tests} ${test_name})
-    endforeach(file_name)
+        )
+    add_test(NAME ${target} COMMAND ${target})
 
-    install(TARGETS ${CURRENT_COMPONENT_unit_tests}
+    install(TARGETS ${CURRENT_COMPONENT_UNIT_TESTS}
         DESTINATION ${unit_tests_install_dir}
     )
 
-    add_custom_target(${CURRENT_COMPONENT_NAME}_unit_tests
-        DEPENDS ${CURRENT_COMPONENT_unit_tests}
-        )
-
-    # Add current component unit tests to project tests
-    add_dependencies(${PROJECT_TESTS} ${CURRENT_COMPONENT_NAME}_unit_tests)
+    add_dependencies(${PROJECT_TESTS} ${target})
 endfunction()
