@@ -35,9 +35,13 @@
 *.pro
 *.pro.*
 *.sublime*
-bin/
+*.sln
+*.vs*
+*.vscode*
+*.user
+*.idea
+
+# Resources
 data/
 docs/
-lib/
-*.user
 Doxyfile

@@ -1,8 +1,8 @@
 #include "Application/application.h"
-#include "GUI/gui_main.h"
-#include "GUI/widget_event_system.h"
-#include "GUI/widget.h"
-#include "GUI/uiparent.h"
+#include "GameEngine/GUI/gui_main.h"
+#include "GameEngine/GUI/widget_event_system.h"
+#include "GameEngine/GUI/widget.h"
+#include "GameEngine/GUI/uiparent.h"
 #include "gtest/gtest.h"
 
 

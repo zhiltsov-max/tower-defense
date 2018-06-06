@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "Core/core.h"
+#include "GameEngine/Utility/core.h"
 
 
 // ### SPLIT TESTS ###

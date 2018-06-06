@@ -13,7 +13,7 @@
 
 #include <windows.h>
 
-#include "Core/devicecontroller.h"
+#include "GameEngine/Utility/devicecontroller.h"
 
 
 //Defines

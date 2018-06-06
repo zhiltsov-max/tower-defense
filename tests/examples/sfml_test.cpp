@@ -2,7 +2,7 @@
     #error "SFML have to be defined"
 #endif //SFML
 
-#include "Core/core.h"
+#include "GameEngine/Utility/core.h"
 
 
 int main() {

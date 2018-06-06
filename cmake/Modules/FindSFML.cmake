@@ -131,6 +131,7 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
                      NAMES ${FIND_SFML_COMPONENT_NAME}
                      PATH_SUFFIXES lib64 lib
                      PATHS ${FIND_SFML_PATHS})
+        message(STATUS "SFML: ${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE}")
 
         # debug library
         find_library(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DEBUG

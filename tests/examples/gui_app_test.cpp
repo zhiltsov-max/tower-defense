@@ -1,7 +1,7 @@
 #include "Application/application.h"
 #include "Application/application_ui.h"
-#include "GUI/gui_main.h"
-#include "GUI/gui_lua_binding.h"
+#include "GameEngine/GUI/gui_main.h"
+#include "GameEngine/GUI/gui_lua_binding.h"
 
 
 

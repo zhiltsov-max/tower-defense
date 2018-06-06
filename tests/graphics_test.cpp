@@ -1,5 +1,5 @@
-#include "Core/core.h"
-#include "Core/graphics.h"
+#include "GameEngine/Utility/core.h"
+#include "GameEngine/Utility/graphics.h"
 #include "gtest/gtest.h"
 
 

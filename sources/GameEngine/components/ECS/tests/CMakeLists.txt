@@ -1,0 +1,1 @@
+add_component_unit_tests(${CURRENT_COMPONENT_NAME})
