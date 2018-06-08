@@ -12,7 +12,7 @@ target_include_directories(${target}
         ${COMPONENT_Application_INCLUDE_DIR}
     )
 
-add_dependencies(EXAMPLES_RESOURCES)
+add_dependencies(${target} EXAMPLES_RESOURCES)
 
 install(TARGETS ${target}
     DESTINATION ${EXAMPLES_INSTALL_DIR}/${target}

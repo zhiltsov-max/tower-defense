@@ -10,7 +10,7 @@ target_include_directories(${target}
         ${SFML_INCLUDE_DIRS}
     )
 
-add_dependencies(EXAMPLES_RESOURCES)
+add_dependencies(${target} EXAMPLES_RESOURCES)
 
 install(TARGETS ${target}
     DESTINATION ${EXAMPLES_INSTALL_DIR}/${target}

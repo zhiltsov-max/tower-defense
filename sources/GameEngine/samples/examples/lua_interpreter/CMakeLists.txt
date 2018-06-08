@@ -10,8 +10,6 @@ target_include_directories(${target}
         ${COMPONENT_Utility_INCLUDE_DIR}
     )
 
-add_dependencies(EXAMPLES_RESOURCES)
-
 install(TARGETS ${target}
     DESTINATION ${EXAMPLES_INSTALL_DIR}/${target}
     )
