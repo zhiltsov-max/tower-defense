@@ -5,12 +5,9 @@ set(sources
 
 add_library(${CURRENT_COMPONENT} ${sources})
 target_include_directories(${CURRENT_COMPONENT}
-    PUBLIC
-        ${COMPONENT_Utility_INCLUDE_DIR}
     INTERFACE
         ${${CURRENT_COMPONENT}_INCLUDE_DIR}
     PRIVATE
-        ${COMPONENT_Infrastructure_INCLUDE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}
     )
 target_link_libraries(${CURRENT_COMPONENT}

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.6)
 
 project(TowerDefense VERSION 0.1.0)
 
+find_package(GameEngine)
+
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Scripts

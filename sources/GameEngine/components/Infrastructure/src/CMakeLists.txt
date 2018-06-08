@@ -36,8 +36,6 @@ endif()
 
 add_library(${CURRENT_COMPONENT} ${sources})
 target_include_directories(${CURRENT_COMPONENT}
-    PUBLIC
-        ${COMPONENT_Utility_INCLUDE_DIR}
     INTERFACE
         ${${CURRENT_COMPONENT}_INCLUDE_DIR}
     PRIVATE
