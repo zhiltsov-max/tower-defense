@@ -1,8 +1,7 @@
 set(sources
     device_controller.cpp
-    graphics_device.cpp
     graphics.cpp
-    io.cpp
+    point.cpp
     window.cpp
     )
 

@@ -1,5 +1,5 @@
-#ifndef CORE_DATASTRUCTURES_H
-#define CORE_DATASTRUCTURES_H
+#ifndef GAME_ENGINE_DATA_STRUCTURES_H
+#define GAME_ENGINE_DATA_STRUCTURES_H
 
 #include <array>
 #include <initializer_list>
@@ -16,6 +16,9 @@
 #include "nameddata.h"
 #include "myon_datareader.h"
 
+
+namespace GE {
+
 using std::array;
 using std::list;
 using std::forward_list;
@@ -24,4 +27,6 @@ using std::vector;
 using std::map;
 using std::pair;
 
-#endif // CORE_DATASTRUCTURES_H
+} // namespace GE
+
+#endif // GAME_ENGINE_DATA_STRUCTURES_H

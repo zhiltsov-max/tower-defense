@@ -1,11 +1,9 @@
-#include "graphicsdevice.h"
-#include "exception.h"
+#include "backend/windows_native/graphics_device.h"
+
+
+namespace GE {
 
 namespace IO {
-
-#if defined(WINDOWS)
-#include <iostream>
-
 
 TD3D9GraphicsDevice::TD3D9GraphicsDevice() :
     d3d9_object(nullptr),
@@ -108,36 +106,6 @@ void TD3D9GraphicsDevice::release() {
     }
 }
 
-#endif //WINDOWS
-
-
-#if defined(SFML)
-
-TSFMLGraphicsDevice::TSFMLGraphicsDevice(
-    sf::RenderTarget* target
-) :
-    target(target)
-{}
-
-const sf::RenderTarget* TSFMLGraphicsDevice::get() const {
-    return target;
-}
-sf::RenderTarget* TSFMLGraphicsDevice::get() {
-    return target;
-}
-const sf::RenderTarget& TSFMLGraphicsDevice::operator*() const {
-    return *target;
-}
-sf::RenderTarget& TSFMLGraphicsDevice::operator*() {
-    return *target;
-}
-const sf::RenderTarget* TSFMLGraphicsDevice::operator->() const {
-    return target;
-}
-sf::RenderTarget* TSFMLGraphicsDevice::operator->() {
-    return target;
-}
-
-#endif //SFML
-
 } // namespace IO
+
+} // namespace GE

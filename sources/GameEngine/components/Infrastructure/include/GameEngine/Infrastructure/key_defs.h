@@ -1,9 +1,11 @@
-#ifndef CORE_IO_KEY_DEFS_H
-#define CORE_IO_KEY_DEFS_H
+#ifndef GAME_ENGINE_KEY_DEFS_H
+#define GAME_ENGINE_KEY_DEFS_H
 
 #include <cstring>
 #include <queue>
 
+
+namespace GE {
 
 namespace IO {
 
@@ -307,6 +309,8 @@ struct TMouseInfo
     static const int MAX_QUEUE_SIZE = 16;
 };
 
-} //namepace IO
+} // namepace IO
 
-#endif // CORE_IO_KEY_DEFS_H
+} // namespace GE
+
+#endif // GAME_ENGINE_KEY_DEFS_H

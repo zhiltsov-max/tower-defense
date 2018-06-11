@@ -6,12 +6,10 @@
 #endif
 
 #if defined(WINDOWS)
-    #if defined(WINDOWS_DIRECTINPUT) && defined(WINDOWS_SYSINPUT)
-        #error Multiple input methods selected.
-    #endif
+    // none
 
 #elif defined(SFML)
-    //none
+    // none
 
 #else
     #error Unsupported target OS selected or target OS was not specified.

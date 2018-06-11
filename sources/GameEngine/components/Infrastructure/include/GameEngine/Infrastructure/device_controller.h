@@ -1,10 +1,14 @@
-#ifndef CORE_DEVICECONTROLLER_H
-#define CORE_DEVICECONTROLLER_H
+#ifndef GAME_ENGINE_DEVICE_CONTROLLER_H
+#define GAME_ENGINE_DEVICE_CONTROLLER_H
 
 #include <memory>
-#include "io.h"
-#include "graphicsdevice.h"
 
+#include "GameEngine/Infrastructure/graphics_device.h"
+#include "GameEngine/Infrastructure/mouse_device.h"
+#include "GameEngine/Infrastructure/keyboard_device.h"
+
+
+namespace GE {
 
 namespace IO {
 
@@ -44,4 +48,6 @@ private:
 
 } // namespace IO
 
-#endif // CORE_DEVICECONTROLLER_H
+} // namespace GE
+
+#endif // GAME_ENGINE_DEVICE_CONTROLLER_H

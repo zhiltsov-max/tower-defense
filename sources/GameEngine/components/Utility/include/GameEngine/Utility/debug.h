@@ -1,15 +1,18 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef GAME_ENGINE_DEBUG_H
+#define GAME_ENGINE_DEBUG_H
 
 #include <fstream>
-#include "GameEngine/Utility/core.h"
+
+#include "GameEngine/Utility/exception.h"
+#include "GameEngine/Utility/string.h"
 
 
+namespace GE {
 
 enum class LogMessageImportance : unsigned char {
 	_min = 0,
 
-	undefined = 0,	
+	undefined = 0,
 	Unimportant,
 	Usual,
 	Important,
@@ -36,7 +39,7 @@ class TDebugTools
 public:
     TDebugTools(const DebugToolsInfo& info = DebugToolsInfo());
     TDebugTools(const TDebugTools& other) = delete;
-	
+
 
     void log(
         const string& message,
@@ -73,5 +76,6 @@ void Throw(const string& message, const string& where_);
         THROW(message)\
     }
 
+} // namespace GE
 
-#endif //DEBUG_H
+#endif // GAME_ENGINE_DEBUG_H

@@ -1,5 +1,7 @@
-#include "devicecontroller.h"
+#include "GameEngine/Infrastructure/device_controller.h"
 
+
+namespace GE {
 
 namespace IO {
 
@@ -46,3 +48,5 @@ TGraphicsDevice* TDeviceController::getGraphicsDevice() {
 }
 
 } // namespace IO
+
+} // namespace GE
