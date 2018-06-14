@@ -1,35 +1,36 @@
-#include "Application/application.h"
-#include "Application/debug.h"
+#include "GameEngine/Utility/debug.h"
+#include "GameEngine/Application/basic_application.h"
 #include "gtest/gtest.h"
 
 
+using namespace GE;
 
 class TestApplication :
     public ::testing::Test,
-    public TApplication
+    public TBasicApplication
 {
 public:
-    static const TApplicationInfo info;
+    static const TBasicApplication::TParameters parameters;
 
     TestApplication() :
         ::testing::Test(),
-        TApplication(info)
+        TBasicApplication(parameters)
     {}
 };
 
-const TApplicationInfo TestApplication::info = [] {
-    TApplicationInfo info;
-    info.appTitle = TEXT("TEST");
-    info.style = sf::Style::Default;
-    info.windowWidth = 200;
-    info.windowHeight = 200;
-    return info;
+const TBasicApplication::TParameters TestApplication::parameters = [] {
+    TBasicApplication::TParameters parameters;
+    parameters.window.title = "Test window";
+    parameters.window.style = sf::Style::Default;
+    parameters.window.width = 200;
+    parameters.window.height = 200;
+    return parameters;
 } ();
 
 
 TEST_F(TestApplication, initialization) {
-    EXPECT_EQ(info.windowWidth, getWindowWidth());
-    EXPECT_EQ(info.windowHeight, getWindowHeight());
+    EXPECT_EQ(parameters.window.width, getWindowWidth());
+    EXPECT_EQ(parameters.window.height, getWindowHeight());
 }
 
 TEST_F(TestApplication, set_title_wokring) {
@@ -62,8 +63,3 @@ TEST_F(TestApplication, debug_subsystem_working) {
 }
 
 
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
