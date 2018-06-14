@@ -1,43 +1,91 @@
-#include "debug.h"
-
 #include <ios>
 #include <iostream>
 
-#include "application.h"
+#include "GameEngine/Utility/debug.h"
 
 
+namespace GE {
 
-TDebugTools::TDebugTools(const DebugToolsInfo& info) {
-    debugLog.rdbuf()->pubsetbuf(nullptr, 0); //make unbuffered I/O
-    debugLog.open(info.path, std::ios_base::trunc);
+TLogger::PLogger TLogger::instance { nullptr };
+const size_t TLogger::DefaultBufferSize = 512;
 
-    ASSERT(debugLog.is_open() == true,
-        "Unable to open file '" + info.path + "'.");
+TLogger& TLogger::GetInstance() {
+    if (instance == nullptr) {
+        instance = std::make_unique<TLogger>(nullptr);
+    }
+    return instance;
 }
-	
-void TDebugTools::log(const std::string& message,
-    LogMessageImportance importance)
+
+TLogger::TLogger(TOutputStream* os) {
+    ASSERT(instance == nullptr, "Expected uninitialized logger.");
+
+    outputStream = os;
+
+    buffer.reserve(DefaultBufferSize);
+}
+
+void TLogger::initialize(TOutputStream* os, ELogMessageLevel minLevel) {
+    GetInstance()->setStream(os);
+    GetInstance()->setThreshold(minLevel);
+}
+
+void TLogger::flush() {
+    if (outputStream != nullptr) {
+        for (auto& line : buffer) {
+            outputStream << line;
+        }
+        outputStream.flush();
+        buffer.clear();
+    }
+}
+
+void TLogger::setStream(TOutputStream* os) {
+    flush();
+    outputStream = os;
+}
+
+void TLogger::log(const TTextString& message, ELogMessageLevel level,
+    const TTextString& position)
 {
-    log(String::toWide(message), importance);
-}
-
-void TDebugTools::log(const std::wstring& message,
-    LogMessageImportance importance)
-{
-#if defined(_DEBUG)
-    std::wcerr << message << std::endl;
-#endif
-    debugLog << L"Log message {" << (int)importance <<
-        L"}: " << message << std::endl;
-}
-
-
-
-void Throw(const string& message, const string& where_) {
-    if (app() != nullptr) {
-        app()->getDebugTools().log("[@" + where_ + "]: " +
-            message, LogMessageImportance::Critical);
+    if (static_cast<int>(level) < static_cast<int>(minLevel)) {
+        return;
     }
 
-    throw exception(message);
+    if (buffer.capacity() <= buffer.size() + 1) {
+        flush();
+    }
+
+    buffer.emplace_back(
+        "[" + toString(level) + "] " +
+        "[" + position + "]: " +
+        message);
 }
+
+TTextString TLogger::toString(ELogMessageLevel level) const {
+    switch (level) {
+        case ELogMessageLevel::Trace:
+            return "Trace";
+        case ELogMessageLevel::Debug:
+            return "Debug";
+        case ELogMessageLevel::Normal:
+            return "Normal";
+        case ELogMessageLevel::Warning:
+            return "Warning";
+        case ELogMessageLevel::Fatal:
+            return "Fatal";
+        default:
+            GE_THROW("Unknown log message level");
+    }
+}
+
+const char* TLogger::GetFileName(const char* path) {
+    const char* base = std::strrchr(filePath, '/');
+    if (!base)
+    {
+        base = std::strrchr(filePath, '\\'); // for Windows platform
+    }
+
+    return base ? (base + 1) : filePath;
+}
+
+} // namespace GE

@@ -1,6 +1,7 @@
 #ifndef GAME_ENGINE_DEBUG_H
 #define GAME_ENGINE_DEBUG_H
 
+#include <memory>
 #include <fstream>
 
 #include "GameEngine/Utility/exception.h"
@@ -9,72 +10,81 @@
 
 namespace GE {
 
-enum class LogMessageImportance : unsigned char {
+enum class ELogMessageLevel : unsigned char {
 	_min = 0,
 
 	undefined = 0,
-	Unimportant,
-	Usual,
-	Important,
+	Trace,
+    Debug,
+	Normal,
 	Warning,
 	Error,
-	Critical,
+	Fatal,
 
-	_max = Critical
+	_max = Fatal
 };
 
-struct DebugToolsInfo
-{
-    static constexpr const char* DEFAULT_DEBUG_LOG_PATH = "DebugLog.txt";
-    string path;
-
-
-    DebugToolsInfo(const string& path = DEFAULT_DEBUG_LOG_PATH) :
-        path(path)
-    {}
-};
-
-class TDebugTools
-{
+class TLogger {
 public:
-    TDebugTools(const DebugToolsInfo& info = DebugToolsInfo());
-    TDebugTools(const TDebugTools& other) = delete;
+    using TOutputStream = std::wostream;
 
+    static TLogger& GetInstance();
 
-    void log(
-        const string& message,
-        LogMessageImportance importance = LogMessageImportance::Usual
-    );
+    static const char* GetFileName(const char* path);
 
-    void log(
-        const wstring& message,
-        LogMessageImportance importance = LogMessageImportance::Usual
-    );
+    void initialize(TOutputStream* os = nullptr, ELogMessageLevel minLevel);
+
+    void log(const TTextString& message,
+        ELogMessageLevel level = ELogMessageLevel::Normal,
+        const TTextString& position);
+
+    void setStream(TOutputStream* os);
+    void setThreshold(ELogMessageLevel threshold);
 
 private:
-    using DebugLog = std::wofstream;
-    DebugLog debugLog;
+    using PLogger = std::unique_ptr<TLogger>;
+    static PLogger instance;
+
+    static const size_t DefaultBufferSize;
+    ELogMessageLevel minLevel;
+
+    vector<TTextString> buffer;
+    TOutputStream* outputStream;
+
+    TLogger(TOutputStream* os = nullptr);
+    ~TLogger();
+
+    void flush();
+
+    TTextString toString(ELogMessageLevel level) const;
 };
 
 
-void Throw(const string& message, const string& where_);
+#define GE_LOG(message, level) \
+    TLogger::GetInstance().log( \
+        TTextString((message)), \
+        level, \
+        TLogger::GetFileName(__FILE__) + ":" + __LINE__);
 
-
-#if defined(THROW)
-    #undef THROW
-#endif
-#define THROW(message) \
-    Throw(std::string(message), \
-        std::string("Error at ") + __FILE__ + ":" + \
-        std::to_string(__LINE__) + ": ");
-
-#if defined(ASSERT)
-    #undef ASSERT
-#endif
-#define ASSERT(expr, message) \
-    if ((expr) == false) {\
-        THROW(message)\
+#define GE_THROW(message) \
+    { \
+        GE_LOG((message), ELogMessageLevel::Error); \
+        throw exception((message)); \
     }
+
+#define GE_ASSERT(expr, message) \
+    if ((expr) == false) { \
+        GE_THROW((message)); \
+    }
+
+#define GE_TRACE_LINE(message) \
+    GE_LOG(__func__ + TTextString((message)), ELogMessageLevel::Trace);
+
+#define GE_TRACE_FUNC \
+    struct TTraceDummy { \
+        TTraceDummy() { GE_TRACE_LINE(": Started"); } \
+        ~TTraceDummy() { GE_TRACE_LINE(": Exited"); } \
+    } [[maybe_unused]] traceDummy;
 
 } // namespace GE
 
