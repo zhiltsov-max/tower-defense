@@ -17,15 +17,6 @@ void TDeviceController::setGraphicsDevice(TGraphicsDevice* device) {
     graphicsDevice.reset(device);
 }
 
-void TDeviceController::update() {
-    if (keyboardDevice != nullptr) {
-        keyboardDevice->update();
-    }
-    if (mouseDevice != nullptr) {
-        mouseDevice->update();
-    }
-}
-
 TMouseDevice const* TDeviceController::getMouseDevice() const {
     return mouseDevice.get();
 }
@@ -45,6 +36,10 @@ TGraphicsDevice const* TDeviceController::getGraphicsDevice() const {
 }
 TGraphicsDevice* TDeviceController::getGraphicsDevice() {
     return graphicsDevice.get();
+}
+
+TDeviceController::Time TDeviceController::getTime() const {
+    return timer.getElapsedTime().asMilliseconds();
 }
 
 } // namespace IO

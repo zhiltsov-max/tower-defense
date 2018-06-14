@@ -1,8 +1,9 @@
-#ifndef APPLICATION_UI_H
-#define APPLICATION_UI_H
+#ifndef GAME_ENGINE_APPLICATION_UI_H
+#define GAME_ENGINE_APPLICATION_UI_H
 
 #include <memory>
-#include "application.h"
+
+#include "GameEngine/Application/application.h"
 
 
 
@@ -10,7 +11,7 @@ namespace GUI {
 class TUIParent;
 }
 
-class TApplicationUI 
+class TApplicationUI
 {
 public:
     TApplicationUI(const TApplicationInfo& info);
@@ -18,7 +19,7 @@ public:
     std::shared_ptr<const GUI::TUIParent> getUIParent() const;
     std::shared_ptr<GUI::TUIParent> getUIParent();
 
-    void handleEvent(const TApplication::Event& event);
+    void handleEvent(const TWindowEvent& event);
     void update();
     void draw();
 
@@ -27,4 +28,4 @@ private:
     UIParent uiParent;
 };
 
-#endif //APPLICATION_UI_H
+#endif // GAME_ENGINE_APPLICATION_UI_H

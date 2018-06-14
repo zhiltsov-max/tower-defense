@@ -35,7 +35,8 @@ public:
     TGraphicsDevice const* getGraphicsDevice() const;
     TGraphicsDevice* getGraphicsDevice();
 
-    void update();
+    using TTime = uint;
+    TTime getTime() const;
 
 private:
     using PMouseDevice = std::unique_ptr<TMouseDevice> ;
@@ -46,6 +47,9 @@ private:
 
     using PGraphicsDevice = std::unique_ptr<TGraphicsDevice>;
     PGraphicsDevice graphicsDevice;
+
+    using TTimer = sf::Clock;
+    TTimer timer;
 };
 
 } // namespace IO
