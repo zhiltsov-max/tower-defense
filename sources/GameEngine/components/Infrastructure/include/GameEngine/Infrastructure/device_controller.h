@@ -17,7 +17,9 @@ class TDeviceController
 public:
     TDeviceController() = default;
     TDeviceController(const TDeviceController& other) = delete;
+    TDeviceController(TDeviceController&& other) = default;
     TDeviceController& operator=(const TDeviceController& other) = delete;
+    TDeviceController& operator=(TDeviceController&& other) = default;
     ~TDeviceController() = default;
 
     void setMouseDevice(TMouseDevice* device);
@@ -36,14 +38,14 @@ public:
     void update();
 
 private:
-    typedef std::unique_ptr<TMouseDevice> Mouse;
-    Mouse mouseDevice;
+    using PMouseDevice = std::unique_ptr<TMouseDevice> ;
+    PMouseDevice mouseDevice;
 
-    typedef std::unique_ptr<TKeyboardDevice> Keyboard;
-    Keyboard keyboardDevice;
+    using PKeyboardDevice = std::unique_ptr<TKeyboardDevice>;
+    PKeyboardDevice keyboardDevice;
 
-    typedef std::unique_ptr<TGraphicsDevice> Graphics;
-    Graphics graphicsDevice;
+    using PGraphicsDevice = std::unique_ptr<TGraphicsDevice>;
+    PGraphicsDevice graphicsDevice;
 };
 
 } // namespace IO

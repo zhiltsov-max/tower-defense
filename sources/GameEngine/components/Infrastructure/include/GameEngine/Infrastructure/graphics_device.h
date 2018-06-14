@@ -1,18 +1,15 @@
 #ifndef GAME_ENGINE_GRAPHICS_DEVICE_H
 #define GAME_ENGINE_GRAPHICS_DEVICE_H
 
-#include "GameEngine/Infrastructure/check_def.h"
+#include "SFML/OpenGL.hpp"
+#include "SFML/Graphics.hpp"
 
 
 namespace GE {
 
 namespace IO {
 
-class TGraphicsDevice
-{
-public:
-    virtual ~TGraphicsDevice() = default;
-};
+using TGraphicsDevice = sf::RenderTarget;
 
 } // namespace IO
 

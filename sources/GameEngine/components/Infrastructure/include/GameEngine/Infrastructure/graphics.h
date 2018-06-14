@@ -1,15 +1,13 @@
-#ifndef CORE_GRAPHICS_H
-#define CORE_GRAPHICS_H
+#ifndef GAME_ENGINE_GRAPHICS_H
+#define GAME_ENGINE_GRAPHICS_H
 
-#include "checkdef.h"
+#include "SFML/Graphics.hpp"
 
-#if !defined(SFML)
-    #error Only SFML supported now
-#endif //SFML
+#include "GameEngine/Utility/defs.h"
+#include "GameEngine/Infrastructure/point.h"
 
-#include "defs.h"
-#include "image.h"
 
+namespace GE {
 
 namespace Graphics {
 
@@ -45,7 +43,8 @@ struct ARGB {
 
 
     constexpr operator uint32_t() const {
-        return (static_cast<uint32_t>(a) << 24) +
+        return
+            (static_cast<uint32_t>(a) << 24) +
             (static_cast<uint32_t>(r) << 16) +
             (static_cast<uint32_t>(g) << 8) +
             (static_cast<uint32_t>(b));
@@ -56,16 +55,23 @@ struct ARGB {
     }
 
     bool operator == (const ARGB& other) const {
-        return operator uint32_t() == other.operator uint32_t();
+        return
+            (a == other.a) &&
+            (r == other.r) &&
+            (g == other.g) &&
+            (b == other.b);
     }
-	
 };
 
 
-using TRenderTarget = sf::RenderTarget;
 using TFont = sf::Font;
 using TText = sf::Text;
+using TImage = sf::Image;
+using TTexture = sf::Texture;
+using TSprite = sf::Sprite;
 
 } // namespace Graphics
 
-#endif // CORE_GRAPHICS_H
+} // namespace GE
+
+#endif // GAME_ENGINE_GRAPHICS_H

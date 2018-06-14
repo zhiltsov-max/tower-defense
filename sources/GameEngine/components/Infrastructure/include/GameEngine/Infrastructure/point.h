@@ -1,5 +1,5 @@
-#ifndef POINT_H
-#define POINT_H
+#ifndef GAME_ENGINE_POINT_H
+#define GAME_ENGINE_POINT_H
 
 #include <array>
 #include <cmath>
@@ -7,9 +7,13 @@
 #include <string>
 #include <initializer_list>
 
-#include "defs.h"
-#include "exception.h"
+#include "GameEngine/Utility/defs.h"
+#include "GameEngine/Utility/exception.h"
 
+
+namespace GE {
+
+namespace Graphics {
 
 bool isPointInRect(int pointX, int pointY, int rectX1, int rectY1, int rectX2, int rectY2);
 
@@ -303,5 +307,8 @@ double norm(const Point<T, dims>& p, NormType normType = NormType::NORM_USUAL) {
 	return res;
 }
 
+} // namespace Graphics
 
-#endif //POINT_H
+} // namespace GE
+
+#endif // GAME_ENGINE_POINT_H

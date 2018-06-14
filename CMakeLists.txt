@@ -97,5 +97,4 @@ message("LUA: ${LUA_INCLUDE_DIR}")
 message("LUAPP: ${LUAPP_INCLUDE_DIR}")
 message("GTest: ${GTEST_INCLUDE_DIR}")
 message("-- Engine --")
-message("Backend: ${GAMEENGINE_BACKEND}")
 message(" ") # empty string

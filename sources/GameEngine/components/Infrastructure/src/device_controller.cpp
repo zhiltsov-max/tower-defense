@@ -5,15 +5,15 @@ namespace GE {
 
 namespace IO {
 
-void TDeviceController::setKeyboardDevice(TKeyboardDevice *device) {
+void TDeviceController::setKeyboardDevice(TKeyboardDevice* device) {
     keyboardDevice.reset(device);
 }
 
-void TDeviceController::setMouseDevice(TMouseDevice *device) {
+void TDeviceController::setMouseDevice(TMouseDevice* device) {
     mouseDevice.reset(device);
 }
 
-void TDeviceController::setGraphicsDevice(TGraphicsDevice *device) {
+void TDeviceController::setGraphicsDevice(TGraphicsDevice* device) {
     graphicsDevice.reset(device);
 }
 

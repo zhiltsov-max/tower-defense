@@ -1,23 +1,21 @@
-#include "backend/sfml/mouse_device.h"
+#include "GameEngine/Infrastructure/window.h"
+#include "GameEngine/Infrastructure/key_defs.h"
+#include "GameEngine/Infrastructure/mouse_device.h"
 
 
 namespace GE {
 
 namespace IO {
 
-void TSFMLMouse::update() {
-    /*none*/
-}
-
-const TMouseInfo& TSFMLMouse::getInfo() const {
+const TMouseInfo& TMouseDevice::getInfo() const {
     return info;
 }
 
-TMouseInfo& TSFMLMouse::getInfo() {
+TMouseInfo& TMouseDevice::getInfo() {
     return info;
 }
 
-void TSFMLMouse::handleEvent(const sf::Event& evt) {
+void TMouseDevice::handleEvent(const TWindowEvent& evt) {
     switch (evt.type) {
     case sf::Event::MouseButtonPressed:
         {
@@ -60,18 +58,20 @@ void TSFMLMouse::handleEvent(const sf::Event& evt) {
             break;
         }
 
-    default: {/*none*/}
+    default: { /* none */ }
     }
 }
 
-bool TSFMLMouse::isPressed(KeyCode code) const {
+bool TMouseDevice::isPressed(KeyCode code) const {
     return info.keyState[code] == KeyState::Pressed;
 }
-void TSFMLMouse::releaseKey(KeyCode code) {
+
+void TMouseDevice::releaseKey(KeyCode code) {
     info.keyState[code] = KeyState::Released;
     info.events.emplace(EventId::MouseUp, code);
 }
-void TSFMLMouse::pressKey(KeyCode code, int x, int y) {
+
+void TMouseDevice::pressKey(KeyCode code, int x, int y) {
     info.keyState[code] = KeyState::Hit;
     info.events.emplace(EventId::MouseDown, code);
     info.events.back().mouseDown.x = x;

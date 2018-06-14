@@ -1,11 +1,9 @@
-#include "GameEngine/Utility/core.h"
 #include "GameEngine/Utility/graphics.h"
+
 #include "gtest/gtest.h"
 
 
-
-using namespace Graphics;
-
+using namespace GE::Graphics;
 
 TEST(argbTest, argb_from_uint32) {
     constexpr uint color = 0x55667788u;
@@ -55,7 +53,3 @@ TEST(argbTest, argb_from_sf_color) {
     EXPECT_EQ(colorB, argb.b);
 }
 
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

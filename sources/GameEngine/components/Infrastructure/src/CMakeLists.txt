@@ -5,33 +5,12 @@ set(sources
     window.cpp
     )
 
-set(BACKEND_WINAPI "WINAPI")
-set(BACKEND_SFML "SFML")
-set(GAMEENGINE_BACKEND_TYPES "${BACKEND_SFML};${BACKEND_WINAPI};" CACHE STRING "Configs" FORCE)
-
-if (NOT DEFINED GAMEENGINE_BACKEND)
-    set(GAMEENGINE_BACKEND ${BACKEND_SFML} CACHE STRING "Backend for GameEngine" FORCE)
-endif()
-
-if(GAMEENGINE_BACKEND STREQUAL ${BACKEND_SFML})
-    set(platform_sources
-        ""
-        )
-    set(sources ${sources} ${platform_sources})
-    set(includes ${SFML_INCLUDE_DIRS})
-    set(libraries ${SFML_LIBRARIES})
-elseif(GAMEENGINE_BACKEND STREQUAL ${BACKEND_WINAPI})
-    set(platform_sources
-        ""
-        )
-    set(sources ${sources} ${platform_sources})
-    set(includes "")
-    set(libraries "")
-else()
-    message(FATAL_ERROR "Selected unknown Application backend "
-        "(variable GAMEENGINE_BACKEND): '${GAMEENGINE_BACKEND}'. "
-        "Select one of ${GAMEENGINE_BACKEND_TYPES}.")
-endif()
+set(platform_sources
+    ""
+    )
+set(sources ${sources} ${platform_sources})
+set(includes ${SFML_INCLUDE_DIRS})
+set(libraries ${SFML_LIBRARIES})
 
 add_library(${CURRENT_COMPONENT} ${sources})
 target_include_directories(${CURRENT_COMPONENT}

@@ -1,15 +1,13 @@
-#include "backend/sfml/keyboard_device.h"
+#include "GameEngine/Infrastructure/window.h"
+#include "GameEngine/Infrastructure/key_defs.h"
+#include "GameEngine/Infrastructure/keyboard_device.h"
 
 
 namespace GE {
 
 namespace IO {
 
-void TSFMLKeyboard::update() {
-    /*none*/
-}
-
-void TSFMLKeyboard::handleEvent(const sf::Event& evt) {
+void TKeyboardDevice::handleEvent(const TWindowEvent& evt) {
     switch (evt.type) {
     case sf::Event::KeyPressed:
         {
@@ -29,26 +27,28 @@ void TSFMLKeyboard::handleEvent(const sf::Event& evt) {
             break;
         }
 
-    default: {/*none*/}
+    default: { /* none */ }
     };
 }
 
-const TKeyboardInfo& TSFMLKeyboard::getInfo() const {
+const TKeyboardInfo& TKeyboardDevice::getInfo() const {
     return info;
 }
 
-TKeyboardInfo& TSFMLKeyboard::getInfo() {
+TKeyboardInfo& TKeyboardDevice::getInfo() {
     return info;
 }
 
-bool TSFMLKeyboard::isPressed(KeyCode code) const {
+bool TKeyboardDevice::isPressed(KeyCode code) const {
     return info.keyState[code] == KeyState::Pressed;
 }
-void TSFMLKeyboard::releaseKey(KeyCode code) {
+
+void TKeyboardDevice::releaseKey(KeyCode code) {
     info.keyState[code] = KeyState::Released;
     info.events.emplace(EventId::KeyUp, code);
 }
-void TSFMLKeyboard::pressKey(KeyCode code) {
+
+void TKeyboardDevice::pressKey(KeyCode code) {
     info.keyState[code] = KeyState::Hit;
     info.events.emplace(EventId::KeyDown, code);
 }

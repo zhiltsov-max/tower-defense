@@ -1,6 +1,7 @@
 #ifndef GAME_ENGINE_KEYBOARD_DEVICE_H
 #define GAME_ENGINE_KEYBOARD_DEVICE_H
 
+#include "GameEngine/Infrastructure/window.h"
 #include "GameEngine/Infrastructure/key_defs.h"
 
 
@@ -11,10 +12,21 @@ namespace IO {
 class TKeyboardDevice
 {
 public:
-    virtual ~TKeyboardDevice() = default;
-    virtual void update() = 0;
-    virtual const TKeyboardInfo& getInfo() const = 0;
-    virtual TKeyboardInfo& getInfo() = 0;
+    TKeyboardDevice() = default;
+    ~TKeyboardDevice() = default;
+
+    void handleEvent(const TWindowEvent& evt);
+
+    const TKeyboardInfo& getInfo() const;
+    TKeyboardInfo& getInfo();
+
+private:
+    TKeyboardInfo info;
+
+    typedef unsigned char KeyCode;
+    bool isPressed(KeyCode code) const;
+    void releaseKey(KeyCode code);
+    void pressKey(KeyCode code);
 };
 
 } // namespace IO
