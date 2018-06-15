@@ -1,6 +1,7 @@
 set(sources
     application.cpp
     application_ui.cpp
+    basic_application.cpp
     )
 
 add_library(${CURRENT_COMPONENT} ${sources})

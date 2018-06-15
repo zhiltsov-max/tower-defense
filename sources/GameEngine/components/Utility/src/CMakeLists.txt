@@ -4,7 +4,6 @@ set(sources
     lua_wrapper.cpp
     math.cpp
     myon_datareader.cpp
-    point.cpp
     string.cpp
     )
 

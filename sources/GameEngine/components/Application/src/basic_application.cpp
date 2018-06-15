@@ -35,7 +35,7 @@ TBasicApplication::~TBasicApplication() {
     }
 }
 
-int TBasicApplication::run() {
+TBasicApplication::TExitCode TBasicApplication::run() {
     isRunning = true;
 
     while (window->isOpen() && isRunning) {
@@ -49,7 +49,7 @@ int TBasicApplication::run() {
 
     onExit();
 
-    return exitCode;
+    return static_cast<TExitCode>(exitCode);
 }
 
 void TBasicApplication::handleEvent(const TWindowEvent& event) {
