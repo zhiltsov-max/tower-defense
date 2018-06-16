@@ -2,7 +2,7 @@
 #define GAME_ENGINE_DEBUG_H
 
 #include <memory>
-#include <fstream>
+#include <iostream>
 
 #include "GameEngine/Utility/exception.h"
 #include "GameEngine/Utility/string.h"
@@ -26,7 +26,7 @@ enum class ELogMessageLevel : unsigned char {
 
 class TLogger {
 public:
-    using TOutputStream = std::wostream;
+    using TOutputStream = std::ostream;
 
     static TLogger& GetInstance();
 
@@ -63,8 +63,8 @@ private:
 #define GE_LOG(message, level) \
     TLogger::GetInstance().log( \
         TTextString((message)), \
-        level, \
-        TLogger::GetFileName(__FILE__) + ":" + __LINE__);
+        (level), \
+        TTextString(TLogger::GetFileName(__FILE__)) + ":" #__LINE__);
 
 #define GE_THROW(message) \
     { \
@@ -78,7 +78,8 @@ private:
     }
 
 #define GE_TRACE_LINE(message) \
-    GE_LOG(__func__ + TTextString((message)), ELogMessageLevel::Trace);
+    GE_LOG(TTextString(__func__) + TTextString((message)), \
+        ELogMessageLevel::Trace);
 
 #define GE_TRACE_FUNC \
     struct TTraceDummy { \

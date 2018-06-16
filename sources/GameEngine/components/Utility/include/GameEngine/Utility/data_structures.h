@@ -2,30 +2,25 @@
 #define GAME_ENGINE_DATA_STRUCTURES_H
 
 #include <array>
-#include <initializer_list>
-#include <forward_list>
 #include <list>
 #include <vector>
-#include <set>
 #include <map>
-#include <memory>
+#include <set>
 #include <utility>
 
-#include "string.h"
-#include "point.h"
-#include "nameddata.h"
-#include "myon_datareader.h"
+#include "GameEngine/Utility/string_functions.h"
+#include "GameEngine/Utility/named_data.h"
+#include "GameEngine/Utility/myon_parser.h"
 
 
 namespace GE {
 
-using std::array;
-using std::list;
-using std::forward_list;
-using std::initializer_list;
-using std::vector;
-using std::map;
-using std::pair;
+using TArray = std::array;
+using TList = std::list;
+using TVector = std::vector;
+using TMap = std::map;
+using TSet = std::set;
+using TPair = std::pair;
 
 } // namespace GE
 

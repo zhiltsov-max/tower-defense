@@ -2,9 +2,7 @@ set(sources
     debug.cpp
     exception.cpp
     lua_wrapper.cpp
-    math.cpp
-    myon_datareader.cpp
-    string.cpp
+    myon_parser.cpp
     )
 
 add_library(${CURRENT_COMPONENT} ${sources})
@@ -20,6 +18,7 @@ target_include_directories(${CURRENT_COMPONENT}
 target_link_libraries(${CURRENT_COMPONENT}
     PUBLIC
         ${LUA_LIBRARIES}
+        ${COMPONENT_Infrastructure}
     )
 target_compile_definitions(${CURRENT_COMPONENT}
     PUBLIC

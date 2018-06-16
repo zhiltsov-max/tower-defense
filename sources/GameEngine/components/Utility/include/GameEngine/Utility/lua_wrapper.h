@@ -1,6 +1,6 @@
-#ifndef LUAWRAPPER_H
-#define LUAWRAPPER_H
+#ifndef GAME_ENGINE_LUA_WRAPPER_H
+#define GAME_ENGINE_LUA_WRAPPER_H
 
 #include "luapp/lua.hpp"
 
-#endif // LUAWRAPPER_H
+#endif // GAME_ENGINE_LUA_WRAPPER_H

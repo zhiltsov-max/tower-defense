@@ -1,30 +1,34 @@
-#ifndef REGISTRY_H
-#define REGISTRY_H
+#ifndef GAME_ENGINE_REGISTRY_H
+#define GAME_ENGINE_REGISTRY_H
 
+#include <cstddef>
+#include <map>
 #include <sstream>
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/Utility/debug.h"
 
 
 namespace GE {
 
-template< class Entry_, class ID_ >
+template<class Entry_, class Id_>
 class TRegistry
 {
 public:
-    using Entry = Entry_;
-    using ID = ID_;
+    using TEntry = Entry_;
+    using TId = Id_;
 
-    void Register(const ID& id, const Entry& entry);
-    void Unregister(const ID& id);
+    void Register(const TId& id, const TEntry& entry);
 
-    const Entry& operator[](const ID& id) const {
+    void Unregister(const TId& id);
+
+    const TEntry& operator[](const TId& id) const {
         return data.at(id);
     }
-    Entry& operator[](const ID& id) {
+
+    TEntry& operator[] (const TId& id) {
         return data.at(id);
     }
 
-    bool IsRegistered(const ID& id) const {
+    bool IsRegistered(const TId& id) const {
         return data.count(id) != 0;
     }
 
@@ -41,32 +45,28 @@ public:
     }
 
 protected:
-    using Data = std::map<ID, Entry>;
-    Data data;
+    using Storage = std::map<TId, TEntry>;
+    Storage data;
 };
 
-template< class Entry, class ID >
-void TRegistry<Entry, ID>::Register(const ID& id, const Entry& entry) {
-    if (IsRegistered(id) == true) {
-        std::stringstream ss;
-        ss << "Class #" << id << " already registered.";
-        THROW(ss.str())
-    }
+template<class Entry_, class Id_>
+void TRegistry<Entry_, Id_>::Register(const TId& id, const TEntry& entry) {
+    GE_ASSERT(IsRegistered(id) == false,
+        "Class #" + std::to_string(id) + " already registered.");
 
     data[id] = entry;
 }
 
-template< class Entry, class ID >
-void TRegistry<Entry, ID>::Unregister(const ID& id) {
+template<class Entry_, class Id_>
+void TRegistry<Entry_, Id_>::Unregister(const TId& id) {
     auto it = data.find(id);
-    if (it == data.end()) {
-        std::stringstream ss;
-        ss << "Class #" << id << " is not registered.";
-        THROW(ss.str());
-    }
+
+    GE_ASSERT(it == data.end(),
+        "Class #" + std::to_string(id) + " is not registered.");
+
     data.erase(it);
 }
 
 } // namespace GE
 
-#endif // REGISTRY_H
+#endif // GAME_ENGINE_REGISTRY_H

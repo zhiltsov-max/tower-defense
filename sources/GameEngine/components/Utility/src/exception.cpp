@@ -1,7 +1,9 @@
-#include "exception.h"
+#include "GameEngine/Utility/exception.h"
 
 
-exception::exception(const std::string &message) :
+namespace GE {
+
+exception::exception(const std::string& message) :
     parent_type(),
     message(message)
 {}
@@ -9,3 +11,5 @@ exception::exception(const std::string &message) :
 const char* exception::what() const noexcept {
     return message.c_str();
 }
+
+} // namespace GE

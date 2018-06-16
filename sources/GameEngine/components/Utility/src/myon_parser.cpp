@@ -1,22 +1,28 @@
-#include "myon_datareader.h"
-
 #include <fstream>
+#include <ios>
+#include <istream>
 #include <streambuf>
-#include "defs.h"
+#include <vector>
 
+#include "GameEngine/Utility/debug.h"
+#include "GameEngine/Utility/myon_parser.h"
+#include "GameEngine/Utility/named_data.h"
+#include "GameEngine/Utility/string.h"
+
+
+namespace GE {
+
+//TODO: update implementation with unicode values support
 
 TMyON_DataReader::TMyON_DataReader(
     std::istream& source,
-    const string& needle
+    const TTextString& needle
 ) :
     source(source),
     needle(needle),
     parsedData(),
     ignored(default_ignored())
 {}
-	
-TMyON_DataReader::~TMyON_DataReader() {}
-
 
 bool TMyON_DataReader::parse() {
     if (seekDataStart() == false) {
@@ -26,9 +32,9 @@ bool TMyON_DataReader::parse() {
 
     parsedData.emplace("__name__", needle);
 
-	std::vector<string> keyStack;		
-	string currentKey;
-	string currentValue;
+	std::vector<TString> keyStack;
+	TString currentKey;
+	TTextString currentValue;
     bool insideValue = false;
     int parenthesesSum = 0;
 
@@ -39,20 +45,20 @@ bool TMyON_DataReader::parse() {
         if (ignored.find(currentChr) != ignored.npos) {
 			continue;
 		}
-			
+
         switch (currentChr) {
-		case sectionStart: 
+		case sectionStart:
 			{
                 ++parenthesesSum;
 
 				//add parsed categories too
-                string key = join(keyStack);
+                TString key = join(keyStack);
 				if (keyStack.empty() == false) {
 					key += keySeparator;
 				}
 				key += currentKey;
                 parsedData.emplace(std::move(key), "");
-					
+
 				if (currentKey.empty() == false) {
                     keyStack.emplace_back(std::move(currentKey));
 				}
@@ -85,11 +91,11 @@ bool TMyON_DataReader::parse() {
                 if (keyStack.size() == 0) {
                     break;
                 }
-					
+
 				keyStack.pop_back();
 				break;
 			}
-				
+
 		case separator:
             {
                 if (currentKey.empty() && currentValue.empty()) { /* block end or ;;;; */
@@ -103,8 +109,8 @@ bool TMyON_DataReader::parse() {
                     error = "Empty value at pos " + std::to_string(source.tellg()) + ".";
 					break;
 				}
-				
-                string key = join(keyStack);
+
+                TString key = join(keyStack);
 				if (keyStack.empty() == false) {
                     key += keySeparator;
 				}
@@ -115,7 +121,7 @@ bool TMyON_DataReader::parse() {
                 insideValue = false;
 				break;
 			}
-					
+
 		case valueSign:
 			{
 				if (currentKey.empty() == true) {
@@ -127,7 +133,7 @@ bool TMyON_DataReader::parse() {
                 insideValue = true;
 				break;
 			}
-					
+
         default:
             {
                 if (insideValue) {
@@ -136,7 +142,7 @@ bool TMyON_DataReader::parse() {
                     currentKey += currentChr;
                 }
 				break;
-			}        
+			}
 		}
 	}
 
@@ -147,17 +153,17 @@ bool TMyON_DataReader::parse() {
     }
 
     return error.empty() == false;
-}	
-	
-const string& TMyON_DataReader::getError() const {
+}
+
+const TTextString& TMyON_DataReader::getError() const {
 	return error;
 }
-	
-const TNamedData<string>& TMyON_DataReader::getParsedData() const {
+
+const TNamedData<TTextString>& TMyON_DataReader::getParsedData() const {
 	return parsedData;
 }
-	
-void TMyON_DataReader::setIgnoredSymbols(const string& value) {
+
+void TMyON_DataReader::setIgnoredSymbols(const TTextString& value) {
 	ignored = value;
 }
 
@@ -169,31 +175,34 @@ bool TMyON_DataReader::seekDataStart() {
 
     char* buffer = new char[needle.size() + 1];
     std::unique_ptr<char> bufferObj(buffer);
-		
+
     while (source.good()) {
         std::streampos start = source.tellg();
         source.get(buffer, needle.size() + 1);
-			
+
         if (strncmp(buffer, needle.c_str(), needle.size()) == 0) {
             source.seekg(start);
 			return true;
 		}
 	}
-		
+
 	error = "substring started with '" + needle + "' was not found.";
 	return false;
-    UNUSED(bufferObj)
+
+    UNUSED(bufferObj);
 }
 
 
-string TMyON_DataReader::join(const std::vector<string>& parts) {
+TString TMyON_DataReader::join(const std::vector<TString>& parts) {
     return String::join(parts, keySeparator);
 }
 
 
-TNamedData<string> ParseData(std::istream& source) {
+TNamedData<TTextString> ParseData(std::istream& source) {
     TMyON_DataReader parser(source);
     ASSERT(parser.parse() == false,
         "Failed to parse source. Message is: " + parser.getError())
     return parser.getParsedData();
 }
+
+} // namespace GE

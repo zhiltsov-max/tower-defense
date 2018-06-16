@@ -1,29 +1,20 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef GAME_ENGINE_STRING_FUNCTIONS_H
+#define GAME_ENGINE_STRING_FUNCTIONS_H
 
+#include <cmath>
 #include <cstring>
+#include <locale>
 #include <string>
 #include <vector>
-#include <locale>
-#include <cmath>
+
+#include "GameEngine/Infrastructure/string.h"
 
 
-template< class CharT >
-using basic_string = std::basic_string<CharT>;
-
-typedef basic_string<char> string;
-typedef basic_string<wchar_t> wstring;
-
-#if defined(UNICODE)
-    typedef wstring TextString;
-#else
-    typedef  string TextString;
-#endif
-
+namespace GE {
 
 namespace String {
 
-//### Split ###
+// Split
 template< class CharT >
 std::vector< basic_string<CharT> >
 split(const CharT* str, const CharT separator);
@@ -59,7 +50,7 @@ std::vector< basic_string<CharT> >
 splitByLength(const basic_string<CharT>& str, size_t partSize);
 
 
-//### Join ###
+// Join
 template< class CharT >
 basic_string<CharT>
 join(const std::vector< basic_string<CharT> >& parts, CharT glue);
@@ -72,7 +63,6 @@ join(
 );
 
 
-//### Other ###
 // Starts with
 template< class CharT >
 bool startsWith(const CharT* str, const CharT* prefix);
@@ -124,19 +114,10 @@ basic_string<CharT> toUpper(
     const std::locale& locale = std::locale()
 );
 
-
-// Number to text conversion
-template< class Number >
-TextString toTextString(const Number& number);
-
-
-// To wide
-wstring toWide(const char* str);
-wstring toWide(const string& str);
-wstring toWide(const wchar_t* str);
-wstring toWide(const wstring& str);
-
 } // namespace String
+
+
+// ### Implementation ###
 
 template< class CharT >
 struct STRING_END;
@@ -401,14 +382,6 @@ basic_string<CharT> String::toUpper(const CharT* str,
     return res;
 }
 
+} // namespace GE
 
-template< class Number >
-TextString String::toTextString(const Number& number) {
-#if defined(UNICODE)
-    return std::to_wstring(number);
-#else
-    return std::to_string(number);
-#endif
-}
-
-#endif //STRING_H
+#endif // GAME_ENGINE_STRING_FUNCTIONS_H
