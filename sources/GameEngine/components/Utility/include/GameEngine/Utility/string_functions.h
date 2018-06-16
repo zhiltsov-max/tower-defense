@@ -9,6 +9,7 @@
 
 #include "GameEngine/Infrastructure/string.h"
 
+// TODO: update the implementation to accept Unicode
 
 namespace GE {
 

@@ -4,7 +4,7 @@
 #include <istream>
 #include <vector>
 
-#include "GameEngine/Utility/string.h"
+#include "GameEngine/Infrastructure/string.h"
 #include "GameEngine/Utility/named_data.h"
 
 
@@ -12,7 +12,7 @@ namespace GE {
 
 class TMyonParser {
 public:
-    TMyonParser(std::istream& source, const TTextString& needle = "");
+    TMyonParser(std::istream& source, const TString& needle = "");
 
 	/*
      * Returns false if no error occured, otherwise returns true.
@@ -20,11 +20,11 @@ public:
 	 */
 	bool parse(); // TODO: change interface
 
-    const TTextString& getError() const;
+    const TString& getError() const;
 
-    const TNamedData<TTextString>& getParsedData() const;
+    const TNamedData<TString>& getParsedData() const;
 
-	void setIgnoredSymbols(const TTextString& value = default_ignored());
+	void setIgnoredSymbols(const std::vector<TString>& value = default_ignored());
 
 private:
     static constexpr char sectionStart = '{';
@@ -32,15 +32,17 @@ private:
     static constexpr char separator = ';';
     static constexpr char valueSign = ':';
     static constexpr char keySeparator = ':';
-    static constexpr const char* default_ignored() { return " \t\r\n"; }
+    static constexpr std::initializer_list<TString> default_ignored() {
+        return {' ', '\t', '\r', '\n'};
+    }
 
     std::istream& source;
 
-	TTextString needle;
-	TTextString error;
+	TString needle;
+	TString error;
 
-    TNamedData<TTextString> parsedData;
-	TTextString ignored;
+    TNamedData<TString> parsedData;
+	TString ignored;
 
 
 	bool seekDataStart();
@@ -50,7 +52,7 @@ private:
 /*
  * Parses source and returns resulting TNamedData
  */
-TNamedData<TTextString> ParseData(std::istream& source);
+TNamedData<TString> ParseData(std::istream& source);
 
 } // namespace GE
 

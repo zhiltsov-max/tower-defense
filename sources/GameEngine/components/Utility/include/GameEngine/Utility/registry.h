@@ -4,14 +4,14 @@
 #include <cstddef>
 #include <map>
 #include <sstream>
+
 #include "GameEngine/Utility/debug.h"
 
 
 namespace GE {
 
 template<class Entry_, class Id_>
-class TRegistry
-{
+class TRegistry {
 public:
     using TEntry = Entry_;
     using TId = Id_;

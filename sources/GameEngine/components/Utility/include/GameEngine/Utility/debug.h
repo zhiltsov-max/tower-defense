@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "GameEngine/Utility/exception.h"
-#include "GameEngine/Utility/string.h"
+#include "GameEngine/Infrastructure/string.h"
 
 
 namespace GE {
@@ -34,9 +34,9 @@ public:
 
     void initialize(TOutputStream* os = nullptr, ELogMessageLevel minLevel);
 
-    void log(const TTextString& message,
+    void log(const TString& message,
         ELogMessageLevel level = ELogMessageLevel::Normal,
-        const TTextString& position);
+        const TString& position);
 
     void setStream(TOutputStream* os);
     void setThreshold(ELogMessageLevel threshold);
@@ -48,7 +48,7 @@ private:
     static const size_t DefaultBufferSize;
     ELogMessageLevel minLevel;
 
-    vector<TTextString> buffer;
+    vector<TString> buffer;
     TOutputStream* outputStream;
 
     TLogger(TOutputStream* os = nullptr);
@@ -56,15 +56,15 @@ private:
 
     void flush();
 
-    TTextString toString(ELogMessageLevel level) const;
+    TString toString(ELogMessageLevel level) const;
 };
 
 
 #define GE_LOG(message, level) \
     TLogger::GetInstance().log( \
-        TTextString((message)), \
+        TString((message)), \
         (level), \
-        TTextString(TLogger::GetFileName(__FILE__)) + ":" #__LINE__);
+        TString(TLogger::GetFileName(__FILE__)) + ":" #__LINE__);
 
 #define GE_THROW(message) \
     { \
@@ -78,7 +78,7 @@ private:
     }
 
 #define GE_TRACE_LINE(message) \
-    GE_LOG(TTextString(__func__) + TTextString((message)), \
+    GE_LOG(TString(__func__) + TString((message)), \
         ELogMessageLevel::Trace);
 
 #define GE_TRACE_FUNC \

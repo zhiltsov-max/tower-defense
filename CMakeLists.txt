@@ -73,8 +73,6 @@ elseif(MSVC)
 endif()
 
 
-add_definitions(-DSFML -DUNICODE)
-
 set(CMAKE_CXX_STANDARD_REQUIRED 14)
 
 

@@ -44,8 +44,8 @@ void TLogger::setStream(TOutputStream* os) {
     outputStream = os;
 }
 
-void TLogger::log(const TTextString& message, ELogMessageLevel level,
-    const TTextString& position)
+void TLogger::log(const TString& message, ELogMessageLevel level,
+    const TString& position)
 {
     if (static_cast<int>(level) < static_cast<int>(minLevel)) {
         return;
@@ -61,7 +61,7 @@ void TLogger::log(const TTextString& message, ELogMessageLevel level,
         message);
 }
 
-TTextString TLogger::toString(ELogMessageLevel level) const {
+TString TLogger::toString(ELogMessageLevel level) const {
     switch (level) {
         case ELogMessageLevel::Trace:
             return "Trace";

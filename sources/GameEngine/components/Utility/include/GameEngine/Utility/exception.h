@@ -2,7 +2,8 @@
 #define GAME_ENGINE_EXCEPTION_H
 
 #include <exception>
-#include <string>
+
+#include "GameEngine/Infrastructure/string.h"
 
 
 namespace GE {
@@ -10,14 +11,14 @@ namespace GE {
 class exception : public std::exception {
 public:
     exception() = default;
-    exception(const std::string& message);
+    exception(const TString& message);
     virtual ~exception() override = default;
     const char* what() const noexcept override;
 
 private:
     using parent_type = std::exception;
 
-    std::string message;
+    TString message;
 };
 
 } // namespace GE

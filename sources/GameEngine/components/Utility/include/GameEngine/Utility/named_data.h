@@ -6,7 +6,7 @@
 #include <map>
 #include <utility>
 
-#include "GameEngine/Utility/string.h"
+#include "GameEngine/Infrastructure/string.h"
 
 
 namespace GE {

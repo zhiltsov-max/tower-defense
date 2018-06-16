@@ -12,11 +12,11 @@
 
 namespace GE {
 
-//TODO: update implementation with unicode values support
+//TODO: update the implementation to support Unicode
 
 TMyON_DataReader::TMyON_DataReader(
     std::istream& source,
-    const TTextString& needle
+    const TString& needle
 ) :
     source(source),
     needle(needle),
@@ -34,8 +34,8 @@ bool TMyON_DataReader::parse() {
 
 	std::vector<TString> keyStack;
 	TString currentKey;
-	TTextString currentValue;
-    bool insideValue = false;
+	TString currentValue;
+    bool isInsideValue = false;
     int parenthesesSum = 0;
 
     while (source.good()) {
@@ -64,7 +64,7 @@ bool TMyON_DataReader::parse() {
 				}
                 currentKey.clear();
                 currentValue.clear();
-                insideValue = false;
+                isInsideValue = false;
 				break;
 			}
 
@@ -82,7 +82,7 @@ bool TMyON_DataReader::parse() {
                     break;
                 }
 
-                if (insideValue) {
+                if (isInsideValue) {
                     error = "Missing separator after value at pos " +
                         std::to_string(source.tellg()) + ".";
                     break;
@@ -118,7 +118,7 @@ bool TMyON_DataReader::parse() {
                 parsedData.emplace(std::move(key), currentValue);
                 currentKey.clear();
                 currentValue.clear();
-                insideValue = false;
+                isInsideValue = false;
 				break;
 			}
 
@@ -130,13 +130,13 @@ bool TMyON_DataReader::parse() {
 				}
 
                 currentValue.clear();
-                insideValue = true;
+                isInsideValue = true;
 				break;
 			}
 
         default:
             {
-                if (insideValue) {
+                if (isInsideValue) {
                     currentValue += currentChr;
                 } else {
                     currentKey += currentChr;
@@ -155,15 +155,15 @@ bool TMyON_DataReader::parse() {
     return error.empty() == false;
 }
 
-const TTextString& TMyON_DataReader::getError() const {
+const TString& TMyON_DataReader::getError() const {
 	return error;
 }
 
-const TNamedData<TTextString>& TMyON_DataReader::getParsedData() const {
+const TNamedData<TString>& TMyON_DataReader::getParsedData() const {
 	return parsedData;
 }
 
-void TMyON_DataReader::setIgnoredSymbols(const TTextString& value) {
+void TMyON_DataReader::setIgnoredSymbols(const TString& value) {
 	ignored = value;
 }
 
@@ -198,7 +198,7 @@ TString TMyON_DataReader::join(const std::vector<TString>& parts) {
 }
 
 
-TNamedData<TTextString> ParseData(std::istream& source) {
+TNamedData<TString> ParseData(std::istream& source) {
     TMyON_DataReader parser(source);
     ASSERT(parser.parse() == false,
         "Failed to parse source. Message is: " + parser.getError())

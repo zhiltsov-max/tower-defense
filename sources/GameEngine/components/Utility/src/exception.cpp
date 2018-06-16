@@ -3,7 +3,7 @@
 
 namespace GE {
 
-exception::exception(const std::string& message) :
+exception::exception(const TString& message) :
     parent_type(),
     message(message)
 {}
