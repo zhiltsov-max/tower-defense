@@ -8,7 +8,7 @@
 
 /*
  * The standard string and char* buffers
- * are considered to be in utf-8 encoding.
+ * are considered to be in UTF-8 encoding.
  *
  * - For Linux platforms this is the default. No additional actions needed.
  *
@@ -17,8 +17,10 @@
  *     calls with UTF-8 strings. Every OS call is preceeded by a conversion
  *     to UTF-16 ("wide" in Windows-world) encoding.
  *
- * See https://utf8everywhere.org for additional
- * recommendations and information.
+ * References:
+ * - http://www.unicode.org/versions/Unicode5.0.0/ - Unicode 5.0 standard
+ * - https://utf8everywhere.org - Unicode usage in C++ applications
+ * - http://www.cl.cam.ac.uk/~mgk25/unicode.html - Unicode usage in UNIX
  */
 
 #if !defined(UNICODE) || ! defined(_UNICODE)
@@ -27,7 +29,8 @@
 
 namespace GE {
 
-using TString = std::string;
+using TUtf8String = std::string;
+using TString = TUtf8String;
 
 } // namespace GE
 

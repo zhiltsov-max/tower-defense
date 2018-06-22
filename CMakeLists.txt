@@ -36,10 +36,16 @@ find_package(LUA 5.3 REQUIRED)
 
 # - LUAPP
 if (NOT DEFINED LUAPP_ROOT OR LUAPP_ROOT STREQUAL "LUAPP_ROOT-NOTFOUND")
-    set(LUAPP_ROOT ${THIRDPARTY_DIR}/LUAPP CACHE STRING "Path to a directory." FORCE)
+    set(LUAPP_ROOT ${THIRDPARTY_DIR}/luapp CACHE STRING "Path to a directory." FORCE)
 endif()
 set(LUAPP_COMPATIBILITY 5.3)
 find_package(LUAPP REQUIRED)
+
+# - JSON
+if (NOT DEFINED JSON_ROOT OR JSON_ROOT STREQUAL "JSON_ROOT-NOTFOUND")
+    set(JSON_ROOT ${THIRDPARTY_DIR}/json CACHE STRING "Path to a directory." FORCE)
+endif()
+find_package(JSON REQUIRED)
 
 # - Threads
 find_package(Threads REQUIRED)

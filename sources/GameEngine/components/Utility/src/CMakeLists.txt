@@ -2,7 +2,6 @@ set(sources
     debug.cpp
     exception.cpp
     lua_wrapper.cpp
-    myon_parser.cpp
     )
 
 add_library(${CURRENT_COMPONENT} ${sources})
@@ -10,6 +9,7 @@ target_include_directories(${CURRENT_COMPONENT}
     PUBLIC
         $<BUILD_INTERFACE:${LUA_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${LUAPP_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${JSON_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>
     INTERFACE
         ${${CURRENT_COMPONENT}_INCLUDE_DIR}
     PRIVATE
