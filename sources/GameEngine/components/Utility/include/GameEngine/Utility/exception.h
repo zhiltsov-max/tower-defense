@@ -9,11 +9,11 @@
 
 GE_BEGIN_ENGINE_NAMESPACE
 
-class exception : public std::exception {
+class TException : public std::exception {
 public:
-    exception() = default;
-    exception(const TString& message);
-    virtual ~exception() override = default;
+    TException() = default;
+    TException(const TString& message);
+    virtual ~TException() override = default;
     const char* what() const noexcept override;
 
 private:

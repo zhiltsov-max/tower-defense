@@ -3,12 +3,12 @@
 
 GE_BEGIN_ENGINE_NAMESPACE
 
-exception::exception(const TString& message) :
+TException::TException(const TString& message) :
     parent_type(),
     message(message)
 {}
 
-const char* exception::what() const noexcept {
+const char* TException::what() const noexcept {
     return message.c_str();
 }
 

@@ -13,28 +13,21 @@ TLogger& TLogger::GetInstance() {
     if (instance == nullptr) {
         instance = std::make_unique<TLogger>(nullptr);
     }
-    return instance;
+    return *instance;
 }
 
 TLogger::TLogger(TOutputStream* os) {
-    ASSERT(instance == nullptr, "Expected uninitialized logger.");
-
     outputStream = os;
 
     buffer.reserve(DefaultBufferSize);
 }
 
-void TLogger::initialize(TOutputStream* os, ELogMessageLevel minLevel) {
-    GetInstance()->setStream(os);
-    GetInstance()->setThreshold(minLevel);
-}
-
 void TLogger::flush() {
     if (outputStream != nullptr) {
         for (auto& line : buffer) {
-            outputStream << line;
+            (*outputStream) << line;
         }
-        outputStream.flush();
+        outputStream->flush();
         buffer.clear();
     }
 }

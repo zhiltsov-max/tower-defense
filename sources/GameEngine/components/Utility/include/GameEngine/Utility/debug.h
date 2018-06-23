@@ -1,8 +1,9 @@
 #ifndef GAME_ENGINE_DEBUG_H
 #define GAME_ENGINE_DEBUG_H
 
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <vector>
 
 #include "GameEngine/Utility/common.h"
 #include "GameEngine/Utility/exception.h"
@@ -33,14 +34,11 @@ public:
 
     static const char* GetFileName(const char* path);
 
-    void initialize(TOutputStream* os = nullptr, ELogMessageLevel minLevel);
-
-    void log(const TString& message,
-        ELogMessageLevel level = ELogMessageLevel::Normal,
+    void log(const TString& message, ELogMessageLevel level,
         const TString& position);
 
-    void setStream(TOutputStream* os);
-    void setThreshold(ELogMessageLevel threshold);
+    void setStream(TOutputStream* os = nullptr);
+    void setThreshold(ELogMessageLevel threshold = ELogMessageLevel::Normal);
 
 private:
     using PLogger = std::unique_ptr<TLogger>;
@@ -49,7 +47,7 @@ private:
     static const size_t DefaultBufferSize;
     ELogMessageLevel minLevel;
 
-    vector<TString> buffer;
+    std::vector<TString> buffer;
     TOutputStream* outputStream;
 
     TLogger(TOutputStream* os = nullptr);
@@ -70,7 +68,7 @@ private:
 #define GE_THROW(message) \
     { \
         GE_LOG((message), ELogMessageLevel::Error); \
-        throw exception((message)); \
+        throw TException((message)); \
     }
 
 #define GE_ASSERT(expr, message) \
