@@ -5,7 +5,7 @@
 #include "GameEngine/ECS/game_engine_context.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class CSLogicsSystem :
     public TComponentSystem
@@ -26,6 +26,6 @@ public:
     virtual ~CLogicsComponent() = default;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_LOGICS_H

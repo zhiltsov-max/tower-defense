@@ -8,7 +8,7 @@
 #include "GameEngine/ECS/game_engine_context.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TComponentHandle
 {
@@ -80,6 +80,6 @@ C* TComponentSystemsManager::AddSystem(const ID& id) {
     return dynamic_cast<C*>(AddSystem(id, std::move(PSystem(new C()))));
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEMS_MANAGER_H

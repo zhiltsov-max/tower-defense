@@ -3,11 +3,11 @@
 
 #include "SFML/Graphics.hpp"
 
-#include "GameEngine/Utility/defs.h"
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Infrastructure/point.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace Graphics {
 
@@ -72,6 +72,6 @@ using TSprite = sf::Sprite;
 
 } // namespace Graphics
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_GRAPHICS_H

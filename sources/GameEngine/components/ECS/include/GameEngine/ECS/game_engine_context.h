@@ -1,7 +1,10 @@
 #ifndef GAME_ENGINE_CONTEXT_H
 #define GAME_ENGINE_CONTEXT_H
 
-namespace GE {
+#include "GameEngine/utility.h"
+
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TGameEngine;
 class TScene;
@@ -16,6 +19,6 @@ struct TGameEngineContext
     {}
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_CONTEXT_H

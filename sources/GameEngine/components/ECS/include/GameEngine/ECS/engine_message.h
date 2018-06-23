@@ -1,13 +1,13 @@
 #ifndef ENGINE_MESSAGE_H
 #define ENGINE_MESSAGE_H
 
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 #if defined(SendMessage)
     #undef SendMessage
 #endif // SendMessage
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TMessageID = uint;
 enum class MessageID : TMessageID;
@@ -30,6 +30,6 @@ private:
     const ID id;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // ENGINE_MESSAGE_H

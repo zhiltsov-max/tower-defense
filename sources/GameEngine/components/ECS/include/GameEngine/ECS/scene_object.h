@@ -7,7 +7,7 @@
 #include "GameEngine/ECS/observable_interface.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 struct TSceneObjectMessage;
 
@@ -129,6 +129,6 @@ struct TSceneObjectMessage
     {}
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // SCENE_OBJECT_H

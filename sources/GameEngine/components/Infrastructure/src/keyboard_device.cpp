@@ -3,7 +3,7 @@
 #include "GameEngine/Infrastructure/keyboard_device.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -55,4 +55,4 @@ void TKeyboardDevice::pressKey(KeyCode code) {
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

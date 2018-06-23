@@ -3,7 +3,7 @@
 #include "GameEngine/Infrastructure/mouse_device.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -80,4 +80,4 @@ void TMouseDevice::pressKey(KeyCode code, int x, int y) {
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

@@ -4,8 +4,10 @@
 #include <cstring>
 #include <queue>
 
+#include "GameEngine/Utility/common.h"
 
-namespace GE {
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -311,6 +313,6 @@ struct TMouseInfo
 
 } // namepace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_KEY_DEFS_H

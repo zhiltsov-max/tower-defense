@@ -1,10 +1,10 @@
 #ifndef SCENE_RESOURCE_H
 #define SCENE_RESOURCE_H
 
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TSceneResourceTypeID = uint;
 enum class SceneResourceTypeID : TSceneResourceTypeID;
@@ -29,6 +29,6 @@ private:
     TypeID type;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif //SCENE_RESOURCE_H

@@ -1,11 +1,12 @@
 #ifndef GAME_ENGINE_KEYBOARD_DEVICE_H
 #define GAME_ENGINE_KEYBOARD_DEVICE_H
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Infrastructure/window.h"
 #include "GameEngine/Infrastructure/key_defs.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -31,6 +32,6 @@ private:
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_KEYBOARD_DEVICE_H

@@ -1,7 +1,7 @@
 #include "scene_resource.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 std::ostream& operator <<(std::ostream& os, const SceneResourceTypeID& id) {
     return os << static_cast<TSceneResourceTypeID>(id);
@@ -15,4 +15,4 @@ TSceneResource::TSceneResource(const TypeID& type) :
     type(type)
 {}
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

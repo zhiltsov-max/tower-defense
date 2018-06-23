@@ -1,7 +1,7 @@
 #include "GameEngine/Infrastructure/device_controller.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -44,4 +44,4 @@ TDeviceController::Time TDeviceController::getTime() const {
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

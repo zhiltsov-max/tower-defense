@@ -7,7 +7,7 @@
 #include "GameEngine/Infrastructure/window.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace GUI {
 class TUIParent;
@@ -34,6 +34,6 @@ private:
     UIParent uiParent;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_APPLICATION_UI_H

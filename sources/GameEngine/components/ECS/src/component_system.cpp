@@ -3,7 +3,7 @@
 #include "GameEngine/ECS/game_engine.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 const TComponentSystem::Handle TComponentSystem::HandleUndefined = -1u;
 
@@ -68,4 +68,4 @@ void TComponentSystem::SetComponentRegistry(TComponentRegistry* instance) {
     componentRegistry = instance;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

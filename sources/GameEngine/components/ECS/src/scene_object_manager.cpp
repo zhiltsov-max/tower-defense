@@ -2,7 +2,7 @@
 #include "GameEngine/ECS/scene_component_manager.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 const TSceneObjectManager::ObjectHandle
 TSceneObjectManager::ObjectHandle::Undefined =
@@ -277,4 +277,4 @@ bool TSceneObjectManager::ObjectHandle::IsNull() const {
     return operator==(Undefined);
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

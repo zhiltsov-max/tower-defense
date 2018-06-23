@@ -419,7 +419,7 @@ struct TestComponent : TComponent
     TestComponent();
 };
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 template <>
 struct ComponentID<TestComponent>
 {
@@ -427,7 +427,7 @@ struct ComponentID<TestComponent>
         return ComponentIDs::TestComponent;
     }
 };
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 TestComponent::TestComponent() :
     TComponent(ComponentID<TestComponent>::value())
 {}
@@ -479,7 +479,7 @@ struct CustomComponent : TComponent
     int value;
 };
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 template<>
 struct ComponentID< CustomComponent > {
     inline static const ComponentIDs value() {
@@ -493,7 +493,7 @@ struct ComponentClass< CustomComponent > {
         return ComponentSystem::Custom;
     }
 };
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 CustomComponent::CustomComponent(const Parameters* parameters) :
     TComponent(ComponentID<CustomComponent>::value()),

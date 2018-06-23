@@ -8,12 +8,13 @@
 #include <set>
 #include <utility>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Utility/string_functions.h"
 #include "GameEngine/Utility/named_data.h"
 #include "GameEngine/Utility/myon_parser.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TArray = std::array;
 using TList = std::list;
@@ -22,6 +23,6 @@ using TMap = std::map;
 using TSet = std::set;
 using TPair = std::pair;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_DATA_STRUCTURES_H

@@ -7,11 +7,12 @@
 #include <string>
 #include <vector>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Infrastructure/string.h"
 
 // TODO: update the implementation to accept Unicode
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace String {
 
@@ -383,6 +384,6 @@ basic_string<CharT> String::toUpper(const CharT* str,
     return res;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_STRING_FUNCTIONS_H

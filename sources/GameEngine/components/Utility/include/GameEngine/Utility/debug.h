@@ -4,11 +4,12 @@
 #include <memory>
 #include <iostream>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Utility/exception.h"
 #include "GameEngine/Infrastructure/string.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 enum class ELogMessageLevel : unsigned char {
 	_min = 0,
@@ -87,6 +88,6 @@ private:
         ~TTraceDummy() { GE_TRACE_LINE(": Exited"); } \
     } [[maybe_unused]] traceDummy;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_DEBUG_H

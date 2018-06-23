@@ -2,7 +2,7 @@
 #include "GameEngine/GUI/uiparent.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TApplicationUI::TApplicationUI(const TParameters& parameters) :
     uiParent()
@@ -39,4 +39,4 @@ void TApplicationUI::draw(IO::TGraphicsDevice& device) {
     uiParent->Draw(device);
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

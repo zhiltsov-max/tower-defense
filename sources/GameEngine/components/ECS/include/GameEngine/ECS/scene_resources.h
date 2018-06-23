@@ -5,7 +5,7 @@
 #include "GameEngine/ECS/scene_resource.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TSceneResourceID = string;
 
@@ -54,6 +54,6 @@ private:
     Registry registry;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif //SCENE_RESOURCES_H

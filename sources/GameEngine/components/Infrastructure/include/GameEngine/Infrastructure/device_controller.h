@@ -3,12 +3,13 @@
 
 #include <memory>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Infrastructure/graphics_device.h"
 #include "GameEngine/Infrastructure/mouse_device.h"
 #include "GameEngine/Infrastructure/keyboard_device.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -54,6 +55,6 @@ private:
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_DEVICE_CONTROLLER_H

@@ -7,11 +7,11 @@
 #include <string>
 #include <initializer_list>
 
-#include "GameEngine/Utility/defs.h"
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Utility/exception.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace Graphics {
 
@@ -309,6 +309,6 @@ double norm(const Point<T, dims>& p, NormType normType = NormType::NORM_USUAL) {
 
 } // namespace Graphics
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_POINT_H

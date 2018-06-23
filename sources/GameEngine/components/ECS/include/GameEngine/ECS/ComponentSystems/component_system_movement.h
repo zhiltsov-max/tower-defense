@@ -4,7 +4,7 @@
 #include "GameEngine/ECS/component_system.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class CSMovementSystem :
     public TComponentSystem
@@ -26,6 +26,6 @@ public:
     virtual ~CMovementComponent() = default;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_MOVEMENT_H

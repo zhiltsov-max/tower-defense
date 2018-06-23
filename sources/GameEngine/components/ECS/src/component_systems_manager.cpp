@@ -1,7 +1,7 @@
 #include "GameEngine/ECS/component_systems_manager.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 const TComponentHandle TComponentHandle::Undefined{};
 
@@ -118,4 +118,4 @@ TComponentSystemsManager::Systems& TComponentSystemsManager::GetSystems() {
     return systems;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

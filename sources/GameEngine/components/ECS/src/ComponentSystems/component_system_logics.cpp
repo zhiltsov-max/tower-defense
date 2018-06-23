@@ -1,7 +1,7 @@
 #include "component_system_logics.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 void CSLogicsSystem::Update(const TTime& step, Context& context) {
     // TODO: ...
@@ -17,4 +17,4 @@ CLogicsComponent::CLogicsComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

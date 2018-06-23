@@ -4,7 +4,7 @@
 #include "GameEngine/GUI/uiparent.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 CSUiSystem::~CSUiSystem() {
     if (ui != nullptr) {
@@ -42,4 +42,4 @@ CUiComponent::CUiComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

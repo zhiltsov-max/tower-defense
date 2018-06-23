@@ -5,7 +5,7 @@
 #include "Application/application.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 enum class DefaultMessageID : TMessageID {
     _min = 0,

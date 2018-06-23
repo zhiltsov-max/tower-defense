@@ -5,8 +5,10 @@
 #include <type_traits>
 #include <vector>
 
+#include "GameEngine/Utility/common.h"
 
-namespace GE {
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace impl {
 template<class T,
@@ -247,6 +249,6 @@ struct Block<T, false, false, false> {
 
 } // namespace impl
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // FREE_LIST_ALLOCATOR_H

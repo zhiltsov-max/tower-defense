@@ -6,7 +6,7 @@
 #include "GameEngine/ECS/component_systems_manager.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TMessageSystem
 {
@@ -61,6 +61,6 @@ protected:
     PComponentSystemsManager componentSystemsManager;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // MESSAGE_SYSTEM_H

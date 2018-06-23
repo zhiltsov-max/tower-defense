@@ -4,8 +4,10 @@
 #include "SFML/OpenGL.hpp"
 #include "SFML/Graphics.hpp"
 
+#include "GameEngine/Utility/common.h"
 
-namespace GE {
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -13,6 +15,6 @@ using TGraphicsDevice = sf::RenderTarget;
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_GRAPHICS_DEVICE_H

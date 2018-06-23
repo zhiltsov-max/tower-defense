@@ -6,7 +6,7 @@
 #include "GameEngine/ECS/scene_object.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TSceneComponentManager;
 
@@ -123,6 +123,6 @@ private:
     Value handle;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // SCENE_OBJECT_MANAGER_H

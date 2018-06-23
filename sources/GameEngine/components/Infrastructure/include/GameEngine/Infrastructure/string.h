@@ -5,6 +5,8 @@
 
 #include "SFML/System/Utf.hpp"
 
+#include "GameEngine/Utility/common.h"
+
 
 /*
  * The standard string and char* buffers
@@ -27,11 +29,11 @@
     #error Unicode defines have to be set for the project.
 #endif
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TUtf8String = std::string;
 using TString = TUtf8String;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_STRING_H

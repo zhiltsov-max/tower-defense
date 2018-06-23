@@ -1,7 +1,7 @@
 #include "GameEngine/ECS/scene_object.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 const TSceneObject::EntryHandle TSceneObject::HandleUndefined =
     TSceneObject::ComponentsAllocator::HandleUndefined;
@@ -192,4 +192,4 @@ void TSceneObject::Observable::SetObserver(ObserverNotifier&& instance) {
 }
 
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

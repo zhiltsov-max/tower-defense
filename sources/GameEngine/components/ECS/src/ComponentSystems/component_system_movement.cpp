@@ -1,7 +1,7 @@
 #include "component_system_movement.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 void CSMovementSystem::Update(const TTime& step, Context& context) {
     // TODO: ...
@@ -18,4 +18,4 @@ CMovementComponent::CMovementComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

@@ -4,7 +4,7 @@
 #include "GameEngine/Utility/debug.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TLogger::PLogger TLogger::instance { nullptr };
 const size_t TLogger::DefaultBufferSize = 512;
@@ -88,4 +88,4 @@ const char* TLogger::GetFileName(const char* path) {
     return base ? (base + 1) : filePath;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

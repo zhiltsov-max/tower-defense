@@ -6,7 +6,7 @@
 
 class TApplicationUI;
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TScriptEngine;
 
@@ -41,6 +41,6 @@ public:
     virtual ~CUiComponent() = default;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_UI_H

@@ -1,7 +1,7 @@
 #include "GameEngine/Application/application.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 AApplication::PApplication AApplication::instance { nullptr };
 
@@ -23,4 +23,4 @@ AApplication& app() {
     return AApplication::GetInstance();
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

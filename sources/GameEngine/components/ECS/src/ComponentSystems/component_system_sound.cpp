@@ -1,7 +1,7 @@
 #include "component_system_sound.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 void CSSoundSystem::Update(const TTime& step, Context& context) {
     // TODO: implementation
@@ -17,4 +17,4 @@ CSoundComponent::CSoundComponent(const TComponent::ID& id) :
     TComponent(id)
 {}
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

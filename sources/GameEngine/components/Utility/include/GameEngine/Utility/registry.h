@@ -5,10 +5,11 @@
 #include <map>
 #include <sstream>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Utility/debug.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 template<class Entry_, class Id_>
 class TRegistry {
@@ -67,6 +68,6 @@ void TRegistry<Entry_, Id_>::Unregister(const TId& id) {
     data.erase(it);
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_REGISTRY_H

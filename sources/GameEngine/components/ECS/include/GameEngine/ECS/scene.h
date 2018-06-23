@@ -1,14 +1,14 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 #include "GameEngine/ECS/game_engine.h"
 #include "GameEngine/ECS/scene_component_manager.h"
 #include "GameEngine/ECS/scene_object_manager.h"
 #include "GameEngine/ECS/scene_resources.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TScene
 {
@@ -92,6 +92,6 @@ T* TScene::GetComponent(const ComponentHandle& handle) {
     return dynamic_cast<T*>(GetComponent(handle));
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // SCENE_H

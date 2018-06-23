@@ -1,7 +1,7 @@
 #ifndef OBSERVABLE_INTERFACE_H
 #define OBSERVABLE_INTERFACE_H
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 template<class M>
 class IObservable
@@ -18,6 +18,6 @@ public:
     using MessageType = M;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // OBSERVABLE_INTERFACE_H

@@ -2,7 +2,7 @@
 #include "GameEngine/ECS/game_engine.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TSceneComponentManager::TSceneComponentManager() :
     engine(nullptr),
@@ -181,4 +181,4 @@ TSceneComponentManager::GetComponent(const ComponentHandle& handle) {
     }
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

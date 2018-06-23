@@ -6,7 +6,7 @@
 #include "GameEngine/ECS/registry.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 struct TComponentCreateArgs
 {
@@ -24,6 +24,6 @@ struct TComponentRegistryEntry
 
 using TComponentRegistry = TRegistry<TComponentRegistryEntry, TComponent::ID>;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_REGISTRY_H

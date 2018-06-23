@@ -1,7 +1,7 @@
 #include "engine_message.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 std::ostream& operator <<(std::ostream& os, const MessageID& id) {
     return os << static_cast<TMessageID>(id);

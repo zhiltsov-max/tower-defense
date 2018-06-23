@@ -3,10 +3,11 @@
 
 #include <exception>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Infrastructure/string.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class exception : public std::exception {
 public:
@@ -21,6 +22,6 @@ private:
     TString message;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_EXCEPTION_H

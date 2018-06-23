@@ -1,7 +1,7 @@
 #include "GameEngine/ECS/component.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 
 std::ostream& operator <<(std::ostream& os, const ComponentIDs& id) {
@@ -16,4 +16,4 @@ const TComponent::ID& TComponent::GetID() const {
     return id;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

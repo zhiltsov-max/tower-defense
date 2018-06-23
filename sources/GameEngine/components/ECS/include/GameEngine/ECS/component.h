@@ -1,10 +1,10 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TComponentID = uint;
 enum class ComponentIDs : TComponentID;
@@ -30,6 +30,6 @@ private:
 template< class Component >
 struct ComponentID;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_H

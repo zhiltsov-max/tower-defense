@@ -1,7 +1,7 @@
 #include "GameEngine/Infrastructure/point.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace Graphics {
 
@@ -14,4 +14,4 @@ bool isPointInRect(int pointX, int pointY, int rectX1, int rectY1, int rectX2, i
 
 } // namespace Graphics
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

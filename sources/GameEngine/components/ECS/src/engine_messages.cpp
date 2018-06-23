@@ -2,7 +2,7 @@
 
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 
 TMessage_SystemEvent::TMessage_SystemEvent(const Event& event) :
@@ -17,4 +17,4 @@ TMessage_SystemEvent::GetEvent() const {
 }
 
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

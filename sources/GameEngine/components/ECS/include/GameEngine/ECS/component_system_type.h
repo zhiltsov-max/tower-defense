@@ -1,10 +1,10 @@
 #ifndef COMPONENT_SYSTEM_TYPE_H
 #define COMPONENT_SYSTEM_TYPE_H
 
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 template<class Component>
 struct ComponentClass;
@@ -12,6 +12,6 @@ struct ComponentClass;
 using TComponentSystemTypeId = uchar;
 enum class ComponentSystem : TComponentSystemTypeId;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_TYPE_H

@@ -1,13 +1,14 @@
 #ifndef GAME_ENGINE_BASIC_APPLICATION_H
 #define GAME_ENGINE_BASIC_APPLICATION_H
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Utility/debug.h"
-#include "GameEngine/Utility/string.h"
+#include "GameEngine/Infrastructure/string.h"
 #include "GameEngine/Infrastructure/window.h"
 #include "GameEngine/Infrastructure/device_controller.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TBasicApplication : public AApplication {
 public:
@@ -92,6 +93,6 @@ protected:
     virtual void handleEvent(const TWindowEvent& evt);
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_BASIC_APPLICATION_H

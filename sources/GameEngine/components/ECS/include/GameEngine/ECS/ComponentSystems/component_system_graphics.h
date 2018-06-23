@@ -4,7 +4,7 @@
 #include "GameEngine/ECS/component_system.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class CSGraphicsSystem :
     public TComponentSystem
@@ -18,6 +18,6 @@ public:
         const TComponentHandle& sender, Context& context) override;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_GRAPHICS_H

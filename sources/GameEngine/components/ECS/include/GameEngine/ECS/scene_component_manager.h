@@ -2,13 +2,13 @@
 #define SCENE_COMPONENT_MANAGER_H
 
 #include <unordered_map>
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 #include "GameEngine/ECS/component_systems_manager.h"
 #include "GameEngine/ECS/scene_object.h"
 #include "GameEngine/ECS/scene_object_manager.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TSceneComponentManager
 {
@@ -91,6 +91,6 @@ T* TSceneComponentManager::GetComponent(
     return dynamic_cast<T*>(GetComponent(handle));
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // SCENE_COMPONENT_MANAGER_H

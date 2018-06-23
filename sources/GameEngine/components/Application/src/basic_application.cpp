@@ -1,7 +1,7 @@
 #include "GameEngine/Application/basic_application.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 static TBasicApplication* GetInstance() {
     return dynamic_cast<TBasicApplication*>(AApplication::GetInstance());
@@ -107,4 +107,4 @@ TDebugTools& TBasicApplication::getDebugTools() {
     return debugTools;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

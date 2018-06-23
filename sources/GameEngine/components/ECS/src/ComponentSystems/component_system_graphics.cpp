@@ -1,7 +1,7 @@
 #include "component_system_graphics.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 void CSGraphicsSystem::Update(const TTime& step, Context& context) {
     // TODO: ...
@@ -17,4 +17,4 @@ void CSGraphicsSystem::HandleMessage(const TMessage& message,
     // TODO: ...
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

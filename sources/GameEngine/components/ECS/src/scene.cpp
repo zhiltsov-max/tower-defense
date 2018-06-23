@@ -2,7 +2,7 @@
 #include "GameEngine/ECS/game_engine.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TScene::TScene() :
     componentManager(),
@@ -146,4 +146,4 @@ TScene::ResourceManager& TScene::GetResourceManager() {
     return resourceManager;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

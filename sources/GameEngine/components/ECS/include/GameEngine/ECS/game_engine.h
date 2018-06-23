@@ -1,7 +1,7 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 #include "GameEngine/ECS/engine_core.h"
 #include "GameEngine/ECS/component_systems_manager.h"
 #include "GameEngine/ECS/message_system.h"
@@ -9,7 +9,7 @@
 #include "GameEngine/ECS/game_engine_context.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TMessage;
 
@@ -44,6 +44,6 @@ protected:
     ScriptEngine scriptEngine;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_H

@@ -4,7 +4,7 @@
 #include "GameEngine/ECS/component_system.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class CSSoundSystem : public TComponentSystem
 {
@@ -24,6 +24,6 @@ public:
     virtual ~CSoundComponent() = default;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_SOUND_H

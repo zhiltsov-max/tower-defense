@@ -1,7 +1,7 @@
 #include "scene_resources.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TSceneResources::PWeakResource TSceneResources::LoadResource(
     const TSceneResources::ID& id, const TSceneResource::TypeID& type,
@@ -58,4 +58,4 @@ bool TSceneResources::IsEmpty() const {
     return resources.empty();
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

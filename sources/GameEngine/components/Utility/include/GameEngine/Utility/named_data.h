@@ -6,10 +6,11 @@
 #include <map>
 #include <utility>
 
+#include "GameEngine/Utility/common.h"
 #include "GameEngine/Infrastructure/string.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 /*
  * Represents a hierarchical dictonary with string keys and values of some type.
@@ -200,6 +201,6 @@ public:
 	}
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif //GAME_ENGINE_NAMED_DATA_H

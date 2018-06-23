@@ -1,7 +1,7 @@
 #include "GameEngine/ECS/message_system.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TMessageSystem::TMessageSystem() :
     routingTable(),
@@ -187,4 +187,4 @@ TMessageSystem::FindSubscription(Subscriptions& subscriptions,
     return it;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

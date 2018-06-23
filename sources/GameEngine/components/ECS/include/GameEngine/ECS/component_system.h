@@ -8,7 +8,7 @@
 #include "GameEngine/ECS/game_engine_context.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TComponentHandle;
 
@@ -52,6 +52,6 @@ protected:
     vector<PComponent> components;
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // COMPONENT_SYSTEM_H

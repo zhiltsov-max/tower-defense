@@ -3,11 +3,13 @@
 
 #include "json.hpp"
 
+#include "GameEngine/Utility/common.h"
 
-namespace GE {
 
-using json = nlohmann::json;
+GE_BEGIN_ENGINE_NAMESPACE
 
-} // namespace GE
+using json = ::nlohmann::json;
+
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_JSON_H

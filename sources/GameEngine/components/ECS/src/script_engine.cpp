@@ -1,9 +1,9 @@
 #include "script_engine.h"
-#include "GameEngine/Utility/core.h"
+#include "GameEngine/utility.h"
 #include "GameEngine/ECS/engine_lua_binding.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TScriptEngine::TScriptEngine() :
     raw()
@@ -27,4 +27,4 @@ void TScriptEngine::initialize() {
     }
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

@@ -4,7 +4,7 @@
 #include "GameEngine/Utility/luawrapper.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 class TScriptEngine {
 public:
@@ -19,6 +19,6 @@ private:
     void initialize();
 };
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // SCRIPT_ENGINE_H

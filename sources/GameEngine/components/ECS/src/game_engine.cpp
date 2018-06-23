@@ -2,7 +2,7 @@
 #include "GameEngine/ECS/engine_message.h"
 
 
-namespace GE {
+GE_BEGIN_ENGINE_NAMESPACE
 
 TGameEngine::TGameEngine() :
     componentSystemsManager(),
@@ -51,4 +51,4 @@ TGameEngine::MessageSystem& TGameEngine::GetMessageSystem() {
     return messageSystem;
 }
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE

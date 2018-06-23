@@ -4,8 +4,10 @@
 #include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
 
+#include "GameEngine/Utility/common.h"
 
-namespace GE {
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 namespace IO {
 
@@ -15,6 +17,6 @@ using TWindow = sf::RenderWindow;
 
 } // namespace IO
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_WINDOW_H

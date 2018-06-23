@@ -1,11 +1,13 @@
 #ifndef ENGINE_CORE_H
 #define ENGINE_CORE_H
 
+#include "GameEngine/utility.h"
 
-namespace GE {
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 using TTime = double;
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // ENGINE_CORE_H

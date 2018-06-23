@@ -3,8 +3,10 @@
 
 #include <memory>
 
+#include "GameEngine/Utility/common.h"
 
-namespace GE {
+
+GE_BEGIN_ENGINE_NAMESPACE
 
 class AApplication {
 public:
@@ -30,6 +32,6 @@ protected:
 
 AApplication* app();
 
-} // namespace GE
+GE_END_ENGINE_NAMESPACE
 
 #endif // GAME_ENGINE_APPLICATION_H
