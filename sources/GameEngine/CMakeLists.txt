@@ -17,13 +17,7 @@ if (BUILD_TESTING)
     add_custom_target(tests) # create aggregating target for unit tests
 endif()
 
-include(Components)
-declare_component(Utility)
-declare_component(Infrastructure)
-declare_component(ECS)
-declare_component(GUI)
-declare_component(Application)
-declare_component(All) # aggregating component
+set(GAME_ENGINE_NAMESPACE ${PROJECT_NAME})
 
 add_subdirectory(docs)
 add_subdirectory(components)

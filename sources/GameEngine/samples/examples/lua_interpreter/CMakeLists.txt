@@ -1,13 +1,11 @@
 set(target lua_interpreter)
-set(sources lua_interpreter.cpp)
 
-add_executable(${target} ${sources})
-target_link_libraries(${target}
-    ${COMPONENT_Utility}
+add_executable(${target}
+    lua_interpreter.cpp
     )
-target_include_directories(${target}
-    PUBLIC
-        ${COMPONENT_Utility_INCLUDE_DIR}
+target_link_libraries(${target}
+    PRIVATE
+        ${GAME_ENGINE_NAMESPACE}::Utility
     )
 
 install(TARGETS ${target}

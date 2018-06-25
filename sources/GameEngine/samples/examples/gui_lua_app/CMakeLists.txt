@@ -1,15 +1,12 @@
 set(target gui_lua_app)
-set(sources gui_lua_app.cpp)
 
-add_executable(${target} ${sources})
-target_link_libraries(${target}
-    ${COMPONENT_GUI}
-    ${COMPONENT_Application}
+add_executable(${target}
+    gui_lua_app.cpp
     )
-target_include_directories(${target}
-    PUBLIC
-        ${COMPONENT_GUI_INCLUDE_DIR}
-        ${COMPONENT_Application_INCLUDE_DIR}
+target_link_libraries(${target}
+    PRIVATE
+        ${GAME_ENGINE_NAMESPACE}::GUI
+        ${GAME_ENGINE_NAMESPACE}::Application
     )
 
 add_dependencies(${target} EXAMPLES_RESOURCES)

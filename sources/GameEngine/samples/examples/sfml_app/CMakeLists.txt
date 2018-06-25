@@ -1,12 +1,13 @@
 set(target sfml_app)
-set(sources sfml_app.cpp)
 
-add_executable(${target} ${sources})
+add_executable(${target}
+    sfml_app.cpp)
 target_link_libraries(${target}
-    ${SFML_LIBRARIES}
+    PRIVATE
+        ${SFML_LIBRARIES}
     )
 target_include_directories(${target}
-    PUBLIC
+    PRIVATE
         ${SFML_INCLUDE_DIRS}
     )
 

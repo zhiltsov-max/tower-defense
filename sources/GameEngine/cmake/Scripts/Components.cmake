@@ -1,26 +1,47 @@
-function(declare_component component_name)
-    if (NOT component_name)
-        message(FATAL_ERROR "Expected component name as first function parameter.")
-    endif()
-    set(component_base_dir ${PROJECT_SOURCE_DIR}/components/${component_name})
-    set(component_library ${PROJECT_NAME}_${component_name})
-    set(COMPONENT_${component_name}_BASE_DIR ${component_base_dir} PARENT_SCOPE)
-    set(COMPONENT_${component_name}_INCLUDE_DIR
-        $<BUILD_INTERFACE:${component_base_dir}/include> # use absolute path when building
-        $<INSTALL_INTERFACE:include> # use relative path when installing
-        PARENT_SCOPE)
-    set(COMPONENT_${component_name}_SOURCE_DIR ${component_base_dir}/src PARENT_SCOPE)
-    set(COMPONENT_${component_name} ${component_library} PARENT_SCOPE)
-    set(COMPONENT_${component_name}_LIBRARY ${component_library} PARENT_SCOPE)
-endfunction()
+macro(declare_component component_name)
+    #
+    # Generic macro to define variables with component structure.
+    #
+    # Parameters:
+    # - component_name
+    #
+    # Results:
+    # - CURRENT_COMPONENT_NAME
+    # - CURRENT_COMPONENT_INCLUDE_DIR
+    # - CURRENT_COMPONENT_LIBRARY
+    # - CURRENT_COMPONENT_SOURCE_DIR
+    #
+
+    set(CURRENT_COMPONENT_NAME ${component_name})
+    set(CURRENT_COMPONENT_INCLUDE_DIR
+            # Make component relocatable by specifying include  paths.
+            # Include path used during the component or project build.
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+
+            # Include path used during component install. This path
+            # is relative to install dir.
+            $<INSTALL_INTERFACE:include>
+        )
+    set(CURRENT_COMPONENT_LIBRARY ${CURRENT_COMPONENT_NAME})
+    set(CURRENT_COMPONENT_SOURCE_DIR src)
+endmacro()
 
 function(add_component_unit_tests CURRENT_COMPONENT_NAME)
+    #
+    # Generic function to create unit tests target for component.
+    # Should be used from component tests directory.
+    #
     # Required variables:
     # - PROJECT_TESTS_INSTALL_DIR - path to the project tests install dir
     # - PROJECT_TESTS - target containing all project tests
-    # Should be used from component tests directory.
-
-    set(unit_tests_install_dir ${PROJECT_TESTS_INSTALL_DIR}/${CURRENT_COMPONENT_NAME})
+    # - CURRENT_COMPONENT_NAME
+    # - CURRENT_COMPONENT_INCLUDE_DIR
+    # - CURRENT_COMPONENT_SOURCE_DIR
+    # - CURRENT_COMPONENT_LIBRARY
+    #
+    # Results:
+    # - A single target with all the component unit-tests.
+    #
 
     # Find C/C++ tests
     file(GLOB test_files
@@ -32,7 +53,7 @@ function(add_component_unit_tests CURRENT_COMPONENT_NAME)
     add_executable(${target} ${test_files})
     target_link_libraries(${target}
         PRIVATE
-            ${CURRENT_COMPONENT}
+            ${CURRENT_COMPONENT_LIBRARY}
             gtest
         )
     target_include_directories(${target}
@@ -43,8 +64,9 @@ function(add_component_unit_tests CURRENT_COMPONENT_NAME)
         )
     add_test(NAME ${target} COMMAND ${target})
 
-    install(TARGETS ${CURRENT_COMPONENT_UNIT_TESTS}
-        DESTINATION ${unit_tests_install_dir}
+    install(TARGETS ${target}
+        DESTINATION
+            ${PROJECT_TESTS_INSTALL_DIR}/${CURRENT_COMPONENT_NAME}
     )
 
     add_dependencies(${PROJECT_TESTS} ${target})
