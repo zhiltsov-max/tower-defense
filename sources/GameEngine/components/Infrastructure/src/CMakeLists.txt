@@ -1,11 +1,9 @@
-set(sources
+add_library(${CURRENT_COMPONENT}
     device_controller.cpp
     keyboard_device.cpp
     mouse_device.cpp
     point.cpp
     )
-
-add_library(${CURRENT_COMPONENT} ${sources})
 target_include_directories(${CURRENT_COMPONENT}
     INTERFACE
         ${${CURRENT_COMPONENT}_INCLUDE_DIR}

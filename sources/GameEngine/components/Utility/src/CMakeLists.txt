@@ -1,15 +1,9 @@
-set(sources
+add_library(${CURRENT_COMPONENT}
     debug.cpp
     exception.cpp
     lua_wrapper.cpp
     )
-
-add_library(${CURRENT_COMPONENT} ${sources})
 target_include_directories(${CURRENT_COMPONENT}
-    PUBLIC
-        $<BUILD_INTERFACE:${LUA_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${LUAPP_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${JSON_INCLUDE_DIRS}> $<INSTALL_INTERFACE:include>
     INTERFACE
         ${${CURRENT_COMPONENT}_INCLUDE_DIR}
     PRIVATE
@@ -17,12 +11,9 @@ target_include_directories(${CURRENT_COMPONENT}
     )
 target_link_libraries(${CURRENT_COMPONENT}
     PUBLIC
-        ${LUA_LIBRARIES}
+        luapp::luapp
+        json::json
         ${COMPONENT_Infrastructure}
-    )
-target_compile_definitions(${CURRENT_COMPONENT}
-    PUBLIC
-        ${LUAPP_DEFINITIONS}
     )
 
 install(TARGETS ${CURRENT_COMPONENT}
@@ -35,11 +26,3 @@ install(TARGETS ${CURRENT_COMPONENT}
         COMPONENT ${CURRENT_COMPONENT_NAME}
     INCLUDES DESTINATION include # headers
 )
-
-# add rules for dependencies
-install(DIRECTORY
-        ${LUA_INCLUDE_DIRS}
-        ${LUAPP_INCLUDE_DIRS}
-    DESTINATION include
-    COMPONENT ${CURRENT_COMPONENT_NAME}
-    )
