@@ -54,13 +54,12 @@ function(add_component_unit_tests CURRENT_COMPONENT_NAME)
     target_link_libraries(${target}
         PRIVATE
             ${CURRENT_COMPONENT_LIBRARY}
-            gtest
+            GTest::GTest
         )
     target_include_directories(${target}
         PRIVATE
             ${CURRENT_COMPONENT_INCLUDE_DIR}
             ${CURRENT_COMPONENT_SOURCE_DIR}
-            ${GTEST_INCLUDE_DIRS}
         )
     add_test(NAME ${target} COMMAND ${target})
 
