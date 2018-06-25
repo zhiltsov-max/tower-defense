@@ -36,10 +36,10 @@
 *.pro.*
 *.sublime*
 *.sln
-.vs
-.vscode
-.user
-.idea
+*.user*
+.vs/
+.vscode/
+.idea/
 
 # Resources
 data/
